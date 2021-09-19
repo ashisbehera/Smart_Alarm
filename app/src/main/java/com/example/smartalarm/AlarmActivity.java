@@ -17,6 +17,7 @@ public class AlarmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_activity);
 
+        Intent intent = getIntent();
         setTitle("Alarms");
         //floating button for @AddAlarm_Activity
         FloatingActionButton add_alarm_fab = findViewById(R.id.add_alarm_fb);
