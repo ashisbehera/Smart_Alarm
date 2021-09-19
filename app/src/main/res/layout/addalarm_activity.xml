@@ -7,52 +7,50 @@
     android:background="@drawable/gradient_background">
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/cancel_alarm"
+        android:layout_width="32dp"
+        android:layout_height="26dp"
         android:layout_marginBottom="88dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintBottom_toTopOf="@+id/alarm_time"
         app:layout_constraintEnd_toStartOf="@+id/imageView4"
-        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.119"
+        app:layout_constraintVertical_bias="0.347"
         app:srcCompat="@drawable/close" />
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="32dp"
+        android:layout_height="26dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintBottom_toTopOf="@+id/alarm_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.098"
+        app:layout_constraintVertical_bias="0.216"
         app:srcCompat="@drawable/done" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/alarm_time"
         android:layout_width="253dp"
         android:layout_height="112dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="60dp"
         android:gravity="center"
         android:text="07 : 30"
         android:textColor="#FFFFFF"
         android:textSize="60sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/set_alarm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/set_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="399dp"
-        android:layout_marginBottom="108dp"
+        android:layout_marginTop="332dp"
         android:text="Set Alarm"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,33 +63,32 @@
         android:layout_marginBottom="108dp"
         android:gravity="center"
         android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button">
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="20dp"
-            android:text="Label"
-            android:textColor="#FFFFFF"
-            android:textSize="34sp" />
+        app:layout_constraintTop_toBottomOf="@+id/set_alarm">
 
         <EditText
             android:id="@+id/editTextTextPersonName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="5"
             android:ems="10"
             android:hint="Work"
             android:inputType="textPersonName"
-            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#C3C3C3" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/done" />
 
     </LinearLayout>
 
