@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.SET_ALARM" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,10 +31,10 @@
         </activity>
         <activity
             android:name=".AddAlarm_Activity"
-            android:parentActivityName=".AlarmActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AlarmActivity">
+                android:value=".MainActivity">
 
             </meta-data>
 

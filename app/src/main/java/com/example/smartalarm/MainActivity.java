@@ -14,14 +14,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ImageView alarm_img = (ImageView) findViewById(R.id.alarm_img_v);
+        ImageView alarm_img = findViewById(R.id.alarm_img_v);
+        ImageView world_clock_img = findViewById(R.id.world_clock);
         alarm_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent alarm_intent = new Intent
                         (MainActivity.this, AlarmActivity.class);
                 startActivity(alarm_intent);
+            }
+        });
+        world_clock_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent edit_alarm_intent = new Intent(MainActivity.this, AddAlarm_Activity.class);
+                startActivity(edit_alarm_intent);
             }
         });
     }

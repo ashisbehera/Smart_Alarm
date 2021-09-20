@@ -58,7 +58,7 @@
             app:srcCompat="@drawable/stopwatch" />
 
         <ImageView
-            android:id="@+id/wclock_img_v"
+            android:id="@+id/world_clock"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
