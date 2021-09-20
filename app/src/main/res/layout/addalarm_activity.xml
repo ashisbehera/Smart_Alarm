@@ -10,13 +10,12 @@
         android:id="@+id/cancel_alarm"
         android:layout_width="32dp"
         android:layout_height="26dp"
-        android:layout_marginBottom="88dp"
-        app:layout_constraintBottom_toTopOf="@+id/alarm_time"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toStartOf="@+id/imageView4"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.347"
+        app:layout_constraintVertical_bias="0.258"
         app:srcCompat="@drawable/close" />
 
     <ImageView
@@ -24,26 +23,11 @@
         android:layout_width="32dp"
         android:layout_height="26dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toTopOf="@+id/alarm_time"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.216"
+        app:layout_constraintVertical_bias="0.258"
         app:srcCompat="@drawable/done" />
-
-    <TextView
-        android:id="@+id/alarm_time"
-        android:layout_width="253dp"
-        android:layout_height="112dp"
-        android:layout_marginBottom="60dp"
-        android:gravity="center"
-        android:text="07 : 30"
-        android:textColor="#FFFFFF"
-        android:textSize="60sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/set_alarm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/set_alarm"
@@ -91,5 +75,61 @@
             app:srcCompat="@drawable/done" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="156dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/set_alarm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/editTextTextPersonName4"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background=""
+            android:ems="10"
+            android:gravity="center"
+            android:hint="08"
+            android:inputType="textPersonName"
+            android:textColorHint="#BFBFBF"
+            android:textSize="60sp" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background=""
+            android:ems="10"
+            android:gravity="center"
+            android:hint="36"
+            android:inputType="textPersonName"
+            android:textColorHint="#BFBFBF"
+            android:textSize="60sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Alarm"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toStartOf="@+id/imageView4"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toEndOf="@+id/cancel_alarm"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.242" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
