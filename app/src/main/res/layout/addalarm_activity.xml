@@ -15,7 +15,7 @@
         app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.258"
+        app:layout_constraintVertical_bias="0.175"
         app:srcCompat="@drawable/close" />
 
     <ImageView
@@ -26,14 +26,14 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.258"
+        app:layout_constraintVertical_bias="0.175"
         app:srcCompat="@drawable/done" />
 
     <Button
         android:id="@+id/set_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="332dp"
+        android:layout_marginTop="340dp"
         android:text="Set Alarm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -87,8 +87,10 @@
         android:paddingRight="50dp"
         app:layout_constraintBottom_toTopOf="@+id/set_alarm"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.635">
 
         <EditText
             android:id="@+id/editTextTextPersonName4"
