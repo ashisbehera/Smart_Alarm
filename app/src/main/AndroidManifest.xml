@@ -3,7 +3,6 @@
     package="com.example.smartalarm">
 
     <uses-permission android:name="android.permission.SET_ALARM" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -18,7 +17,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,18 +25,16 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"></meta-data>
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".AddAlarm_Activity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity">
-
-            </meta-data>
-
+                android:value=".MainActivity" />
         </activity>
-    </application>
 
+        <receiver android:name=".AlarmReceiver" />
+    </application>
 </manifest>
