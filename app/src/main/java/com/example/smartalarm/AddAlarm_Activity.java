@@ -20,48 +20,62 @@ import androidx.fragment.app.DialogFragment;
 import java.util.Calendar;
 
 public class AddAlarm_Activity extends AppCompatActivity {
+    private TimePicker timePicker;
     private Button cancel_alarm;
     private Button set_alarm;
-    private EditText editHour;
-    private EditText editMinute;
-    PendingIntent pendingIntent;
-    AlarmManager alarmManager;
+    private AlarmConstraints newAlarm;
+    private StringBuilder timeBuilder=new StringBuilder();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addalarm_activity);
         setTitle("Add alarm");
-
-        editHour = findViewById(R.id.editHour);
-        editMinute = findViewById(R.id.editMinute);
+        /**
+         *set alarm button
+         */
         set_alarm = findViewById(R.id.set_alarm);
-
+        /**
+         *time picker
+         */
+        timePicker=(TimePicker) findViewById(R.id.timePicker);/**
+         *initialing the alarmcontraints button
+         */
+        newAlarm = new AlarmConstraints();
         set_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long time;
-                Calendar calendar = Calendar.getInstance();
-                time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
-                if (System.currentTimeMillis() > time) {
-                    // setting time as AM and PM
-                    if (calendar.AM_PM == 0)
-                        time = time + (1000 * 60 * 60 * 12);
-                    else
-                        time = time + (1000 * 60 * 60 * 24);
-                }
-                Intent intent = new Intent(AddAlarm_Activity.this, AlarmReceiver.class);
-                pendingIntent = PendingIntent.getBroadcast(AddAlarm_Activity.this, 0, intent, 0);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 10000, pendingIntent);
-                /*int hour = Integer.parseInt(editHour.getText().toString());
-                int minute = Integer.parseInt(editMinute.getText().toString());
-                Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
-                intent.putExtra(AlarmClock.EXTRA_HOUR, hour);
-                intent.putExtra(AlarmClock.EXTRA_MINUTES, minute);
-                if (hour <= 24 && minute <= 60) {
-                    startActivity(intent);
-                }*/
+                /**
+                 *sending the alarm to setalarmtime method
+                 */
+                newAlarm.setAlarmTime(getpickerTime());
+                newAlarm.scheduleAlarm(getApplicationContext());
+                /**
+                 *will return to the previous activity
+                 */
+                finish();
             }
         });
+    }
+
+    /**
+     *collect the time from the time picker
+     */
+    private String getpickerTime()
+    {
+        timeBuilder.append(String.valueOf(timePicker.getCurrentHour()));
+        timeBuilder.append(":");
+        String minute=timePicker.getCurrentMinute().toString();
+        if(minute.length()==1)
+        {
+            timeBuilder.append("0").append(minute);
+        }
+        else
+        {
+            timeBuilder.append(minute);
+        }
+
+        return timeBuilder.toString();
     }
 }

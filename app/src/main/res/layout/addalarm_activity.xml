@@ -81,33 +81,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.635">
 
-        <EditText
-            android:id="@+id/editHour"
-            android:layout_width="wrap_content"
+        <TimePicker
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@null"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="08"
-            android:inputType="textPersonName"
-            android:textColorHint="#BFBFBF"
-            android:textSize="60sp" />
-
-        <EditText
-            android:id="@+id/editMinute"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@null"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="36"
-            android:inputType="textPersonName"
-            android:textColorHint="#BFBFBF"
-            android:textSize="60sp" />
+            android:id="@+id/timePicker"
+            android:timePickerMode="spinner"
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
     <TextView
