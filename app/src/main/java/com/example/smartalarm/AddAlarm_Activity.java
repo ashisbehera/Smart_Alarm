@@ -1,28 +1,17 @@
 package com.example.smartalarm;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.AlarmClock;
-import android.text.NoCopySpan;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
 import com.example.smartalarm.databinding.ActivityMainBinding;
-
-import java.util.Calendar;
 
 public class AddAlarm_Activity extends AppCompatActivity {
     private TimePicker timePicker;
@@ -33,7 +22,7 @@ public class AddAlarm_Activity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addalarm_activity);
         createNotificationChannel();
