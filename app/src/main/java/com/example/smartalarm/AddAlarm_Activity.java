@@ -17,12 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Calendar;
 
 public class AddAlarm_Activity extends AppCompatActivity {
     private TimePicker timePicker;
     private Button cancel_alarm;
-    private Button set_alarm;
+    private FloatingActionButton set_alarm;
     private AlarmConstraints newAlarm;
     private StringBuilder timeBuilder=new StringBuilder();
 
@@ -35,11 +37,12 @@ public class AddAlarm_Activity extends AppCompatActivity {
         /**
          *set alarm button
          */
-        set_alarm = findViewById(R.id.set_alarm);
+        set_alarm = (FloatingActionButton) findViewById(R.id.set_alarm_fbt);
         /**
          *time picker
          */
-        timePicker=(TimePicker) findViewById(R.id.timePicker);/**
+        timePicker=(TimePicker) findViewById(R.id.timePicker);
+        /**
          *initialing the alarmcontraints button
          */
         newAlarm = new AlarmConstraints();

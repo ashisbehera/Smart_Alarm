@@ -112,7 +112,7 @@ public class AlarmConstraints {
      */
     private long convertTimeInMilliseconds() {
         /**
-         *setting calender time agarin from the time we get above
+         *setting calender time again from the time we get above
          */
         Calendar newCalendar=Calendar.getInstance();
         newCalendar.set(Calendar.HOUR,calendar.get(Calendar.HOUR));
@@ -127,7 +127,7 @@ public class AlarmConstraints {
         }
 
         /**
-         *converting to milisecond
+         *converting to millisecond
          */
         alarmTimeinMilliseconds=newCalendar.getTimeInMillis() - (newCalendar.getTimeInMillis() % 60000);
 
