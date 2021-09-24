@@ -22,10 +22,13 @@
         <TimePicker
             android:paddingTop="40dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/timePicker"
-            android:timePickerMode="spinner"
-            android:layout_gravity="center_horizontal" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Snooze"
+            android:textSize="25dp"
+            android:textStyle="bold"></TextView>
+
+
     </LinearLayout>
 
     <LinearLayout
@@ -91,7 +94,14 @@
             android:textStyle="bold"></TextView>
 
 
-    </LinearLayout>
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Vibrate"
+            android:textSize="25dp"
+            android:textStyle="bold">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
 

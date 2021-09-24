@@ -22,7 +22,8 @@
         </activity>
         <activity
             android:name=".AlarmActivity"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -35,6 +36,6 @@
                 android:value=".MainActivity" />
         </activity>
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".AlarmReceiver" android:process=":remote" />
     </application>
 </manifest>

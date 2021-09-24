@@ -45,6 +45,7 @@ public class AlarmActivity extends AppCompatActivity {
                 startActivity(alarm_intent);
             }
         });
+
     }
 
 
