@@ -58,7 +58,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Vibrator vibrator = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
         vibrator.vibrate(2000);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notification_alarm")
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Smart Alarm Manager")
                 .setContentText("Notification")
                 .setAutoCancel(true)

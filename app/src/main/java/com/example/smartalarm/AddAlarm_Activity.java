@@ -18,7 +18,7 @@ public class AddAlarm_Activity extends AppCompatActivity {
     private Button cancel_alarm;
     private Button set_alarm;
     private AlarmConstraints newAlarm;
-    private StringBuilder timeBuilder = new StringBuilder();
+    private final StringBuilder timeBuilder = new StringBuilder();
     private ActivityMainBinding binding;
 
     @Override

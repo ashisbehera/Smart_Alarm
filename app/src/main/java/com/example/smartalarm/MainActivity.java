@@ -11,15 +11,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        createNotificationChannel();
+        // createNotificationChannel();
         ImageView alarm_img = findViewById(R.id.alarm_img_v);
         ImageView world_clock_img = findViewById(R.id.world_clock);
+        CustomAnalogClock customAnalogClock = (CustomAnalogClock) findViewById(R.id.analog_clock);
+        customAnalogClock.setAutoUpdate(true);
+        customAnalogClock.setScale(1.25f);
         alarm_img.setOnClickListener(v -> {
             Intent alarm_intent = new Intent(MainActivity.this, AlarmActivity.class);
             startActivity(alarm_intent);
