@@ -12,11 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.databinding.ActivityMainBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AddAlarm_Activity extends AppCompatActivity {
     private TimePicker timePicker;
     private Button cancel_alarm;
-    private Button set_alarm;
+    private FloatingActionButton set_alarm;
     private AlarmConstraints newAlarm;
     private final StringBuilder timeBuilder = new StringBuilder();
     private ActivityMainBinding binding;
