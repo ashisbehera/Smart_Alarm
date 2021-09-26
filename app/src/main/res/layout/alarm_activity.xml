@@ -5,22 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".AlarmActivity">
 
-
-    <!--  <ListView
+    <!--   -->
+    <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp" />  -->
+        android:padding="16dp" />
 
-    <!-- testing purpose -->
-    <Button
-        android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="340dp"
-        android:text="cancel"
-        android:layout_centerInParent="true"/>
-    <!-- testing purpose -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_alarm_fb"
         android:layout_width="wrap_content"
