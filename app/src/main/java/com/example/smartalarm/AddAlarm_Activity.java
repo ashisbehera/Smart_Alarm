@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -23,15 +25,17 @@ import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class AddAlarm_Activity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
-    private static final int ALARM_LOADER = 0;
+import java.io.File;
+import java.util.ArrayList;
 
+public class AddAlarm_Activity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int ALARM_LOADER = 0;
     private TimePicker timePicker;
     private FloatingActionButton set_alarm;
     private EditText alarmNameEditText;
-    private Switch vibrateSwitch,snoozeSwitch;
+    private Switch vibrateSwitch, snoozeSwitch;
     private AlarmConstraints newAlarm;
+    private TextView ringtone_name;
     private final StringBuilder timeBuilder = new StringBuilder();
 
     @Override
@@ -40,72 +44,58 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         setContentView(R.layout.addalarm_activity);
         createNotificationChannel();
         setTitle("Add alarm");
-        /**
-         *set alarm button
-         */
-
-        alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
-
+        alarmNameEditText = findViewById(R.id.label_edt_txt);
         vibrateSwitch = findViewById(R.id.vibrate_switch);
-
         snoozeSwitch = findViewById(R.id.snooze_switch);
-
         set_alarm = findViewById(R.id.set_alarm);
-        /**
-         *time picker
-         */
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
-        /**
-         *initialing the alarmcontraints button
-         */
+        timePicker = findViewById(R.id.timePicker);
+        ringtone_name = findViewById(R.id.ringtone_name);
+        ImageView dropDown = findViewById(R.id.drop_down);
+        Intent intent = getIntent();
         newAlarm = new AlarmConstraints();
-        set_alarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /**
-                 *sending the alarm to setalarmtime method
-                 */
-                saveAlarmToDataBase();
-                newAlarm.setAlarmTime(getpickerTime());
-                newAlarm.scheduleAlarm(getApplicationContext());
-                /**
-                 *will return to the previous activity
-                 */
-                finish();
-            }
+        // set alarm
+        set_alarm.setOnClickListener(view -> {
+            // sending the alarm to setAlarmTime method
+            saveAlarmToDataBase();
+            newAlarm.setAlarmTime(getpickerTime());
+            newAlarm.scheduleAlarm(getApplicationContext());
+            // return to previous activity
+            Intent i = new Intent(AddAlarm_Activity.this, AlarmActivity.class);
+            startActivity(i);
         });
+        // choose ringtone
+        dropDown.setOnClickListener(view -> {
+            Intent i = new Intent(AddAlarm_Activity.this, Ringtone.class);
+            startActivity(i);
+        });
+        String songName = intent.getStringExtra("currentMusic");
+        ringtone_name.setText(songName);
     }
 
-    private void saveAlarmToDataBase(){
+    private void saveAlarmToDataBase() {
         String alarmName = alarmNameEditText.getText().toString();
         String time = getpickerTime();
         int vibrate_on_off;
         boolean vibrate = vibrateSwitch.isChecked();
-        if (vibrate){
+        if (vibrate) {
             vibrate_on_off = 1;
-        }else vibrate_on_off=0;
-
+        } else vibrate_on_off = 0;
         int snooze_on_off;
         boolean snooze = snoozeSwitch.isChecked();
-        if (snooze){
+        if (snooze) {
             snooze_on_off = 1;
-        }else snooze_on_off=0;
+        } else snooze_on_off = 0;
         int alarm_on_off = 1;
-
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME, alarmName);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
         values.put(AlarmEntry.ALARM_ACTIVE, alarm_on_off);
-
         Uri newUri = getContentResolver().insert(AlarmEntry.CONTENT_URI, values);
-
     }
 
-    /**
-     * collect the time from the time picker
-     */
+    // collect time from getPickerTime
     private String getpickerTime() {
         timeBuilder.append(String.valueOf(timePicker.getCurrentHour()));
         timeBuilder.append(":");
@@ -115,10 +105,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         } else {
             timeBuilder.append(minute);
         }
-
         return timeBuilder.toString();
     }
 
+    // notification on alarm
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Reminder channel";
@@ -138,11 +128,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }
