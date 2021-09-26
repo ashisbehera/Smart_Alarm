@@ -37,5 +37,11 @@
         </activity>
 
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
+        <provider
+            android:authorities="com.example.smartalarm"
+            android:name=".data.AlarmDataProvider"
+            android:exported="false">
+
+        </provider>
     </application>
 </manifest>

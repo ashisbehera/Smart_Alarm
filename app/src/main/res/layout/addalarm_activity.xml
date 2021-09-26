@@ -32,83 +32,123 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginEnd="100dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="30dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
         app:layout_constraintVertical_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/lable_llout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:gravity="center"
-            android:text="Label"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold">
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+            <TextView
+                android:id="@+id/label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Label"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold">
 
-        </TextView>
+            </TextView>
 
-        <EditText
-            android:id="@+id/editTextTextPersonName"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_gravity="left"
-            android:layout_marginTop="10dp"
-            android:background="#4DFFFFFF"
-            android:ems="10"
-            android:gravity="center|left"
-            android:hint="Wake up"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#C3C3C3"
-            android:textSize="25sp" />
+            <EditText
+                android:id="@+id/label_edt_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="10dp"
+                android:background="#4DFFFFFF"
+                android:ems="10"
+                android:hint="Enter Alarm name"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C3C3C3"
+                android:textSize="25sp" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:id="@+id/ringtone_llout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="Ringtone"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold">
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
 
-        </TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:text="Ringtone"
 
-        <TextView
-            android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:ignore="RtlCompat">
+
+            </TextView>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/vibrate_llout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="Vibrate"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold">
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
 
-        </TextView>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="6"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:layout_gravity="left"
+                android:gravity="center"
+                android:text="Vibrate"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:ignore="RtlCompat">
 
-        <TextView
-            android:layout_width="wrap_content"
+            </TextView>
+            <Switch
+                android:id="@+id/vibrate_switch"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:textSize="25sp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/snooze_llout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="20dp"
-            android:text="Snooze"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/vibrate_llout">
+            <TextView
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Snooze"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
+            <Switch
+                android:id="@+id/snooze_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -131,28 +171,5 @@
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
-    <Switch
-        android:id="@+id/switch5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="56dp"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/set_alarm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.269"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout2" />
-
-    <Switch
-        android:id="@+id/switch6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/switch5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.269"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

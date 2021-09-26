@@ -1,26 +1,38 @@
 package com.example.smartalarm;
 
+import android.app.LoaderManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ContentValues;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.smartalarm.databinding.ActivityMainBinding;
+import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class AddAlarm_Activity extends AppCompatActivity {
+public class AddAlarm_Activity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>{
+    private static final int ALARM_LOADER = 0;
+
     private TimePicker timePicker;
-    private Button cancel_alarm;
     private FloatingActionButton set_alarm;
+    private EditText alarmNameEditText;
+    private Switch vibrateSwitch,snoozeSwitch;
     private AlarmConstraints newAlarm;
     private final StringBuilder timeBuilder = new StringBuilder();
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +43,19 @@ public class AddAlarm_Activity extends AppCompatActivity {
         /**
          *set alarm button
          */
+
+        alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
+
+        vibrateSwitch = findViewById(R.id.vibrate_switch);
+
+        snoozeSwitch = findViewById(R.id.snooze_switch);
+
         set_alarm = findViewById(R.id.set_alarm);
         /**
          *time picker
          */
-        timePicker = (TimePicker) findViewById(R.id.timePicker);/**
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        /**
          *initialing the alarmcontraints button
          */
         newAlarm = new AlarmConstraints();
@@ -45,6 +65,7 @@ public class AddAlarm_Activity extends AppCompatActivity {
                 /**
                  *sending the alarm to setalarmtime method
                  */
+                saveAlarmToDataBase();
                 newAlarm.setAlarmTime(getpickerTime());
                 newAlarm.scheduleAlarm(getApplicationContext());
                 /**
@@ -53,6 +74,33 @@ public class AddAlarm_Activity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void saveAlarmToDataBase(){
+        String alarmName = alarmNameEditText.getText().toString();
+        String time = getpickerTime();
+        int vibrate_on_off;
+        boolean vibrate = vibrateSwitch.isChecked();
+        if (vibrate){
+            vibrate_on_off = 1;
+        }else vibrate_on_off=0;
+
+        int snooze_on_off;
+        boolean snooze = snoozeSwitch.isChecked();
+        if (snooze){
+            snooze_on_off = 1;
+        }else snooze_on_off=0;
+        int alarm_on_off = 1;
+
+        ContentValues values = new ContentValues();
+        values.put(AlarmEntry.ALARM_NAME, alarmName);
+        values.put(AlarmEntry.ALARM_TIME, time);
+        values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
+        values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
+        values.put(AlarmEntry.ALARM_ACTIVE, alarm_on_off);
+
+        Uri newUri = getContentResolver().insert(AlarmEntry.CONTENT_URI, values);
+
     }
 
     /**
@@ -81,5 +129,20 @@ public class AddAlarm_Activity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
