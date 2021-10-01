@@ -43,12 +43,13 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent i = new Intent(context, AlarmActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // Intent.FLAG_ACTIVITY_CLEAR_TOP
         // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_ONE_SHOT);
         // pendingIntent.getActivity(context, 0, i, Intent.FLAG_ACTIVITY_NEW_TASK);
 
         /*
@@ -77,7 +78,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 }
 /*
 package com.example.smartalarm;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -93,14 +93,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
-
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import java.io.File;
 import java.util.ArrayList;
-
 public class AlarmReceiver extends BroadcastReceiver {
     NotificationManager notificationManager;
     Notification notification = new Notification();
@@ -111,7 +108,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }*/
 
-    // @RequiresApi(api = Build.VERSION_CODES.O)
+// @RequiresApi(api = Build.VERSION_CODES.O)
 /*
     public void channelNotification() {
         NotificationChannel channel = new NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH);
@@ -139,7 +136,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         // notification.flags |= Notification.FLAG_AUTO_CANCEL;
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
         // pendingIntent.getActivity(context, 0, i, Intent.FLAG_ACTIVITY_NEW_TASK);
-
         /*
          initialing the vibrator
          */
