@@ -9,12 +9,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +35,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private EditText alarmNameEditText;
     private Switch vibrateSwitch,snoozeSwitch;
     private AlarmConstraints newAlarm;
+    private ScheduleService scheduleService;
     private final StringBuilder timeBuilder = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addalarm_activity);
-        createNotificationChannel();
         setTitle("Add alarm");
         /**
          *set alarm button
@@ -62,12 +65,17 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         set_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                newAlarm.setToggleOnOff(true);
                 /**
-                 *sending the alarm to setalarmtime method
+                 *saving alarm to database
                  */
-                saveAlarmToDataBase();
-                newAlarm.setAlarmTime(getpickerTime());
-                newAlarm.scheduleAlarm(getApplicationContext());
+                saveAlarmToDataBase(newAlarm);
+                Log.i("data saved to data base", "database created");
+                newAlarm.setAlarmTime(getPickerTime());
+                /**
+                 * updating the service
+                 */
+                scheduleService.updateAlarmSchedule(getBaseContext());
                 /**
                  *will return to the previous activity
                  */
@@ -76,9 +84,20 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         });
     }
 
-    private void saveAlarmToDataBase(){
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        ScheduleService.updateAlarmSchedule(getBaseContext());
+//
+//    }
+
+    /**
+     * saving the alarm to database using all the values
+     * @param alarm
+     */
+    private void saveAlarmToDataBase(AlarmConstraints alarm){
         String alarmName = alarmNameEditText.getText().toString();
-        String time = getpickerTime();
+        String time = getPickerTime();
         int vibrate_on_off;
         boolean vibrate = vibrateSwitch.isChecked();
         if (vibrate){
@@ -90,14 +109,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         if (snooze){
             snooze_on_off = 1;
         }else snooze_on_off=0;
-        int alarm_on_off = 1;
 
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME, alarmName);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
-        values.put(AlarmEntry.ALARM_ACTIVE, alarm_on_off);
+        values.put(AlarmEntry.ALARM_ACTIVE, alarm.isAlarmOn()?1:0);
 
         Uri newUri = getContentResolver().insert(AlarmEntry.CONTENT_URI, values);
 
@@ -106,7 +124,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     /**
      * collect the time from the time picker
      */
-    private String getpickerTime() {
+    private String getPickerTime() {
         timeBuilder.append(String.valueOf(timePicker.getCurrentHour()));
         timeBuilder.append(":");
         String minute = timePicker.getCurrentMinute().toString();
@@ -117,18 +135,6 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         }
 
         return timeBuilder.toString();
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Reminder channel";
-            String description = "Channel for alarm manager";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("notification_alarm", name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     @Override

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
     <application
         android:allowBackup="true"
@@ -35,8 +36,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".CancelAlarm">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity">
 
-        <receiver android:name=".AlarmReceiver" android:process=":remote" />
+            </meta-data>
+        </activity>
+
+        <service android:name="com.example.smartalarm.ScheduleService"></service>
+        <receiver android:name=".AlarmReceiver"></receiver>
         <provider
             android:authorities="com.example.smartalarm"
             android:name=".data.AlarmDataProvider"
