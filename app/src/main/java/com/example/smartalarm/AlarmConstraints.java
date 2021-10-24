@@ -120,13 +120,15 @@ public class AlarmConstraints implements Parcelable  {
      */
     public void setAlarmTime(String alarmTime) {
         this.alarmTime=alarmTime;
-        setStandardTime(alarmTime);
+    }
+
+    public String getAlarmTime(){
+        return alarmTime;
     }
     /**
-     *will extract the time from the alarmtime string
-     * and will set the calender time for calculation
+     *will convert the alarm time to standard time with am/pm
      */
-    private void setStandardTime(String time)
+    public void setStandardTime(String time)
     {
         standardTime=new StringBuilder();
         String []splitTime = time.split(":");
@@ -135,12 +137,6 @@ public class AlarmConstraints implements Parcelable  {
          */
         int hour=Integer.parseInt(splitTime[0]);
         int min=Integer.parseInt(splitTime[1]);
-        /**
-         *setting to callender
-         */
-        calendar.set(Calendar.HOUR_OF_DAY,hour);
-        calendar.set(Calendar.MINUTE,min);
-        calendar.set(Calendar.SECOND,0);
         String format;
 
         if (hour == 0) {
@@ -155,16 +151,7 @@ public class AlarmConstraints implements Parcelable  {
         } else {
             format = "AM";
         }
-        /**
-         *setting AM or PM
-         */
 
-        if(format.equals("AM")) {
-            calendar.set(Calendar.AM_PM,Calendar.AM);
-        }
-        else {
-            calendar.set(Calendar.AM_PM,Calendar.PM);
-        }
         /**
          *for future use
          */
@@ -180,35 +167,52 @@ public class AlarmConstraints implements Parcelable  {
     }
 
     /**
+     * will get the standard time
+     * @return
+     */
+    public StringBuilder getStandardTime(){
+        return  standardTime;
+    }
+
+    /**
      *will convert the incoming time to millisecond to set the alarm
      */
-    private long convertTimeInMS() {
+    private long convertTimeInMS(String time) {
+
+        standardTime=new StringBuilder();
+        String []splitTime = time.split(":");
+        /**
+         *extracting hour and min
+         */
+        int hour=Integer.parseInt(splitTime[0]);
+        int min=Integer.parseInt(splitTime[1]);
         /**
          *setting calender time again from the time we get above
          */
         Calendar newCalendar=Calendar.getInstance();
-        newCalendar.set(Calendar.HOUR,calendar.get(Calendar.HOUR));
-        newCalendar.set(Calendar.MINUTE,calendar.get(Calendar.MINUTE));
-        newCalendar.set(Calendar.SECOND,calendar.get(Calendar.SECOND));
-        newCalendar.set(Calendar.AM_PM,calendar.get(Calendar.AM_PM));
+
+        newCalendar.set(Calendar.HOUR,hour);
+        newCalendar.set(Calendar.MINUTE,min);
+        newCalendar.set(Calendar.SECOND,0);
+
         /**
          *if the time less than current time
          */
-        if (calendar.before(Calendar.getInstance())) {
+        if (newCalendar.before(Calendar.getInstance())) {
             newCalendar.add(Calendar.DAY_OF_WEEK,1);
         }
 
         /**
          *converting to millisecond
          */
-        alarmTimeInMS=newCalendar.getTimeInMillis() - (newCalendar.getTimeInMillis() % 60000);
+        alarmTimeInMS= newCalendar.getTimeInMillis();
         Log.i("UPDATE",String.valueOf(alarmTimeInMS));
         return alarmTimeInMS;
     }
 
     /**
      * this will use to show toast msg of the ringing alarm time
-     * @param time
+     * @param
      * @return
      */
     public String getDurationBreakdown(long time) {
@@ -224,11 +228,11 @@ public class AlarmConstraints implements Parcelable  {
 
         StringBuilder sb = new StringBuilder(64);
         sb.append(hours);
-        sb.append(" H ");
+        sb.append(":H ");
         sb.append(minutes);
-        sb.append(" Mi ");
+        sb.append(":M ");
         sb.append(seconds);
-        sb.append(" S");
+        sb.append(":S");
 
         return(sb.toString());
     }
@@ -237,9 +241,9 @@ public class AlarmConstraints implements Parcelable  {
      *pusing the alarm to the alarmmanager
      */
     @SuppressLint("LongLogTag")
-    public void scheduleAlarm(Context context)
+    public void scheduleAlarm(Context context , String time)
     {
-        alarmTimeInMS = convertTimeInMS();
+        alarmTimeInMS = convertTimeInMS(time);
         /**
          *intent for broadcast manager
          */
@@ -331,8 +335,8 @@ public class AlarmConstraints implements Parcelable  {
         }
     };
 
-    public Long getMillisecondTime() {
-        return convertTimeInMS();
+    public Long getMillisecondTime(String time) {
+        return convertTimeInMS(time);
     }
 
     public String getTimeToRing(long timeInM){

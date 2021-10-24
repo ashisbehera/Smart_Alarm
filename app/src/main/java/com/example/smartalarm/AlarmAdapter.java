@@ -28,6 +28,7 @@ public class AlarmAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        AlarmConstraints alarm = new AlarmConstraints();
         TextView nameTextView = (TextView) view.findViewById(R.id.alarm_name);
         TextView timeTextView = (TextView) view.findViewById(R.id.alarm_time);
         Switch alarmSwitch = view.findViewById(R.id.alarm_active_switch);
@@ -38,6 +39,12 @@ public class AlarmAdapter extends CursorAdapter {
 
         String alarmName = cursor.getString(nameColumnIndex);
         String alarmTime = cursor.getString(timeColumnIndex);
+        /**
+         * convert the alarm time to standard time
+         */
+        alarm.setStandardTime(alarmTime);
+        StringBuilder standardTime = alarm.getStandardTime();
+
         int switchStage = cursor.getInt(switchColumnIndex);
 
         if (TextUtils.isEmpty(alarmName)) {
@@ -50,7 +57,7 @@ public class AlarmAdapter extends CursorAdapter {
             alarmSwitch.setChecked(true);
 
         nameTextView.setText(alarmName);
-        timeTextView.setText(alarmTime);
+        timeTextView.setText(standardTime);
 
     }
 }

@@ -55,7 +55,7 @@ public class ScheduleService extends Service {
             if (alarm != null) {
                 Log.i("the pkey in scheduleservice",String.valueOf(alarm.getPKeyDB()));
 
-                alarm.scheduleAlarm(getApplicationContext());
+                alarm.scheduleAlarm(getApplicationContext() , alarm.getAlarmTime());
                   Log.i("scheduleAlarm","alarm schedule in time");
             }
         }
@@ -90,7 +90,7 @@ public class ScheduleService extends Service {
             @Override
             public int compare(AlarmConstraints lhs, AlarmConstraints rhs) {
                 int result = 0;
-                long diff = lhs.getMillisecondTime() - rhs.getMillisecondTime();
+                long diff = lhs.getMillisecondTime(lhs.getAlarmTime()) - rhs.getMillisecondTime(rhs.getAlarmTime());
 
                 if(diff > 0){
                     return 1;
