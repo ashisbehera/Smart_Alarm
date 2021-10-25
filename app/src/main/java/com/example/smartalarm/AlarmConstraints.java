@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -178,7 +181,6 @@ public class AlarmConstraints implements Parcelable  {
      *will convert the incoming time to millisecond to set the alarm
      */
     private long convertTimeInMS(String time) {
-
         standardTime=new StringBuilder();
         String []splitTime = time.split(":");
         /**
@@ -194,6 +196,20 @@ public class AlarmConstraints implements Parcelable  {
         newCalendar.set(Calendar.HOUR,hour);
         newCalendar.set(Calendar.MINUTE,min);
         newCalendar.set(Calendar.SECOND,0);
+
+        /**
+         * get the system time
+         */
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        String s = sdf.format(new Date());
+        String []curTime = s.split(":");
+        int hr = Integer.parseInt(curTime[0]);
+        /**
+         * if the system time hour is pm format then change the alarm pm/am
+         */
+        if (hr>=12){
+            newCalendar.set(Calendar.AM_PM,Calendar.AM);
+        }
 
         /**
          *if the time less than current time
@@ -265,7 +281,7 @@ public class AlarmConstraints implements Parcelable  {
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS, pi);
         }
         Toast.makeText(context, "alarm will ring in :"+
-                String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
+                        String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
                 Toast.LENGTH_SHORT).show();
         Log.i("alarm will ring in :",String.valueOf(getDurationBreakdown(alarmTimeInMS)));
 
