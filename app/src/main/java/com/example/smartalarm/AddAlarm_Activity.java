@@ -1,37 +1,27 @@
 package com.example.smartalarm;
 
 import android.app.LoaderManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.content.Context;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class AddAlarm_Activity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class AddAlarm_Activity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int ALARM_LOADER = 0;
-
     private TimePicker timePicker;
     private FloatingActionButton set_alarm;
     private EditText alarmNameEditText;
@@ -90,6 +80,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             Intent intent = new Intent(AddAlarm_Activity.this, Ringtone.class);
             startActivity(intent);
         });
+        // set ringtone name from the music
         String songName = i.getStringExtra("currentMusic");
         setRingtone.setText(songName);
     }

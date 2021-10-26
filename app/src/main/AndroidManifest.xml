@@ -44,6 +44,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"></meta-data>
         </activity>
+        <activity
+            android:name=".Ringtone"
+            android:exported="true" />
 
         <service android:name=".ScheduleService" />
 
