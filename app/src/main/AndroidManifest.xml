@@ -4,9 +4,9 @@
 
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,13 +20,14 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AlarmActivity"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -41,18 +42,17 @@
         <activity android:name=".CancelAlarm">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity">
-
-            </meta-data>
+                android:value=".MainActivity"></meta-data>
         </activity>
 
-        <service android:name="com.example.smartalarm.ScheduleService"></service>
-        <receiver android:name=".AlarmReceiver"></receiver>
-        <provider
-            android:authorities="com.example.smartalarm"
-            android:name=".data.AlarmDataProvider"
-            android:exported="false">
+        <service android:name=".ScheduleService" />
 
-        </provider>
+        <receiver android:name=".AlarmReceiver" />
+
+        <provider
+            android:name=".data.AlarmDataProvider"
+            android:authorities="com.example.smartalarm"
+            android:exported="false"></provider>
     </application>
+
 </manifest>
