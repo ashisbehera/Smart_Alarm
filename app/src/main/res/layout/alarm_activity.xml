@@ -10,14 +10,17 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp" />
+        android:padding="16dp"
+        />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_alarm_fb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
+        android:focusable="false"
         android:src="@drawable/add_alarm"/>
+
 </RelativeLayout>

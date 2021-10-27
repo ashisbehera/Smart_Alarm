@@ -46,6 +46,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         {
             Log.i("receiver","found the bundle and intent extra with value");
         }
+
+       // AlarmWakeLock.acquireCpuWakeLock(context);
         /**
          * intent to cancelAlarm activity
          */

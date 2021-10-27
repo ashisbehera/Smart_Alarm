@@ -13,10 +13,13 @@ import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -41,7 +44,21 @@ public class CancelAlarm extends AppCompatActivity implements
     @SuppressLint("LongLogTag")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /**
+         * for notification future use
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
         setContentView(R.layout.cancel_alarm);
+
         Button cancelb = findViewById(R.id.cancel_button);
         vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
@@ -72,6 +89,7 @@ public class CancelAlarm extends AppCompatActivity implements
         cancelb.setOnClickListener(view -> {
             cancelAlarmButton(alarm);
             Log.i("on cancelb" , "successfully canceled alarm");
+            AlarmWakeLock.releaseCpuLock();
             finish();
         });
     }
@@ -172,6 +190,8 @@ public class CancelAlarm extends AppCompatActivity implements
         Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,id);
         getContentResolver().update(currentPetUri , values, null, null);
     }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
