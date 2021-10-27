@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -80,6 +82,32 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         });
         getLoaderManager().initLoader(ALARM_LOADER, null, this);
 
+    }
+
+    /** will inflate menu in the activity **/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_alarmlist, menu);
+        return true;
+    }
+
+    /** will delete all the alarm form the database **/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.delete_all_alarms:
+                deleteAllPets();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAllPets() {
+        int rowsDeleted = getContentResolver().delete
+                (AlarmEntry.CONTENT_URI, null, null);
+        Log.v("AlarmActivity", rowsDeleted + " all alarms are deleted ");
+         ScheduleService.updateAlarmSchedule(getApplicationContext());
     }
 
 

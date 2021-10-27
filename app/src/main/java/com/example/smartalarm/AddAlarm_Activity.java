@@ -34,7 +34,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private static final int ALARM_LOADER_E = 0;
 
     private TimePicker timePicker;
-    private FloatingActionButton set_alarm;
+    private FloatingActionButton set_alarm , delete_alarm;
     private EditText alarmNameEditText;
     private Switch vibrateSwitch,snoozeSwitch;
     private AlarmConstraints newAlarm;
@@ -53,9 +53,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         Intent i  = getIntent();
         /** extract the data from the intent and save it to uri **/
         editUri = i.getData();
+
+        delete_alarm = findViewById(R.id.delete_alarm);
         /** is the uri is null then it will be add alarm **/
         if (editUri == null) {
             setTitle("Add alarm");
+            /** if it is add alarm activity then delete button will invisible **/
+            delete_alarm.setVisibility(View.GONE);
         } else {
             /** if the uri has the alarm id then it will be update alarm **/
             setTitle("Edit alarm");
@@ -101,6 +105,18 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                  *will return to the previous activity
                  */
                 finish();
+            }
+        });
+
+        /** will delete the alarm from the data base **/
+        delete_alarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editUri!=null){
+                    getContentResolver().delete(editUri, null, null);
+                    ScheduleService.updateAlarmSchedule(getApplicationContext());
+                    finish();
+                }
             }
         });
         // select ringtone if clicked on ringtone
