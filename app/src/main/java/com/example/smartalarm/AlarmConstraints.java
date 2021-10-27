@@ -281,7 +281,7 @@ public class AlarmConstraints implements Parcelable  {
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS, pi);
         }
         Toast.makeText(context, "alarm will ring in :"+
-                String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
+                        String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
                 Toast.LENGTH_SHORT).show();
         Log.i("alarm will ring in :",String.valueOf(getDurationBreakdown(alarmTimeInMS)));
 

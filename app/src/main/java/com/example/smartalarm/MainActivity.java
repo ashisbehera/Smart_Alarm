@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(alarm_intent);
         });
         world_clock_img.setOnClickListener(view -> {
-            Intent edit_alarm_intent = new Intent(MainActivity.this, AddAlarm_Activity.class);
+            Intent edit_alarm_intent = new Intent(MainActivity.this, Ringtone.class);
             startActivity(edit_alarm_intent);
         });
     }
