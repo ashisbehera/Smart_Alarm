@@ -297,11 +297,11 @@ public class AlarmConstraints implements Parcelable  {
 
         try {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
+            intent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast
                     (context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-
+            Log.i("removefrmSchedule", "going to remove");
             if (alarmManager != null) {
                 alarmManager.cancel(pendingIntent);
                 Log.i("removefrmSchedule", "removed");

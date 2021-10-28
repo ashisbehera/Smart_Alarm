@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,20 +45,20 @@ public class CancelAlarm extends AppCompatActivity implements
     @SuppressLint("LongLogTag")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.cancel_alarm);
         /**
          * for notification future use
          */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true);
-            setTurnScreenOn(true);
-        } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-        setContentView(R.layout.cancel_alarm);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+//            setShowWhenLocked(true);
+//            setTurnScreenOn(true);
+//        } else {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+//                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+//                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+//                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        }
+
 
         Button cancelb = findViewById(R.id.cancel_button);
         vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
@@ -83,13 +84,17 @@ public class CancelAlarm extends AppCompatActivity implements
         }catch (Exception e){
             Log.i("bundle/alarm null Exception" , " bundle/alarm is null");
         }
+//
+//        Toast.makeText(getApplicationContext(), "pkey in cancel alarm:"+
+//                String.valueOf(alarm.getPKeyDB()) ,
+//                Toast.LENGTH_SHORT).show();
         /**
          * cancel the alarm
          */
         cancelb.setOnClickListener(view -> {
             cancelAlarmButton(alarm);
             Log.i("on cancelb" , "successfully canceled alarm");
-            AlarmWakeLock.releaseCpuLock();
+           // AlarmWakeLock.releaseCpuLock();
             finish();
         });
     }
@@ -160,7 +165,7 @@ public class CancelAlarm extends AppCompatActivity implements
          */
         setToggleOnOfAfterAlarm(alarm , 0);
         Log.i("toggled off","toggle" );
-        alarm.cancelAlarm(this);
+        alarm.cancelAlarm(getApplicationContext());
         Log.i("this alarm has canceled","alarm");
 
 
