@@ -98,12 +98,13 @@
 
             <TextView
                 android:id="@+id/setRingtone"
-                android:layout_width="0dp"
+                android:layout_width="0sp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|right"
-                android:paddingRight="10dp"
-                android:text="Default ringtone" />
+                android:paddingRight="10sp"
+                android:text="Default ringtone"
+                android:textColor="#E3F2FD" />
         </LinearLayout>
 
 
