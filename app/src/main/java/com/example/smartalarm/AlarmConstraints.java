@@ -107,7 +107,7 @@ public class AlarmConstraints implements Parcelable  {
 
     public void setLabel(String label)
     {
-        Label=label;
+        this.Label=label;
     }
 
     /**
@@ -275,10 +275,14 @@ public class AlarmConstraints implements Parcelable  {
         if (alarmManager == null)
             return;
 
-        if (SDK_INT >= 23)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMS, pi);
-        else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS, pi);
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    alarmTimeInMS , pi);
+        } else if (android.os.Build.VERSION.SDK_INT >= 19
+                && android.os.Build.VERSION.SDK_INT < 23) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
         }
         Toast.makeText(context, "alarm will ring in :"+
                         String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
@@ -293,11 +297,11 @@ public class AlarmConstraints implements Parcelable  {
 
         try {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
+            intent = new Intent(context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast
                     (context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-
+            Log.i("removefrmSchedule", "going to remove");
             if (alarmManager != null) {
                 alarmManager.cancel(pendingIntent);
                 Log.i("removefrmSchedule", "removed");

@@ -38,7 +38,6 @@ public class Alarm_Database extends SQLiteOpenHelper {
      */
     private List<AlarmConstraints>alarmList=new LinkedList<>();
 
-
     private Context context;
 
     /**

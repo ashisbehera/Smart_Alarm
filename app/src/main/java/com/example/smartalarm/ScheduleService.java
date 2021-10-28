@@ -104,6 +104,14 @@ public class ScheduleService extends Service {
        * will get the list of alarms from the database
        */
         List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
+        /**if all the alarm are deleted but previously there is an alarm in alarm manager
+         * then we have to cancel that
+         */
+        if (alarms.isEmpty()){
+            AlarmConstraints alarm = new AlarmConstraints();
+            Log.i("active on/off", "alarms list is empty");
+            alarm.cancelAlarm(getApplicationContext());
+        }
 
 
         /**
@@ -126,8 +134,13 @@ public class ScheduleService extends Service {
         }
         else
         {
+            /**if we are toggling off the last alarm then we have to cancel that form alarm manager
+             * otherwise it won't turn off
+             */
+            AlarmConstraints alarm = new AlarmConstraints();
             Log.i("active on/off", "no active alarm");
             Toast.makeText(getApplicationContext(),"no active alarms",Toast.LENGTH_LONG).show();
+            alarm.cancelAlarm(getApplicationContext());
             return null;
         }
 

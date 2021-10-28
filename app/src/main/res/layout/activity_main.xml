@@ -11,17 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.955"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023"
-            app:srcCompat="@drawable/menu" />
+
 
         <com.tomerrosenfeld.customanalogclockview.CustomAnalogClock
             android:id="@+id/analog_clock"
@@ -53,21 +43,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/alarm" />
+                app:srcCompat="@drawable/baseline_access_alarms_white_36"
+                tools:ignore="VectorDrawableCompat" />
 
             <ImageView
                 android:id="@+id/stopw_img_v"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/stopwatch" />
+                app:srcCompat="@drawable/baseline_timer_white_36"
+                tools:ignore="VectorDrawableCompat" />
 
             <ImageView
                 android:id="@+id/world_clock"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/world_clock" />
+                app:srcCompat="@drawable/baseline_watch_later_white_36"
+                tools:ignore="VectorDrawableCompat" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

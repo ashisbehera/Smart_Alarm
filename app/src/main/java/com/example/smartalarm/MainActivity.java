@@ -8,6 +8,10 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -30,21 +34,27 @@ public class MainActivity extends AppCompatActivity {
             startActivity(alarm_intent);
         });
         world_clock_img.setOnClickListener(view -> {
-            Intent edit_alarm_intent = new Intent(MainActivity.this, Ringtone.class);
-            startActivity(edit_alarm_intent);
+//            Intent edit_alarm_intent = new Intent(MainActivity.this, Ringtone.class);
+//            startActivity(edit_alarm_intent);
         });
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            CharSequence name = "Testing Alarm";
-            String description = "Alarm";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("notification_alarm", name, importance);
-            channel.setDescription(description);
+    /** will inflate the menu **/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+        return true;
+    }
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.about_menu:
+                /**to be done **/
+                return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 }
