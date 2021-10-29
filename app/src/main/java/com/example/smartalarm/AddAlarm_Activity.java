@@ -50,6 +50,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         /**
          * get the intent form alarm activity
          */
+        //
         Intent i  = getIntent();
         /** extract the data from the intent and save it to uri **/
         editUri = i.getData();
