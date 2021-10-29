@@ -42,7 +42,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private LinearLayout ringtoneLayout;
     Uri editUri ;
     private final StringBuilder timeBuilder = new StringBuilder();
-
+//
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
