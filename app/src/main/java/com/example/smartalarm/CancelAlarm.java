@@ -16,12 +16,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
+import android.os.Handler;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 import com.example.smartalarm.data.Alarm_Database;
 
 import java.util.List;
+import java.util.Locale;
 
 public class CancelAlarm extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -37,9 +40,10 @@ public class CancelAlarm extends AppCompatActivity implements
     /**
      *initialing the vibrator , ringtone and uri for ringtone
     */
-    Vibrator vibrator ;
-    Uri ring;
-    Ringtone ringtone;
+    private TextToSpeech tts;
+    //private Vibrator vibrator ;
+    private Uri ring;
+   // private Ringtone ringtone;
 
 
     @SuppressLint("LongLogTag")
@@ -61,8 +65,28 @@ public class CancelAlarm extends AppCompatActivity implements
 
 
         Button cancelb = findViewById(R.id.cancel_button);
-        vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-        ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+       // vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+       // ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+//
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS){
+                    int result = tts.setLanguage(Locale.US);
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                            result == TextToSpeech.LANG_NOT_SUPPORTED){
+                        Toast.makeText(getApplicationContext(), "tts language not supported",
+                                Toast.LENGTH_SHORT).show();
+                        Log.i("tts language", "tts language not supported ");
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "tts  initialization failed",
+                            Toast.LENGTH_SHORT).show();
+                    Log.i("tts initialization", "tts  initialization failed");
+                }
+
+            }
+        });
 
         /**
          * getting intent from pending intent
@@ -88,6 +112,8 @@ public class CancelAlarm extends AppCompatActivity implements
 //        Toast.makeText(getApplicationContext(), "pkey in cancel alarm:"+
 //                String.valueOf(alarm.getPKeyDB()) ,
 //                Toast.LENGTH_SHORT).show();
+
+
         /**
          * cancel the alarm
          */
@@ -97,6 +123,8 @@ public class CancelAlarm extends AppCompatActivity implements
            // AlarmWakeLock.releaseCpuLock();
             finish();
         });
+
+
     }
 
 
@@ -107,7 +135,8 @@ public class CancelAlarm extends AppCompatActivity implements
     @SuppressLint("LongLogTag")
     public void cancelAlarmButton(AlarmConstraints alarm){
 
-        stopVib_ringtone();
+       // stopVib_ringtone();
+        stop_tts();
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm);
         Log.i(" alarm removed " , "successfully alarm removed");
@@ -119,6 +148,26 @@ public class CancelAlarm extends AppCompatActivity implements
     public void onNewIntent(Intent intent) {
        // super.onNewIntent(intent);
         Log.i("onNewIntent", "beforeKeyCheck");
+
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS){
+                    int result = tts.setLanguage(Locale.US);
+                    if (result == TextToSpeech.LANG_MISSING_DATA ||
+                            result == TextToSpeech.LANG_NOT_SUPPORTED){
+                        Toast.makeText(getApplicationContext(), "tts language not supported",
+                                Toast.LENGTH_SHORT).show();
+                        Log.i("tts language", "tts language not supported ");
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "tts  initialization failed",
+                            Toast.LENGTH_SHORT).show();
+                    Log.i("tts initialization", "tts  initialization failed");
+                }
+
+            }
+        });
 
         if (intent.hasExtra(AlarmConstraints.ALARM_KEY)) {
 
@@ -142,17 +191,36 @@ public class CancelAlarm extends AppCompatActivity implements
         if(alarm == null) {
             return;
         }
-        vibrator.vibrate(20000);
-        ringtone = RingtoneManager.getRingtone(getApplicationContext() , ring);
-        ringtone.play();
+       // vibrator.vibrate(20000);
+//        ringtone = RingtoneManager.getRingtone(getApplicationContext() , ring);
+//        ringtone.play();
+          ttsSpeak(alarm);
+    }
+
+    /**will play tts **/
+    private void ttsSpeak(AlarmConstraints alarm){
+        Toast.makeText(getApplicationContext(), "tts  :"+alarm.getTtsString(),
+                Toast.LENGTH_SHORT).show();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        }, 100);
+    }
+/**will stop the tts **/
+    private void stop_tts(){
+        tts.stop();
+        tts.shutdown();
     }
 
     /**
      * stop the vibration and ringtone
      */
     private void stopVib_ringtone() {
-        vibrator.cancel();
-        ringtone.stop();
+       // vibrator.cancel();
+       // ringtone.stop();
     }
 
     /**
@@ -195,6 +263,8 @@ public class CancelAlarm extends AppCompatActivity implements
         Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,id);
         getContentResolver().update(currentPetUri , values, null, null);
     }
+
+
 
 
 

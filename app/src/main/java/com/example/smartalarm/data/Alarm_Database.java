@@ -108,6 +108,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
         String SQL_CREATE_ALARM_TABLE =  "CREATE TABLE " + AlarmEntry.TABLE_NAME + " ("
                 + AlarmEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + AlarmEntry.ALARM_NAME + " TEXT, "
+                /** tts string column **/
+                + AlarmEntry.TTS_STRING + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
@@ -127,7 +129,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
         /**
          * which columns cursor will to move
          */
-        String [] columns = new String[]{AlarmEntry._ID,AlarmEntry.ALARM_NAME,
+        String [] columns = new String[]{AlarmEntry._ID,AlarmEntry.ALARM_NAME,AlarmEntry.TTS_STRING,
                 AlarmEntry.ALARM_TIME,AlarmEntry.ALARM_VIBRATE,AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE};
         Log.i("columns arr created" , " string arr");
         /**
@@ -149,6 +151,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 alarms[i]=new AlarmConstraints();
                 alarms[i].setPKeyDB(cursor.getInt(cursor.getColumnIndex(AlarmEntry._ID)));
                 alarms[i].setLabel(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_NAME)));
+                /** set the tts string of alarmconstraints **/
+                alarms[i].setTtsString(cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING)));
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
 
                 if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE))==1)

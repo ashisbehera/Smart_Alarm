@@ -35,14 +35,14 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 
     private TimePicker timePicker;
     private FloatingActionButton set_alarm , delete_alarm;
-    private EditText alarmNameEditText;
+    private EditText alarmNameEditText , ttsEditText;
     private Switch vibrateSwitch,snoozeSwitch;
     private AlarmConstraints newAlarm;
     private ScheduleService scheduleService;
     private LinearLayout ringtoneLayout;
     Uri editUri ;
     private final StringBuilder timeBuilder = new StringBuilder();
-//
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +72,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
          */
 
         alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
+        ttsEditText = findViewById(R.id.tts_edt_txt);
 
         vibrateSwitch = findViewById(R.id.vibrate_switch);
 
@@ -143,6 +144,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
      */
     private void saveAlarmToDataBase(AlarmConstraints alarm) {
         String alarmName = alarmNameEditText.getText().toString();
+        /** tts string from edit text **/
+        String ttsString = ttsEditText.getText().toString();
         String time = getPickerTime();
         int vibrate_on_off;
         boolean vibrate = vibrateSwitch.isChecked();
@@ -158,6 +161,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME, alarmName);
+        /** insert into data base **/
+        values.put(AlarmEntry.TTS_STRING, ttsString);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
@@ -194,6 +199,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         String[] projection = {
                 AlarmEntry._ID,
                 AlarmEntry.ALARM_NAME,
+                AlarmEntry.TTS_STRING,
                 AlarmEntry.ALARM_TIME,
                 AlarmEntry.ALARM_VIBRATE,
                 AlarmEntry.ALARM_SNOOZE,
@@ -222,16 +228,19 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         if (cursor.moveToFirst()) {
             int alarmNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
             Log.i("name restored", "alarm name");
+            int ttsStringCIn = cursor.getColumnIndex(AlarmEntry.TTS_STRING);
             int alarmTimeCIn = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
             int VibCIn = cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE);
             int SnzCIn = cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE);
 
             String alarmName = cursor.getString(alarmNameCIn);
+            String ttsString = cursor.getString(ttsStringCIn);
             String alarmTime = cursor.getString(alarmTimeCIn);
             int vib = cursor.getInt(VibCIn);
             int snooze = cursor.getInt(SnzCIn);
 
             alarmNameEditText.setText(alarmName);
+            ttsEditText.setText(ttsString);
             String timeArr[] = alarmTime.split(":");
             timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
             timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));
@@ -245,6 +254,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         alarmNameEditText.setText("");
+        ttsEditText.setText("");
         timePicker.setEnabled(false);
         vibrateSwitch.setChecked(false);
         snoozeSwitch.setChecked(false);

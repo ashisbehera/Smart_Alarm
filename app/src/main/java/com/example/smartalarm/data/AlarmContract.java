@@ -53,6 +53,8 @@ public class AlarmContract {
         public final static String ALARM_ACTIVE="alarm_active";
 
         public final static String ALARM_SNOOZE="alarm_snooze";
+        /** tts string for data base **/
+        public final static String TTS_STRING="tts_string";
 
         public final static String ALARM_SNOOZE_ACTIVE="alarm_snooze_active";
 

@@ -51,6 +51,8 @@ public class AlarmConstraints implements Parcelable  {
     private int pKeyDB=0;
 
     private String Label="Alarm";
+
+    private  String ttsString = "";
     /**
      *calender to get the time
      */
@@ -108,6 +110,14 @@ public class AlarmConstraints implements Parcelable  {
     public void setLabel(String label)
     {
         this.Label=label;
+    }
+    /** will set the tts string from the data base **/
+    public void setTtsString(String tts){
+        ttsString = tts;
+    }
+    /** will get the tts string **/
+    public String getTtsString(){
+        return ttsString;
     }
 
     /**
@@ -325,6 +335,7 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeString(alarmTime);
         parcel.writeString(standardTime.toString());
         parcel.writeInt(pKeyDB);
+        parcel.writeString(ttsString);
         //parcel.writeParcelable(intent, i);
 
     }
@@ -335,6 +346,7 @@ public class AlarmConstraints implements Parcelable  {
         alarmTime = in.readString();
         standardTime=new StringBuilder(in.readString());
         pKeyDB = in.readInt();
+        ttsString = in.readString();
         //intent = in.readParcelable(Intent.class.getClassLoader());
     }
 
