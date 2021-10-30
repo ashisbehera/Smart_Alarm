@@ -66,7 +66,7 @@
 
             <EditText
                 android:id="@+id/label_edt_txt"
-                android:layout_width="242dp"
+                android:layout_width="0sp"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:layout_weight="1"

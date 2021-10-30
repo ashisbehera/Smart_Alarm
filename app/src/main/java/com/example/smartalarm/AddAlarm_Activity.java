@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.Locale;
 
 public class AddAlarm_Activity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final int ALARM_LOADER_E = 0;
+    // data members
     private TimePicker timePicker;
     private FloatingActionButton set_alarm;
     private FloatingActionButton delete_alarm;
@@ -38,53 +39,48 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
     private TextToSpeech textToSpeech;
     // just to check whether tts is working
     private TextView buttonTTS;
+    private String label;
     Bundle savedState = new Bundle();
     Uri editUri;
+
+    // final data members
+    private static final int ALARM_LOADER_E = 0;
     private final StringBuilder timeBuilder = new StringBuilder();
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String LABEL = "label";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addalarm_activity);
-        if (savedInstanceState != null && savedInstanceState.getSerializable("label") != null) {
-            alarmNameEditText.setText(savedInstanceState.getString("label"));
-        }
-        /**
-         * get the intent form alarm activity
-         */
-        Intent i = getIntent();
-        /** extract the data from the intent and save it to uri **/
-        editUri = i.getData();
 
+        // find ids
         delete_alarm = findViewById(R.id.delete_alarm);
-        /** is the uri is null then it will be add alarm **/
-        if (editUri == null) {
-            setTitle("Add alarm");
-            /** if it is add alarm activity then delete button will invisible **/
-            delete_alarm.setVisibility(View.GONE);
-        } else {
-            /** if the uri has the alarm id then it will be update alarm **/
-            setTitle("Edit alarm");
-            getLoaderManager().initLoader(ALARM_LOADER_E, null, this);
-        }
-
-        /**
-         *set alarm button
-         */
-
-        alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
+        alarmNameEditText = findViewById(R.id.label_edt_txt);
         vibrateSwitch = findViewById(R.id.vibrate_switch);
         snoozeSwitch = findViewById(R.id.snooze_switch);
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         // just to check whether tts is working
         buttonTTS = findViewById(R.id.label);
-
         TextView setRingtone = findViewById(R.id.setRingtone);
-        /**
-         *time picker
-         */
         timePicker = (TimePicker) findViewById(R.id.timePicker);
+
+        // get the intent from alarm activity
+        Intent i = getIntent();
+
+        // extract the data from the intent and save it to uri
+        editUri = i.getData();
+
+        // if the uri is null(visiting the activity first time), then it'll be add alarm or else it'll be edit alarm
+        if (editUri == null) {
+            setTitle("Add alarm");
+            // if it is add alarm activity, then delete button will be invisible
+            delete_alarm.setVisibility(View.GONE);
+        } else {
+            setTitle("Edit alarm");
+            getLoaderManager().initLoader(ALARM_LOADER_E, null, this);
+        }
         /**
          *initialing the alarmcontraints button
          */
@@ -103,9 +99,12 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
                  * updating the service
                  */
                 scheduleService.updateAlarmSchedule(getBaseContext());
-                /**
-                 *will return to the previous activity
-                 */
+                // clear the stored data upon logout
+                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.apply();
+                // return to previous activity
                 finish();
             }
         });
@@ -124,6 +123,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
 
         // select ringtone if clicked on ringtone
         ringtoneLayout.setOnClickListener(view -> {
+            // save the data before moving onto the ringtone activity
+            saveData();
             Intent intent = new Intent(AddAlarm_Activity.this, Ringtone.class);
             startActivity(intent);
         });
@@ -153,6 +154,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
 
         // button for TTS
         buttonTTS.setOnClickListener(view -> speak());
+
+        // calling loadData() and updateViews() to restore and set the previously saved data
+        loadData();
+        updateViews();
     }
 
     // convert text to speech
@@ -160,6 +165,26 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
         String text = alarmNameEditText.getText().toString();
         // QUEUE_FLUSH cancels the current text to speak the new one
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    // save the entered information
+    public void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LABEL, alarmNameEditText.getText().toString());
+        editor.apply();
+    }
+
+    // load the saved information
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        // if nothing is entered then the string will be blank by default
+        label = sharedPreferences.getString(LABEL, "");
+    }
+
+    // update the saved information to the correct place
+    public void updateViews() {
+        alarmNameEditText.setText(label);
     }
 
 //    @Override
@@ -306,13 +331,17 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("label", alarmNameEditText.getText().toString());
+        EditText alarmName = findViewById(R.id.label_edt_txt);
+        String label = alarmName.getText().toString();
+        outState.putString("labelName", label);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        alarmNameEditText.setText(savedInstanceState.getString("label"));
+        String storedLabel = savedInstanceState.getString("labelName");
+        EditText labelEditText = findViewById(R.id.label_edt_txt);
+        labelEditText.setText(storedLabel);
     }
      */
 }
