@@ -4,8 +4,8 @@
 
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -15,6 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartAlarm">
+        <activity
+            android:name=".Stopwatch"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.SmartAlarm">
@@ -42,30 +45,30 @@
         <activity android:name=".CancelAlarm">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"></meta-data>
+                android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".Ringtone"
             android:exported="true"
             android:parentActivityName=".AddAlarm_Activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"></meta-data>
+                android:value=".MainActivity" />
         </activity>
 
         <service android:name=".ScheduleService" />
+        <service android:name=".ScheduleService" />
 
-        <service android:name="com.example.smartalarm.ScheduleService"></service>
-        <receiver android:name=".AlarmReceiver"
-                  android:enabled="true"
-                  android:exported="true"
-                  android:process=":remote"></receiver>
+        <receiver
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" />
 
         <provider
             android:name=".data.AlarmDataProvider"
             android:authorities="com.example.smartalarm"
-            android:exported="false"></provider>
+            android:exported="false" />
     </application>
 
 </manifest>

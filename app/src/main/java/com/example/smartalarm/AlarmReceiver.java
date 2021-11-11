@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -16,44 +17,57 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.io.File;
+import java.util.ArrayList;
+
 public class AlarmReceiver extends BroadcastReceiver {
+    ArrayList<File> songs;
+    int position;
+    MediaPlayer mediaPlayer;
 
 
     @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("AlarmReceiver","Intent received");
+        Log.i("AlarmReceiver", "Intent received");
         /**
          * getting bundle from intent
          */
-        Bundle bundle= intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
-        Log.i("bundle ","bundle received from receiver");
+        Bundle bundle = intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
+        /*
+        Bundle bundleSong = intent.getExtras();
+        songs = (ArrayList) bundleSong.getParcelableArrayList("songList");
+        position = intent.getIntExtra("position", 0);
+        Uri uri = Uri.parse(songs.get(position).toString());
+        mediaPlayer = MediaPlayer.create(context, uri);
+        mediaPlayer.start();
+        */
+
+        Log.i("bundle ", "bundle received from receiver");
         /**
          * checking if bundle or intent extra null
          */
-        if(bundle==null || bundle.getParcelable(AlarmConstraints.ALARM_KEY)==null )
-        {
-            Log.i("receiver","bundle and intent extra is null");
+        if (bundle == null || bundle.getParcelable(AlarmConstraints.ALARM_KEY) == null) {
+            Log.i("receiver", "bundle and intent extra is null");
             return;
-        }
-        else
-        {
-            Log.i("receiver","found the bundle and intent extra with value");
+        } else {
+            Log.i("receiver", "found the bundle and intent extra with value");
         }
 
-       // AlarmWakeLock.acquireCpuWakeLock(context);
+        // AlarmWakeLock.acquireCpuWakeLock(context);
         /**
          * intent to cancelAlarm activity
          */
-        Intent newIntent=new Intent(context,CancelAlarm.class);
+        Intent newIntent = new Intent(context, CancelAlarm.class);
         newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        newIntent.putExtra(AlarmConstraints.ALARM_KEY,bundle);
+        newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
 
         context.startActivity(newIntent);
     }

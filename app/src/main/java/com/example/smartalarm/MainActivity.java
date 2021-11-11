@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         // createNotificationChannel();
         ImageView alarm_img = findViewById(R.id.alarm_img_v);
         ImageView world_clock_img = findViewById(R.id.world_clock);
+        ImageView stopwatch_img = findViewById(R.id.stopw_img_v);
         CustomAnalogClock customAnalogClock = (CustomAnalogClock) findViewById(R.id.analog_clock);
         customAnalogClock.setAutoUpdate(true);
         customAnalogClock.setScale(1.25f);
@@ -36,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         world_clock_img.setOnClickListener(view -> {
 //            Intent edit_alarm_intent = new Intent(MainActivity.this, Ringtone.class);
 //            startActivity(edit_alarm_intent);
+        });
+        stopwatch_img.setOnClickListener(view -> {
+            Intent stopwatch_intent = new Intent(MainActivity.this, Stopwatch.class);
+            startActivity(stopwatch_intent);
         });
     }
 

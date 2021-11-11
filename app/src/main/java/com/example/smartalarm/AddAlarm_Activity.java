@@ -105,7 +105,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
                 editor.clear();
                 editor.apply();
                 // return to previous activity
-                finish();
+                // finish();
+                Intent intent = new Intent(AddAlarm_Activity.this, AlarmActivity.class);
+                startActivity(intent);
             }
         });
 
