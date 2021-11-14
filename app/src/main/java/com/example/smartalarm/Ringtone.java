@@ -3,7 +3,9 @@ package com.example.smartalarm;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,7 +33,9 @@ import java.util.List;
 
 public class Ringtone extends AppCompatActivity {
     MediaPlayer mediaPlayer;
-    ArrayList<File> myMusic;
+   // ArrayList<File> myMusic;
+    ArrayList<Uri> local_ringtone;
+    android.media.Ringtone ringtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +48,15 @@ public class Ringtone extends AppCompatActivity {
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                        myMusic = fetchMusic(Environment.getExternalStorageDirectory());
+                       // myMusic = fetchMusic(Environment.getExternalStorageDirectory());
                         // get music titles
+                        local_ringtone = (ArrayList<Uri>) loadLocalRingtonesUris();
                         ArrayList<String> items = new ArrayList<>();
-                        for (int i = 0; i < myMusic.size(); i++) {
-                            items.add(myMusic.get(i).getName().replace(".mp3", ""));
+                        for (int i = 0; i < local_ringtone.size(); i++) {
+                            ringtone = RingtoneManager.getRingtone(getApplicationContext(), local_ringtone.get(i));
+                            items.add(ringtone.getTitle(getApplicationContext()));
                         }
+
                         // set custom adapter for music title and play button
                         listView.setAdapter(new RingtoneListAdapter(Ringtone.this, R.layout.ringtone_custom_list, items));
                     }
@@ -69,7 +76,7 @@ public class Ringtone extends AppCompatActivity {
         listView.setOnItemClickListener((adapterView, view, position, l) -> {
             Intent intent = new Intent(Ringtone.this, AddAlarm_Activity.class);
             String musicName = listView.getItemAtPosition(position).toString();
-            intent.putExtra("songList", myMusic);
+            intent.putExtra("songList", local_ringtone);
             intent.putExtra("currentMusic", musicName);
             intent.putExtra("position", position);
             startActivity(intent);
@@ -77,21 +84,46 @@ public class Ringtone extends AppCompatActivity {
     }
 
     // return all music files
-    public ArrayList<File> fetchMusic(File file) {
-        ArrayList arrayList = new ArrayList();
-        File[] songs = file.listFiles();
-        if (songs != null) {
-            for (File myFile : songs) {
-                if (!myFile.isHidden() && myFile.isDirectory()) {
-                    arrayList.addAll(fetchMusic(myFile));
-                } else {
-                    if (myFile.getName().endsWith(".mp3") && !myFile.getName().startsWith(".")) {
-                        arrayList.add(myFile);
-                    }
-                }
+//    public ArrayList<File> fetchMusic(File file) {
+//        ArrayList arrayList = new ArrayList();
+//        File[] songs = file.listFiles();
+//        if (songs != null) {
+//            for (File myFile : songs) {
+//                if (!myFile.isHidden() && myFile.isDirectory()) {
+//                    arrayList.addAll(fetchMusic(myFile));
+//                } else {
+//                    if (myFile.getName().endsWith(".mp3") && !myFile.getName().startsWith(".")) {
+//                        arrayList.add(myFile);
+//                    }
+//                }
+//            }
+//        }
+//        return arrayList;
+//    }
+
+    private List<Uri> loadLocalRingtonesUris() {
+        List<Uri> alarms = new ArrayList<>();
+        try {
+            RingtoneManager ringtoneMgr = new RingtoneManager(getApplicationContext());
+            ringtoneMgr.setType(RingtoneManager.TYPE_RINGTONE | RingtoneManager.TYPE_ALARM);
+
+            Cursor alarmsCursor = ringtoneMgr.getCursor();
+            int alarmsCount = alarmsCursor.getCount();
+            if (alarmsCount == 0 && !alarmsCursor.moveToFirst()) {
+                alarmsCursor.close();
+                return null;
             }
+
+            while (!alarmsCursor.isAfterLast() && alarmsCursor.moveToNext()) {
+                int currentPosition = alarmsCursor.getPosition();
+                alarms.add(ringtoneMgr.getRingtoneUri(currentPosition));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return arrayList;
+
+        return alarms;
     }
 
     private class RingtoneListAdapter extends ArrayAdapter<String> {
@@ -116,8 +148,8 @@ public class Ringtone extends AppCompatActivity {
             }
             viewholder = (ViewHolder) convertView.getTag();
             viewholder.listen.setOnClickListener(v -> {
-                Uri uri = Uri.parse(myMusic.get(position).toString());
-                mediaPlayer = MediaPlayer.create(Ringtone.this, uri);
+               // Uri uri = Uri.parse(local_ringtone.get(position).toString());
+                mediaPlayer = MediaPlayer.create(Ringtone.this, local_ringtone.get(position));
                 mediaPlayer.start();
             });
             viewholder.title.setText(getItem(position));
