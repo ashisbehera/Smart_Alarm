@@ -51,6 +51,12 @@ public class AlarmConstraints implements Parcelable  {
     private int pKeyDB=0;
 
     private String Label="Alarm";
+
+    private  String ttsString = "";
+
+    private boolean tts_active = false;
+
+    private boolean ringtone_active = false;
     /**
      *calender to get the time
      */
@@ -108,6 +114,27 @@ public class AlarmConstraints implements Parcelable  {
     public void setLabel(String label)
     {
         this.Label=label;
+    }
+    /** will set the tts string from the data base **/
+    public void setTtsString(String tts){
+        ttsString = tts;
+    }
+
+    public  void setTts_active(boolean val){
+        tts_active = val;
+    }
+    public  void setRingtone_active(boolean val){
+        ringtone_active = val;
+    }
+    public boolean getTts_active(){
+        return tts_active;
+    }
+    public boolean getRingtone_active(){
+        return ringtone_active;
+    }
+    /** will get the tts string **/
+    public String getTtsString(){
+        return ttsString;
     }
 
     /**
@@ -325,6 +352,9 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeString(alarmTime);
         parcel.writeString(standardTime.toString());
         parcel.writeInt(pKeyDB);
+        parcel.writeString(ttsString);
+        parcel.writeInt(tts_active ? 1 : 0);
+        parcel.writeInt(ringtone_active ? 1 : 0);
         //parcel.writeParcelable(intent, i);
 
     }
@@ -335,6 +365,9 @@ public class AlarmConstraints implements Parcelable  {
         alarmTime = in.readString();
         standardTime=new StringBuilder(in.readString());
         pKeyDB = in.readInt();
+        ttsString = in.readString();
+        tts_active = in.readInt() == 1;
+        ringtone_active = in.readInt() == 1;
         //intent = in.readParcelable(Intent.class.getClassLoader());
     }
 

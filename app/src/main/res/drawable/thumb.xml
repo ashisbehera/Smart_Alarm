@@ -3,8 +3,8 @@
 <item android:state_checked="true">
     <shape android:shape="oval">
         <solid android:color="@color/white"></solid>
-        <stroke android:width="5dp"
-            android:color="@color/gray"></stroke>
+        <stroke android:width="2dp"
+            android:color="@color/teal_200"></stroke>
         <size android:width="20dp"
             android:height="20dp"></size>
     </shape>

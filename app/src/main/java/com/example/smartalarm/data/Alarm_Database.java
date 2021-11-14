@@ -108,9 +108,13 @@ public class Alarm_Database extends SQLiteOpenHelper {
         String SQL_CREATE_ALARM_TABLE =  "CREATE TABLE " + AlarmEntry.TABLE_NAME + " ("
                 + AlarmEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + AlarmEntry.ALARM_NAME + " TEXT, "
+                /** tts string column **/
+                + AlarmEntry.TTS_STRING + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 1, "
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
         // Execute the SQL statement
@@ -128,7 +132,10 @@ public class Alarm_Database extends SQLiteOpenHelper {
          * which columns cursor will to move
          */
         String [] columns = new String[]{AlarmEntry._ID,AlarmEntry.ALARM_NAME,
-                AlarmEntry.ALARM_TIME,AlarmEntry.ALARM_VIBRATE,AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE};
+                AlarmEntry.TTS_STRING,
+                AlarmEntry.ALARM_TIME,AlarmEntry.ALARM_VIBRATE,
+                AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE,
+                AlarmEntry.TTS_ACTIVE,AlarmEntry.RINGTONE_ACTIVE};
         Log.i("columns arr created" , " string arr");
         /**
          * set the cursor
@@ -149,12 +156,24 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 alarms[i]=new AlarmConstraints();
                 alarms[i].setPKeyDB(cursor.getInt(cursor.getColumnIndex(AlarmEntry._ID)));
                 alarms[i].setLabel(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_NAME)));
+                /** set the tts string of alarmconstraints **/
+                alarms[i].setTtsString(cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING)));
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
 
                 if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE))==1)
                     alarms[i].setToggleOnOff(true);
                 else
                     alarms[i].setToggleOnOff(false);
+
+                if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE))==1)
+                    alarms[i].setTts_active(true);
+                else
+                    alarms[i].setTts_active(false);
+
+                if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE))==1)
+                    alarms[i].setRingtone_active(true);
+                else
+                    alarms[i].setRingtone_active(false);
 
                 i++;
                 cursor.moveToNext();

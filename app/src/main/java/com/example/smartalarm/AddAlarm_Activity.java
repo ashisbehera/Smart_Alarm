@@ -1,86 +1,93 @@
 package com.example.smartalarm;
 
 import android.app.LoaderManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.content.Context;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Locale;
+public class AddAlarm_Activity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>{
+    private static final int ALARM_LOADER_E = 0;
 
-public class AddAlarm_Activity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    // data members
     private TimePicker timePicker;
-    private FloatingActionButton set_alarm;
-    private FloatingActionButton delete_alarm;
-    private EditText alarmNameEditText;
-    private Switch vibrateSwitch;
-    private Switch snoozeSwitch;
+    private FloatingActionButton set_alarm , delete_alarm;
+    private EditText alarmNameEditText , ttsEditText;
+    private Switch vibrateSwitch,snoozeSwitch;
+    private CheckBox tts_check_bx , ringtone_check_bx;
     private AlarmConstraints newAlarm;
     private ScheduleService scheduleService;
     private LinearLayout ringtoneLayout;
-    private TextToSpeech textToSpeech;
-    // just to check whether tts is working
-    private TextView buttonTTS;
-    private String label;
-    Bundle savedState = new Bundle();
-    Uri editUri;
-
-    // final data members
-    private static final int ALARM_LOADER_E = 0;
+    Uri editUri ;
     private final StringBuilder timeBuilder = new StringBuilder();
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String LABEL = "label";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addalarm_activity);
-
-        // find ids
-        delete_alarm = findViewById(R.id.delete_alarm);
-        alarmNameEditText = findViewById(R.id.label_edt_txt);
-        vibrateSwitch = findViewById(R.id.vibrate_switch);
-        snoozeSwitch = findViewById(R.id.snooze_switch);
-        set_alarm = findViewById(R.id.set_alarm);
-        ringtoneLayout = findViewById(R.id.ringtoneLayout);
-        // just to check whether tts is working
-        buttonTTS = findViewById(R.id.label);
-        TextView setRingtone = findViewById(R.id.setRingtone);
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
-
-        // get the intent from alarm activity
-        Intent i = getIntent();
-
-        // extract the data from the intent and save it to uri
+        /**
+         * get the intent form alarm activity
+         */
+        //
+        Intent i  = getIntent();
+        /** extract the data from the intent and save it to uri **/
         editUri = i.getData();
 
-        // if the uri is null(visiting the activity first time), then it'll be add alarm or else it'll be edit alarm
+        delete_alarm = findViewById(R.id.delete_alarm);
+        /** is the uri is null then it will be add alarm **/
         if (editUri == null) {
             setTitle("Add alarm");
-            // if it is add alarm activity, then delete button will be invisible
+            /** if it is add alarm activity then delete button will invisible **/
             delete_alarm.setVisibility(View.GONE);
         } else {
+            /** if the uri has the alarm id then it will be update alarm **/
             setTitle("Edit alarm");
             getLoaderManager().initLoader(ALARM_LOADER_E, null, this);
         }
+
+        /**
+         *set alarm button
+         */
+
+        alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
+        ttsEditText = findViewById(R.id.tts_edt_txt);
+
+        vibrateSwitch = findViewById(R.id.vibrate_switch);
+        tts_check_bx = findViewById(R.id.tts_ch_bt);
+        ringtone_check_bx = findViewById(R.id.ringtone_ch_bt);
+        snoozeSwitch = findViewById(R.id.snooze_switch);
+
+        set_alarm = findViewById(R.id.set_alarm);
+        ringtoneLayout = findViewById(R.id.ringtoneLayout);
+        TextView setRingtone = findViewById(R.id.setRingtone);
+        /**
+         *time picker
+         */
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
         /**
          *initialing the alarmcontraints button
          */
@@ -99,15 +106,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
                  * updating the service
                  */
                 scheduleService.updateAlarmSchedule(getBaseContext());
-                // clear the stored data upon logout
-                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.apply();
-                // return to previous activity
-                // finish();
-                Intent intent = new Intent(AddAlarm_Activity.this, AlarmActivity.class);
-                startActivity(intent);
+                /**
+                 *will return to the previous activity
+                 */
+                finish();
             }
         });
 
@@ -115,78 +117,21 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
         delete_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editUri != null) {
+                if (editUri!=null){
                     getContentResolver().delete(editUri, null, null);
                     ScheduleService.updateAlarmSchedule(getApplicationContext());
                     finish();
                 }
             }
         });
-
         // select ringtone if clicked on ringtone
         ringtoneLayout.setOnClickListener(view -> {
-            // save the data before moving onto the ringtone activity
-            saveData();
             Intent intent = new Intent(AddAlarm_Activity.this, Ringtone.class);
             startActivity(intent);
         });
-
         // set ringtone name from the music
         String songName = i.getStringExtra("currentMusic");
         setRingtone.setText(songName);
-
-        // text-to-speech
-        textToSpeech = new TextToSpeech(this, status -> {
-            // check if working properly
-            if (status == TextToSpeech.SUCCESS) {
-                // set language
-                int result = textToSpeech.setLanguage(Locale.US);
-                // check if the language is available
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                    Log.e("TTS", "Language not supported");
-                } else {
-                    // if TTS is working then we can use the button
-                    buttonTTS.setEnabled(true);
-                }
-            } else {
-                // if not working
-                Log.e("TTS", "Initialization failed");
-            }
-        });
-
-        // button for TTS
-        buttonTTS.setOnClickListener(view -> speak());
-
-        // calling loadData() and updateViews() to restore and set the previously saved data
-        loadData();
-        updateViews();
-    }
-
-    // convert text to speech
-    private void speak() {
-        String text = alarmNameEditText.getText().toString();
-        // QUEUE_FLUSH cancels the current text to speak the new one
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-    // save the entered information
-    public void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(LABEL, alarmNameEditText.getText().toString());
-        editor.apply();
-    }
-
-    // load the saved information
-    public void loadData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        // if nothing is entered then the string will be blank by default
-        label = sharedPreferences.getString(LABEL, "");
-    }
-
-    // update the saved information to the correct place
-    public void updateViews() {
-        alarmNameEditText.setText(label);
     }
 
 //    @Override
@@ -198,11 +143,12 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
 
     /**
      * saving the alarm to database using all the values
-     *
      * @param alarm
      */
     private void saveAlarmToDataBase(AlarmConstraints alarm) {
         String alarmName = alarmNameEditText.getText().toString();
+        /** tts string from edit text **/
+        String ttsString = ttsEditText.getText().toString();
         String time = getPickerTime();
         int vibrate_on_off;
         boolean vibrate = vibrateSwitch.isChecked();
@@ -215,18 +161,24 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
         if (snooze) {
             snooze_on_off = 1;
         } else snooze_on_off = 0;
+        boolean tts_ch_box = tts_check_bx.isChecked();
+        boolean ring_ch_box = ringtone_check_bx.isChecked();
 
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME, alarmName);
+        /** insert into data base **/
+        values.put(AlarmEntry.TTS_STRING, ttsString);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
-        values.put(AlarmEntry.ALARM_ACTIVE, alarm.isAlarmOn() ? 1 : 0);
+        values.put(AlarmEntry.TTS_ACTIVE, tts_ch_box?1:0);
+        values.put(AlarmEntry.RINGTONE_ACTIVE, ring_ch_box?1:0);
+        values.put(AlarmEntry.ALARM_ACTIVE, alarm.isAlarmOn()?1:0);
         /** if the uri is null then insert new alarm to the database **/
-        if (editUri == null) {
+        if (editUri==null){
             Uri newUri = getContentResolver().insert(AlarmEntry.CONTENT_URI, values);
-        } else
-        /**else update the data in the data base **/
+        }else
+            /**else update the data in the data base **/
             getContentResolver().update(editUri, values, null, null);
 
 
@@ -248,17 +200,18 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
         return timeBuilder.toString();
     }
 
-    /**
-     * in background thread cursor will project the specific row id
-     **/
+    /** in background thread cursor will project the specific row id **/
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] projection = {
                 AlarmEntry._ID,
                 AlarmEntry.ALARM_NAME,
+                AlarmEntry.TTS_STRING,
                 AlarmEntry.ALARM_TIME,
                 AlarmEntry.ALARM_VIBRATE,
                 AlarmEntry.ALARM_SNOOZE,
+                AlarmEntry.TTS_ACTIVE,
+                AlarmEntry.RINGTONE_ACTIVE,
                 AlarmEntry.ALARM_ACTIVE};
 
 
@@ -270,10 +223,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
                 null);
     }
 
-    /**
-     * when cursor will fetch the data then it will update the data in specific area of the
+    /** when cursor will fetch the data then it will update the data in specific area of the
      * add alarm activity in the background thread
-     *
      * @param loader
      * @param cursor
      */
@@ -286,64 +237,43 @@ public class AddAlarm_Activity extends AppCompatActivity implements LoaderManage
         if (cursor.moveToFirst()) {
             int alarmNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
             Log.i("name restored", "alarm name");
+            int ttsStringCIn = cursor.getColumnIndex(AlarmEntry.TTS_STRING);
             int alarmTimeCIn = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
             int VibCIn = cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE);
             int SnzCIn = cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE);
+            int ttsCIn = cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE);
+            int ringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE);
 
             String alarmName = cursor.getString(alarmNameCIn);
+            String ttsString = cursor.getString(ttsStringCIn);
             String alarmTime = cursor.getString(alarmTimeCIn);
             int vib = cursor.getInt(VibCIn);
             int snooze = cursor.getInt(SnzCIn);
+            int tts_active = cursor.getInt(ttsCIn);
+            int ringtone_active = cursor.getInt(ringCIn);
 
             alarmNameEditText.setText(alarmName);
+            ttsEditText.setText(ttsString);
             String timeArr[] = alarmTime.split(":");
             timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
             timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));
 
             vibrateSwitch.setChecked(vib == 1 ? true : false);
             snoozeSwitch.setChecked(snooze == 1 ? true : false);
+            tts_check_bx.setChecked(tts_active==1?true:false);
+            ringtone_check_bx.setChecked(ringtone_active==1?true:false);
         }
     }
 
-    /**
-     * at the time of return it will reset the each area of the add alarm activity
-     **/
+    /** at the time of return it will reset the each area of the add alarm activity **/
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         alarmNameEditText.setText("");
+        ttsEditText.setText("");
         timePicker.setEnabled(false);
         vibrateSwitch.setChecked(false);
         snoozeSwitch.setChecked(false);
+        tts_check_bx.setChecked(false);
+        ringtone_check_bx.setChecked(false);
     }
-    /*
-    @Override
-    protected void onPause() {
-        super.onPause();
-        String label = alarmNameEditText.getText().toString();
-        savedState.putString("label", label);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        alarmNameEditText.setText(savedState.getString("label"), label);
-    }
-    */
-    /*
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        EditText alarmName = findViewById(R.id.label_edt_txt);
-        String label = alarmName.getText().toString();
-        outState.putString("labelName", label);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        String storedLabel = savedInstanceState.getString("labelName");
-        EditText labelEditText = findViewById(R.id.label_edt_txt);
-        labelEditText.setText(storedLabel);
-    }
-     */
 }

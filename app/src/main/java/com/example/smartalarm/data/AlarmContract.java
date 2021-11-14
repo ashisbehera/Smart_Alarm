@@ -53,6 +53,10 @@ public class AlarmContract {
         public final static String ALARM_ACTIVE="alarm_active";
 
         public final static String ALARM_SNOOZE="alarm_snooze";
+        /** tts string for data base **/
+        public final static String TTS_STRING="tts_string";
+
+        public final static String TTS_ACTIVE="tts_active";
 
         public final static String ALARM_SNOOZE_ACTIVE="alarm_snooze_active";
 
@@ -61,6 +65,8 @@ public class AlarmContract {
         public final static String RINGTONE_NAME="ringtone_name";
 
         public final static String RINGTONE_PATH="ringtone_path";
+
+        public final static String RINGTONE_ACTIVE="ringtone_active";
 
         public static  final int ALARM_ACTIVE_OFF = 0;
 
