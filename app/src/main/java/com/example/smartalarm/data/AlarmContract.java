@@ -10,6 +10,7 @@ public class AlarmContract {
 
     }
 
+
     public static final String CONTENT_AUTHORITY = "com.example.smartalarm";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
