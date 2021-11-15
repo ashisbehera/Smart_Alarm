@@ -1,9 +1,14 @@
 package com.example.smartalarm;
 
 import android.Manifest;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,7 +17,9 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +27,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+import com.example.smartalarm.data.Alarm_Database;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -31,136 +40,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ringtone extends AppCompatActivity {
+public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     MediaPlayer mediaPlayer;
-   // ArrayList<File> myMusic;
+    private static final int RINGTONE_LOADER = 0;
     ArrayList<Uri> local_ringtone;
     android.media.Ringtone ringtone;
-
+    RingtoneListAdapter rAdapter;
+    Uri prevUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ringtone);
+        Intent in = getIntent();
+        prevUri = in.getData();
         ListView listView = findViewById(R.id.listView);
-        // permission to use external storage for local music
-        Dexter.withContext(this)
-                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-                       // myMusic = fetchMusic(Environment.getExternalStorageDirectory());
-                        // get music titles
-                        local_ringtone = (ArrayList<Uri>) loadLocalRingtonesUris();
-                        ArrayList<String> items = new ArrayList<>();
-                        for (int i = 0; i < local_ringtone.size(); i++) {
-                            ringtone = RingtoneManager.getRingtone(getApplicationContext(), local_ringtone.get(i));
-                            items.add(ringtone.getTitle(getApplicationContext()));
-                        }
+        rAdapter = new RingtoneListAdapter(this , null);
+        listView.setAdapter(rAdapter);
 
-                        // set custom adapter for music title and play button
-                        listView.setAdapter(new RingtoneListAdapter(Ringtone.this, R.layout.ringtone_custom_list, items));
-                    }
+        getLoaderManager().initLoader(RINGTONE_LOADER, null, this);
 
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-                })
-                .check();
-        // set song title in the other activity
-        listView.setOnItemClickListener((adapterView, view, position, l) -> {
-            Intent intent = new Intent(Ringtone.this, AddAlarm_Activity.class);
-            String musicName = listView.getItemAtPosition(position).toString();
-            intent.putExtra("songList", local_ringtone);
-            intent.putExtra("currentMusic", musicName);
-            intent.putExtra("position", position);
-            startActivity(intent);
-        });
     }
 
-    // return all music files
-//    public ArrayList<File> fetchMusic(File file) {
-//        ArrayList arrayList = new ArrayList();
-//        File[] songs = file.listFiles();
-//        if (songs != null) {
-//            for (File myFile : songs) {
-//                if (!myFile.isHidden() && myFile.isDirectory()) {
-//                    arrayList.addAll(fetchMusic(myFile));
-//                } else {
-//                    if (myFile.getName().endsWith(".mp3") && !myFile.getName().startsWith(".")) {
-//                        arrayList.add(myFile);
-//                    }
-//                }
-//            }
-//        }
-//        return arrayList;
-//    }
-
-    private List<Uri> loadLocalRingtonesUris() {
-        List<Uri> alarms = new ArrayList<>();
-        try {
-            RingtoneManager ringtoneMgr = new RingtoneManager(getApplicationContext());
-            ringtoneMgr.setType(RingtoneManager.TYPE_RINGTONE | RingtoneManager.TYPE_ALARM);
-
-            Cursor alarmsCursor = ringtoneMgr.getCursor();
-            int alarmsCount = alarmsCursor.getCount();
-            if (alarmsCount == 0 && !alarmsCursor.moveToFirst()) {
-                alarmsCursor.close();
-                return null;
-            }
-
-            while (!alarmsCursor.isAfterLast() && alarmsCursor.moveToNext()) {
-                int currentPosition = alarmsCursor.getPosition();
-                alarms.add(ringtoneMgr.getRingtoneUri(currentPosition));
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return alarms;
-    }
-
-    private class RingtoneListAdapter extends ArrayAdapter<String> {
-        private final int layout;
-
-        // custom adapter
-        private RingtoneListAdapter(Context context, int resource, List<String> objects) {
-            super(context, resource, objects);
-            layout = resource;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder viewholder;
-            if (convertView == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                convertView = inflater.inflate(layout, parent, false);
-                ViewHolder viewHolder = new ViewHolder();
-                viewHolder.listen = convertView.findViewById(R.id.listen);
-                viewHolder.title = convertView.findViewById(R.id.music_name);
-                convertView.setTag(viewHolder);
-            }
-            viewholder = (ViewHolder) convertView.getTag();
-            viewholder.listen.setOnClickListener(v -> {
-               // Uri uri = Uri.parse(local_ringtone.get(position).toString());
-                mediaPlayer = MediaPlayer.create(Ringtone.this, local_ringtone.get(position));
-                mediaPlayer.start();
-            });
-            viewholder.title.setText(getItem(position));
-            return convertView;
-        }
-    }
-
-    public static class ViewHolder {
-        ImageView listen;
-        TextView title;
-    }
 
     @Override
     protected void onPause() {
@@ -169,5 +69,84 @@ public class Ringtone extends AppCompatActivity {
             mediaPlayer.stop();
             mediaPlayer.release();
         }
+    }
+    /**custom ringtoe adapter **/
+    private class RingtoneListAdapter extends CursorAdapter{
+
+        public RingtoneListAdapter(Context context, Cursor c) {
+            super(context, c, 0);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
+            return LayoutInflater.from(context).
+                    inflate(R.layout.ringtone_custom_list, viewGroup, false);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            TextView ringtoneNameTextView = (TextView) view.findViewById(R.id.music_name);
+            ImageView playPause = view.findViewById(R.id.listen);
+
+            int ringtoneNameColumnIndex = cursor.getColumnIndex(AlarmEntry.RINGTONE_NAME);
+            int ringtoneUriColumnIndex = cursor.getColumnIndex(AlarmEntry.RINGTONE_URI);
+            String ringtoneName = cursor.getString(ringtoneNameColumnIndex);
+            String ringtoneUri = cursor.getString(ringtoneUriColumnIndex);
+            /** convert the ringtone string to uri **/
+            Uri uri = Uri.parse(ringtoneUri);
+            ringtoneNameTextView.setText(ringtoneName);
+            /** play button click listener **/
+            playPause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    mediaPlayer = MediaPlayer.create(Ringtone.this,
+                                            uri);
+                    mediaPlayer.start();
+                }
+            });
+
+            ringtoneNameTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Ringtone.this, AddAlarm_Activity.class);
+                    intent.putExtra("ringtoneName",ringtoneName);
+                    intent.putExtra("ringtoneUri",uri);
+                    intent.setData(prevUri);
+                    startActivity(intent);
+                }
+            });
+
+
+        }
+    }
+
+    /** background thread **/
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String[] projection = {
+                AlarmEntry.RINGTONE_ID,
+                AlarmEntry.RINGTONE_NAME,
+                AlarmEntry.RINGTONE_URI};
+
+        return new CursorLoader(this,
+                /**ringtone content uri
+                 * @AlarmContract -> AlarmEntry
+                 * **/
+                AlarmEntry.RINGTONE_CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+      rAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        rAdapter.swapCursor(null);
     }
 }

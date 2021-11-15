@@ -21,15 +21,22 @@ public class AlarmDataProvider extends ContentProvider {
     /** URI matcher code for the content URI for the sinle alarm in the alarm table
      * */
     private static final int ALARM_ID = 51;
+    /** URI matcher code for the content URI for the ringtone table
+     * */
+    private static final int RINGTONE = 52;
 
     private static final UriMatcher alarmUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
 
         /**
-         *  This URI is used to provide access to MULTIPLE rows
+         *  This URI is used to provide access to MULTIPLE rows in alarm table
           */
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_ALARM,ALARMS);
+        /**
+         *  This URI is used to provide access to MULTIPLE rows in ringtone table
+         */
+        alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_RINGTONE,RINGTONE);
 
         /**
          * This URI is used to provide access to ONE single row
@@ -74,11 +81,19 @@ public class AlarmDataProvider extends ContentProvider {
 
         switch (match) {
             /**
-             * this will query the whole data base
+             * this will query the whole alarm table
              */
             case ALARMS:
 
                 cursor = database.query(AlarmEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            /**
+             * this will query the whole ringtone table
+             */
+            case RINGTONE:
+
+                cursor = database.query(AlarmEntry.RINGTONE_TABLE, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
 

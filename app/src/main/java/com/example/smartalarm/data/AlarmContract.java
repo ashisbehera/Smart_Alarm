@@ -16,11 +16,16 @@ public class AlarmContract {
 
     public static final String PATH_ALARM = "alarms";
 
+    public static final String PATH_RINGTONE = "table_ringtone";
+
     public static final class AlarmEntry implements BaseColumns{
 
         /** The content URI to access the alarm data in the provider
          * */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ALARM);
+        /** The content URI to access the ringtone data in the provider
+         * */
+        public static final Uri RINGTONE_CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_RINGTONE);
 
         /*** for a list of alarms.
          */
@@ -35,6 +40,9 @@ public class AlarmContract {
         /** Name of database table for alarms
          * */
         public final static String TABLE_NAME = "alarms";
+        /** Name of database table for ringtone
+         * */
+        public final static String RINGTONE_TABLE = "table_ringtone";
 
         /*** Unique ID number for the alarms (only for use in the database table).
          */
@@ -55,16 +63,20 @@ public class AlarmContract {
         public final static String ALARM_SNOOZE="alarm_snooze";
         /** tts string for data base **/
         public final static String TTS_STRING="tts_string";
+        /** this string will save in the alarm table **/
+        public final static String RINGTONE_STRING="alarm_ringtone_uri";
+        /** this RINGTONE NAME will save in the alarm table **/
+        public final static String ALARM_RINGTONE_NAME="alarm_ringtone_name";
 
         public final static String TTS_ACTIVE="tts_active";
 
         public final static String ALARM_SNOOZE_ACTIVE="alarm_snooze_active";
-
-        public final static String RINGTONE_ID="ringtone_id";
-
+        /** for ringtone table **/
+        public final static String RINGTONE_ID= BaseColumns._ID;
+        /** for ringtone table **/
         public final static String RINGTONE_NAME="ringtone_name";
-
-        public final static String RINGTONE_PATH="ringtone_path";
+        /** for ringtone table **/
+        public final static String RINGTONE_URI="ringtone_uri";
 
         public final static String RINGTONE_ACTIVE="ringtone_active";
 

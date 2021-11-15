@@ -8,18 +8,16 @@
 
     <TextView
         android:id="@+id/music_name"
-        android:layout_width="wrap_content"
-        android:layout_height="75sp"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_weight="1"
         android:gravity="center|left"
-        android:paddingLeft="30sp"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
 
     <ImageView
         android:id="@+id/listen"
-        android:layout_width="75sp"
-        android:layout_height="75sp"
-        android:layout_weight="0"
-        android:paddingRight="30sp"
-        app:srcCompat="@drawable/play" />
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/outline_play_circle_filled_24" />
 </LinearLayout>

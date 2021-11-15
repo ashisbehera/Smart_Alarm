@@ -1,10 +1,12 @@
 package com.example.smartalarm.data;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.media.RingtoneManager;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -77,6 +79,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
         }
 
         myDatabase=getWritableDatabase();
+        /** save the ringtone in the ringtone table **/
+        save_ringtoneToDatabase();
 
     }
 
@@ -110,6 +114,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.ALARM_NAME + " TEXT, "
                 /** tts string column **/
                 + AlarmEntry.TTS_STRING + " TEXT, "
+                + AlarmEntry.RINGTONE_STRING + " TEXT, "
+                + AlarmEntry.ALARM_RINGTONE_NAME + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
@@ -117,8 +123,14 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 1, "
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
-        // Execute the SQL statement
+        String SQL_CREATE_RINGTONE_TABLE = "CREATE TABLE " + AlarmEntry.RINGTONE_TABLE + " ("
+                + AlarmEntry.RINGTONE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + AlarmEntry.RINGTONE_NAME + " TEXT NOT NULL, "
+                + AlarmEntry.RINGTONE_URI + " TEXT NOT NULL);";
+
+                        // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_RINGTONE_TABLE);
     }
 
     /**
@@ -186,6 +198,28 @@ public class Alarm_Database extends SQLiteOpenHelper {
         alarmList.addAll(Arrays.asList(alarms));
 
         return alarmList;
+    }
+
+
+    private void save_ringtoneToDatabase(){
+        RingtoneManager ringtoneMgr = new RingtoneManager(context);
+        ringtoneMgr.setType(RingtoneManager.TYPE_RINGTONE | RingtoneManager.TYPE_ALARM);
+
+        Cursor ringtoneCursor = ringtoneMgr.getCursor();
+        ContentValues values=new ContentValues();
+        int alarmsCount = ringtoneCursor.getCount();
+        if (alarmsCount == 0 && !ringtoneCursor.moveToFirst()) {
+            ringtoneCursor.close();
+            return;
+        }
+
+        while (!ringtoneCursor.isAfterLast() && ringtoneCursor.moveToNext()) {
+            values.put(AlarmEntry.RINGTONE_NAME, ringtoneMgr.getRingtone
+                    (ringtoneCursor.getPosition()).getTitle(context));
+            values.put(AlarmEntry.RINGTONE_URI, ringtoneMgr.getRingtoneUri
+                    (ringtoneCursor.getPosition()).toString());
+            myDatabase.insert(AlarmEntry.RINGTONE_TABLE,null,values);
+        }
     }
 
     @Override

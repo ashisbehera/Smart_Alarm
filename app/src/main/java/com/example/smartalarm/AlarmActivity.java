@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -25,6 +26,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+import com.example.smartalarm.data.Alarm_Database;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -37,7 +39,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_activity);
-
         setTitle("Alarms");
 
 
