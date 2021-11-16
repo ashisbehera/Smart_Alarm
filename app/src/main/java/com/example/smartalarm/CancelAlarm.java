@@ -47,7 +47,6 @@ public class CancelAlarm extends AppCompatActivity implements
     private MediaPlayer ringtonePlay;
    // private Ringtone ringtone;
 
-
     @SuppressLint("LongLogTag")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
