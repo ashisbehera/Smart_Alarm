@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -41,8 +42,9 @@ public class CancelAlarm extends AppCompatActivity implements
      *initialing the vibrator , ringtone and uri for ringtone
     */
     private TextToSpeech tts;
-    //private Vibrator vibrator ;
+    Vibrator vibrator ;
     private Uri ring;
+    private MediaPlayer ringtonePlay;
    // private Ringtone ringtone;
 
 
@@ -135,8 +137,8 @@ public class CancelAlarm extends AppCompatActivity implements
     @SuppressLint("LongLogTag")
     public void cancelAlarmButton(AlarmConstraints alarm){
 
-       // stopVib_ringtone();
-        stop_tts();
+        stopVib_ringtone();
+        //stop_tts();
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm);
         Log.i(" alarm removed " , "successfully alarm removed");
@@ -178,8 +180,8 @@ public class CancelAlarm extends AppCompatActivity implements
 
             Log.i("onNewIntent", "called");
 
+                playAlarm(alarm);
 
-            playAlarm(alarm);
         }
     }
 
@@ -191,18 +193,22 @@ public class CancelAlarm extends AppCompatActivity implements
         if(alarm == null) {
             return;
         }
-       // vibrator.vibrate(20000);
-//        ringtone = RingtoneManager.getRingtone(getApplicationContext() , ring);
-//        ringtone.play();
-        if(alarm.getTts_active()){
-            ttsSpeak(alarm);
-        }
+
+//        if(alarm.getTts_active() && alarm.getRingtone_active()){
+//            ttsSpeak(alarm);
+//            Thread.sleep(500);
+//            playRingtone(alarm);
+//        }
+//         if(alarm.getTts_active())
+//            ttsSpeak(alarm);
+//         else if(alarm.getRingtone_active()){
+            playRingtone(alarm);
+        //}
     }
 
     /**will play tts **/
     private void ttsSpeak(AlarmConstraints alarm){
-        Toast.makeText(getApplicationContext(), "tts  :"+alarm.getTtsString(),
-                Toast.LENGTH_SHORT).show();
+       // vibrator.vibrate(20000);
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -217,12 +223,20 @@ public class CancelAlarm extends AppCompatActivity implements
         tts.shutdown();
     }
 
+    private void playRingtone(AlarmConstraints alarm){
+        ring = Uri.parse(alarm.getRingtoneUri());
+        Toast.makeText(getApplicationContext(), "uri  :"+alarm.getRingtoneUri(),
+                Toast.LENGTH_SHORT).show();
+        ringtonePlay = MediaPlayer.create(getApplicationContext() , ring);
+        ringtonePlay.start();
+    }
+
     /**
      * stop the vibration and ringtone
      */
     private void stopVib_ringtone() {
-       // vibrator.cancel();
-       // ringtone.stop();
+        //vibrator.cancel();
+        ringtonePlay.stop();
     }
 
     /**

@@ -43,8 +43,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private AlarmConstraints newAlarm;
     private ScheduleService scheduleService;
     private LinearLayout ringtoneLayout;
-    private String ringtoneUri;
-    private String ringtoneName;
+    private String ringtoneUri="";
+    private String ringtoneName="";
     Uri editUri ;
     Intent i;
     private final StringBuilder timeBuilder = new StringBuilder();
@@ -83,6 +83,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         /** is the uri is null then it will be add alarm **/
         if (editUri == null) {
             setTitle("Add alarm");
+            if(i.getExtras()!=null){
+                // set ringtone name from the extra
+                ringtoneName = i.getStringExtra("ringtoneName");
+                setRingtone.setText(ringtoneName);
+                // set ringtone uri from the extra
+                ringtoneUri = i.getStringExtra("ringtoneUri");
+            }
             /** if it is add alarm activity then delete button will invisible **/
             delete_alarm.setVisibility(View.GONE);
         } else {
@@ -163,6 +170,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
      */
     private void saveAlarmToDataBase(AlarmConstraints alarm) {
         String alarmName = alarmNameEditText.getText().toString();
+        String ringtoneNameToShow = setRingtone.getText().toString();
         /** tts string from edit text **/
         String ttsString = ttsEditText.getText().toString();
         String time = getPickerTime();
@@ -184,8 +192,12 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         values.put(AlarmEntry.ALARM_NAME, alarmName);
         /** insert into data base **/
         values.put(AlarmEntry.TTS_STRING, ttsString);
+        /**if we are coming from alarmActivity and don't want to edit ringtone the
+         * put in database
+         */
+        if(i.getExtras()!=null)
         values.put(AlarmEntry.RINGTONE_STRING , ringtoneUri);
-        values.put(AlarmEntry.ALARM_RINGTONE_NAME , ringtoneName);
+        values.put(AlarmEntry.ALARM_RINGTONE_NAME , ringtoneNameToShow);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
@@ -225,6 +237,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 AlarmEntry._ID,
                 AlarmEntry.ALARM_NAME,
                 AlarmEntry.TTS_STRING,
+                /** this string will save in the alarm table **/
                 AlarmEntry.RINGTONE_STRING,
                 AlarmEntry.ALARM_RINGTONE_NAME,
                 AlarmEntry.ALARM_TIME,

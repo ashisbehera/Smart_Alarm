@@ -38,19 +38,21 @@
 
         <ImageView
             android:id="@+id/start"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minHeight="40dp"
             android:onClick="startChronometer"
-            app:srcCompat="@drawable/play_circle" />
+            android:src="@drawable/outline_play_circle_filled_24" />
 
         <ImageView
             android:id="@+id/pause"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:layout_weight="1"
             android:onClick="pauseChronometer"
-            app:srcCompat="@drawable/pause_circle" />
+            android:src="@drawable/outline_pause_circle_filled_24" />
 
     </LinearLayout>
 

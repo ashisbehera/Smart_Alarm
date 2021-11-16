@@ -145,7 +145,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
          */
         String [] columns = new String[]{AlarmEntry._ID,AlarmEntry.ALARM_NAME,
                 AlarmEntry.TTS_STRING,
-                AlarmEntry.ALARM_TIME,AlarmEntry.ALARM_VIBRATE,
+                AlarmEntry.ALARM_TIME,AlarmEntry.RINGTONE_STRING,AlarmEntry.ALARM_VIBRATE,
                 AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE,
                 AlarmEntry.TTS_ACTIVE,AlarmEntry.RINGTONE_ACTIVE};
         Log.i("columns arr created" , " string arr");
@@ -171,6 +171,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 /** set the tts string of alarmconstraints **/
                 alarms[i].setTtsString(cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING)));
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
+                alarms[i].setRingtoneUri(cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING)));
 
                 if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE))==1)
                     alarms[i].setToggleOnOff(true);

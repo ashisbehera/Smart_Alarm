@@ -111,7 +111,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
                 public void onClick(View view) {
                     Intent intent = new Intent(Ringtone.this, AddAlarm_Activity.class);
                     intent.putExtra("ringtoneName",ringtoneName);
-                    intent.putExtra("ringtoneUri",uri);
+                    intent.putExtra("ringtoneUri",ringtoneUri);
                     intent.setData(prevUri);
                     startActivity(intent);
                 }

@@ -54,6 +54,8 @@ public class AlarmConstraints implements Parcelable  {
 
     private  String ttsString = "";
 
+    private  String ringtoneUri = "";
+
     private boolean tts_active = false;
 
     private boolean ringtone_active = false;
@@ -135,6 +137,13 @@ public class AlarmConstraints implements Parcelable  {
     /** will get the tts string **/
     public String getTtsString(){
         return ttsString;
+    }
+    public String getRingtoneUri() {
+        return ringtoneUri;
+    }
+
+    public void setRingtoneUri(String ringtoneUri) {
+        this.ringtoneUri = ringtoneUri;
     }
 
     /**
@@ -353,6 +362,7 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeString(standardTime.toString());
         parcel.writeInt(pKeyDB);
         parcel.writeString(ttsString);
+        parcel.writeString(ringtoneUri);
         parcel.writeInt(tts_active ? 1 : 0);
         parcel.writeInt(ringtone_active ? 1 : 0);
         //parcel.writeParcelable(intent, i);
@@ -366,6 +376,7 @@ public class AlarmConstraints implements Parcelable  {
         standardTime=new StringBuilder(in.readString());
         pKeyDB = in.readInt();
         ttsString = in.readString();
+        ringtoneUri = in.readString();
         tts_active = in.readInt() == 1;
         ringtone_active = in.readInt() == 1;
         //intent = in.readParcelable(Intent.class.getClassLoader());
