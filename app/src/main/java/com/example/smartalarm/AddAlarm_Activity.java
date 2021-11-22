@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -30,10 +31,19 @@ import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class AddAlarm_Activity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
     private static final int ALARM_LOADER_E = 0;
-
+    private String label;
+    private String speechText;
+    private int timeMinute;
+    private int timeHour;
+    private String timeAMPM;
+    //private TimePicker pickedTime;
+    private String pickedTime;
     private TimePicker timePicker;
     private FloatingActionButton set_alarm , delete_alarm;
     private EditText alarmNameEditText , ttsEditText;
@@ -47,7 +57,14 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private String ringtoneName="";
     Uri editUri ;
     Intent i;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String LABEL = "label";
+    public static final String SPEECHTEXT = "speech_text";
+    public static final String TIME_M = "minute";
+    public static final String TIME_H = "hour";
+    public static final String TIME_AM_PM = "AM_PM";
     private final StringBuilder timeBuilder = new StringBuilder();
+    // private StringBuilder pickedTime = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +85,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         setRingtone = findViewById(R.id.setRingtone);
+
         /**
          *time picker
          */
@@ -126,6 +144,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                  * updating the service
                  */
                 scheduleService.updateAlarmSchedule(getBaseContext());
+                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.apply();
                 /**
                  *will return to the previous activity
                  */
@@ -146,6 +168,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         });
         // select ringtone if clicked on ringtone
         ringtoneLayout.setOnClickListener(view -> {
+            // save the data before moving onto the ringtone activity
+            saveData();
             Intent intent = new Intent(AddAlarm_Activity.this, Ringtone.class);
             intent.setData(editUri);
             startActivity(intent);
@@ -155,6 +179,40 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 //        setRingtone.setText(ringtoneName);
 //        // set ringtone uri from the extra
 //        ringtoneUri = i.getStringExtra("ringtoneUri");
+
+        // calling loadData() and updateViews() to restore and set the previously saved data
+        loadData();
+        updateViews();
+    }
+
+    // save the entered information
+    public void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LABEL, alarmNameEditText.getText().toString());
+        editor.putString(SPEECHTEXT, ttsEditText.getText().toString());
+        editor.putInt(TIME_H, timePicker.getCurrentHour());
+        editor.putInt(TIME_M, timePicker.getCurrentMinute());
+        editor.apply();
+    }
+
+    // load the saved information
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Calendar timeNow = Calendar.getInstance();
+        // if nothing is entered then the string will be blank by default
+        label = sharedPreferences.getString(LABEL, "");
+        speechText = sharedPreferences.getString(SPEECHTEXT, "");
+        timeHour = sharedPreferences.getInt(TIME_H, timeNow.get(Calendar.HOUR));
+        timeMinute = sharedPreferences.getInt(TIME_M,timeNow.get(Calendar.MINUTE));
+    }
+
+    // update the saved information to the correct place
+    public void updateViews() {
+        alarmNameEditText.setText(label);
+        ttsEditText.setText(speechText);
+        timePicker.setCurrentHour(timeHour);
+        timePicker.setCurrentMinute(timeMinute);
     }
 
 //    @Override
@@ -196,7 +254,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
          * put in database
          */
         if(i.getExtras()!=null)
-        values.put(AlarmEntry.RINGTONE_STRING , ringtoneUri);
+            values.put(AlarmEntry.RINGTONE_STRING , ringtoneUri);
         values.put(AlarmEntry.ALARM_RINGTONE_NAME , ringtoneNameToShow);
         values.put(AlarmEntry.ALARM_TIME, time);
         values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
@@ -208,7 +266,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         if (editUri==null){
             Uri newUri = getContentResolver().insert(AlarmEntry.CONTENT_URI, values);
         }else
-            /**else update the data in the data base **/
+        /**else update the data in the data base **/
             getContentResolver().update(editUri, values, null, null);
 
 
@@ -271,7 +329,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             int alarmNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
             Log.i("name restored", "alarm name");
             int ttsStringCIn = cursor.getColumnIndex(AlarmEntry.TTS_STRING);
-           // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
+            // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
             int alarmRingtoneNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME);
             int alarmTimeCIn = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
             int VibCIn = cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE);
@@ -282,7 +340,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             String alarmName = cursor.getString(alarmNameCIn);
             String ttsString = cursor.getString(ttsStringCIn);
             String alarmTime = cursor.getString(alarmTimeCIn);
-          //  String ringtoneString = cursor.getString(ringtoneStringCIn);
+            //  String ringtoneString = cursor.getString(ringtoneStringCIn);
             String alarmRiName = cursor.getString(alarmRingtoneNameCIn);
             int vib = cursor.getInt(VibCIn);
             int snooze = cursor.getInt(SnzCIn);
@@ -293,7 +351,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             ttsEditText.setText(ttsString);
             /** if we are not coming from ringtone activity then setText as database **/
             if(i.getExtras()==null)
-            setRingtone.setText(alarmRiName);
+                setRingtone.setText(alarmRiName);
             String timeArr[] = alarmTime.split(":");
             timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
             timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));

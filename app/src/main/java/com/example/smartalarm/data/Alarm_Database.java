@@ -128,7 +128,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.RINGTONE_NAME + " TEXT NOT NULL, "
                 + AlarmEntry.RINGTONE_URI + " TEXT NOT NULL);";
 
-                        // Execute the SQL statement
+        // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RINGTONE_TABLE);
     }

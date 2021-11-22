@@ -101,7 +101,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
                 public void onClick(View view) {
 
                     mediaPlayer = MediaPlayer.create(Ringtone.this,
-                                            uri);
+                            uri);
                     mediaPlayer.start();
                 }
             });
@@ -142,7 +142,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-      rAdapter.swapCursor(cursor);
+        rAdapter.swapCursor(cursor);
     }
 
     @Override
