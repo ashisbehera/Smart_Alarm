@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -18,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,11 +29,13 @@ import android.widget.Toast;
 import android.os.Handler;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 import com.example.smartalarm.data.Alarm_Database;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,9 +49,13 @@ public class CancelAlarm extends AppCompatActivity implements
     Vibrator vibrator ;
     private Uri ring;
     private MediaPlayer ringtonePlay;
+    private AudioManager audioManager;
+    Ringtone r;
+
    // private Ringtone ringtone;
 
-    @SuppressLint("LongLogTag")
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cancel_alarm);
@@ -66,9 +74,10 @@ public class CancelAlarm extends AppCompatActivity implements
 
 
         Button cancelb = findViewById(R.id.cancel_button);
-       // vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-       // ring = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-//
+        vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        ringtonePlay = new MediaPlayer();
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -137,13 +146,14 @@ public class CancelAlarm extends AppCompatActivity implements
     public void cancelAlarmButton(AlarmConstraints alarm){
 
         stopVib_ringtone();
-        //stop_tts();
+        stop_tts();
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm);
         Log.i(" alarm removed " , "successfully alarm removed");
         ScheduleService.updateAlarmSchedule(getApplicationContext());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @SuppressLint("MissingSuperCall")
     @Override
     public void onNewIntent(Intent intent) {
@@ -179,6 +189,7 @@ public class CancelAlarm extends AppCompatActivity implements
 
             Log.i("onNewIntent", "called");
 
+
                 playAlarm(alarm);
 
         }
@@ -188,26 +199,55 @@ public class CancelAlarm extends AppCompatActivity implements
      * @param alarm
      * play the alarm and ringtone
      */
+    @RequiresApi(api = Build.VERSION_CODES.P)
     private void playAlarm(final AlarmConstraints alarm) {
         if(alarm == null) {
             return;
         }
-
-//        if(alarm.getTts_active() && alarm.getRingtone_active()){
-//            ttsSpeak(alarm);
-//            Thread.sleep(500);
-//            playRingtone(alarm);
-//        }
-//         if(alarm.getTts_active())
-//            ttsSpeak(alarm);
-//         else if(alarm.getRingtone_active()){
+        vibrator.vibrate(20000);
+        if(alarm.getTts_active() && alarm.getRingtone_active()){
             playRingtone(alarm);
-        //}
+            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                @Override
+                public void onStart(String s) {
+                    ringtonePlay.pause();
+                }
+
+                @Override
+                public void onDone(String s) {
+                    ringtonePlay.start();
+                }
+
+                @Override
+                public void onError(String s) {
+
+                }
+            });
+            HashMap<String, String> params = new HashMap<>();
+            params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                }
+            }, 1000);
+
+
+        }
+         else if(alarm.getTts_active()){
+                 ttsSpeak(alarm);
+             }
+         else if(alarm.getRingtone_active()){
+            playRingtone(alarm);
+        }
     }
 
     /**will play tts **/
     private void ttsSpeak(AlarmConstraints alarm){
-       // vibrator.vibrate(20000);
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -227,15 +267,20 @@ public class CancelAlarm extends AppCompatActivity implements
         Toast.makeText(getApplicationContext(), "uri  :"+alarm.getRingtoneUri(),
                 Toast.LENGTH_SHORT).show();
         ringtonePlay = MediaPlayer.create(getApplicationContext() , ring);
+        //ringtonePlay.setLooping(true);
         ringtonePlay.start();
+
+//        r = RingtoneManager.getRingtone(getApplicationContext(), ring);
+//        r.play();
     }
 
     /**
      * stop the vibration and ringtone
      */
     private void stopVib_ringtone() {
-        //vibrator.cancel();
+        vibrator.cancel();
         ringtonePlay.stop();
+//        r.stop();
     }
 
     /**

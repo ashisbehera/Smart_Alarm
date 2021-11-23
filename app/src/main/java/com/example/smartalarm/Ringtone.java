@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +24,10 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
-import com.example.smartalarm.data.Alarm_Database;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+
 
 public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     MediaPlayer mediaPlayer;
@@ -66,10 +55,20 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
     protected void onPause() {
         super.onPause();
         if (mediaPlayer != null) {
-            mediaPlayer.stop();
             mediaPlayer.release();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+
+    }
+
+
     /**custom ringtoe adapter **/
     private class RingtoneListAdapter extends CursorAdapter{
 
@@ -99,7 +98,10 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
             playPause.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    }
                     mediaPlayer = MediaPlayer.create(Ringtone.this,
                             uri);
                     mediaPlayer.start();
@@ -113,6 +115,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
                     intent.putExtra("ringtoneName",ringtoneName);
                     intent.putExtra("ringtoneUri",ringtoneUri);
                     intent.setData(prevUri);
+                    finish();
                     startActivity(intent);
                 }
             });
