@@ -35,9 +35,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 import com.example.smartalarm.data.Alarm_Database;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CancelAlarm extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -190,7 +193,11 @@ public class CancelAlarm extends AppCompatActivity implements
             Log.i("onNewIntent", "called");
 
 
+            try {
                 playAlarm(alarm);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
     }
@@ -200,7 +207,7 @@ public class CancelAlarm extends AppCompatActivity implements
      * play the alarm and ringtone
      */
     @RequiresApi(api = Build.VERSION_CODES.P)
-    private void playAlarm(final AlarmConstraints alarm) {
+    private void playAlarm(final AlarmConstraints alarm) throws IOException {
         if(alarm == null) {
             return;
         }
@@ -249,12 +256,23 @@ public class CancelAlarm extends AppCompatActivity implements
     private void ttsSpeak(AlarmConstraints alarm){
 
         final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, null);
+                handler.postDelayed(this , 5000);
             }
-        }, 1000);
+        };
+        handler.postDelayed(runnable , 1000);
+        TimerTask ttsTimer = new TimerTask() {
+            @Override
+            public void run() {
+                handler.removeCallbacks(runnable);
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(ttsTimer, 10000);
+
     }
 /**will stop the tts **/
     private void stop_tts(){
@@ -262,16 +280,30 @@ public class CancelAlarm extends AppCompatActivity implements
         tts.shutdown();
     }
 
-    private void playRingtone(AlarmConstraints alarm){
-        ring = Uri.parse(alarm.getRingtoneUri());
-        Toast.makeText(getApplicationContext(), "uri  :"+alarm.getRingtoneUri(),
-                Toast.LENGTH_SHORT).show();
-        ringtonePlay = MediaPlayer.create(getApplicationContext() , ring);
-        //ringtonePlay.setLooping(true);
-        ringtonePlay.start();
+    private void playRingtone(AlarmConstraints alarm) throws IOException {
+        try {
+            ring = Uri.parse(alarm.getRingtoneUri());
+            Toast.makeText(getApplicationContext(), "uri  :"+alarm.getRingtoneUri(),
+                    Toast.LENGTH_SHORT).show();
 
-//        r = RingtoneManager.getRingtone(getApplicationContext(), ring);
-//        r.play();
+            ringtonePlay.setDataSource(this, ring);
+            if (audioManager.getStreamVolume(AudioManager.STREAM_RING) != 0) {
+                ringtonePlay.setAudioStreamType(AudioManager.STREAM_RING);
+                ringtonePlay.setLooping(true);
+                ringtonePlay.prepare();
+                ringtonePlay.start();
+                TimerTask ringtoneTimer = new TimerTask() {
+                    @Override
+                    public void run() {
+                        stopVib_ringtone();
+                    }
+                };
+                Timer timer = new Timer();
+                timer.schedule(ringtoneTimer, 300000);
+            }
+        }catch (Exception e){
+
+        }
     }
 
     /**
@@ -280,7 +312,6 @@ public class CancelAlarm extends AppCompatActivity implements
     private void stopVib_ringtone() {
         vibrator.cancel();
         ringtonePlay.stop();
-//        r.stop();
     }
 
     /**

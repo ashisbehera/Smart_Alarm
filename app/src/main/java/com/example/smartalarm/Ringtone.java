@@ -115,6 +115,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
                     intent.putExtra("ringtoneName",ringtoneName);
                     intent.putExtra("ringtoneUri",ringtoneUri);
                     intent.setData(prevUri);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     finish();
                     startActivity(intent);
                 }
