@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // createNotificationChannel();
+        createNotificationChannel();
         ImageView alarm_img = findViewById(R.id.alarm_img_v);
         ImageView world_clock_img = findViewById(R.id.world_clock);
         ImageView stopwatch_img = findViewById(R.id.stopw_img_v);
@@ -42,6 +42,19 @@ public class MainActivity extends AppCompatActivity {
             Intent stopwatch_intent = new Intent(MainActivity.this, Stopwatch.class);
             startActivity(stopwatch_intent);
         });
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            CharSequence name = "Testing Alarm";
+            String description = "Alarm";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("notification_alarm", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     /** will inflate the menu **/

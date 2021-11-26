@@ -66,9 +66,26 @@ public class AlarmReceiver extends BroadcastReceiver {
          * intent to cancelAlarm activity
          */
         Intent newIntent = new Intent(context, CancelAlarm.class);
-        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
 
-        context.startActivity(newIntent);
+
+//        Intent fullScreenIntent = new Intent(this, CallActivity.class);
+//        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
+//                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notification_alarm")
+                .setSmallIcon(R.drawable.baseline_access_alarms_24)
+                .setContentTitle("Smart Alarm Manager")
+                .setContentText("Notification")
+                .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+        notificationManagerCompat.notify(1, builder.build());
+//        context.startActivity(newIntent);
+
     }
 }
