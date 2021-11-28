@@ -111,6 +111,24 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
          ScheduleService.updateAlarmSchedule(getApplicationContext());
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

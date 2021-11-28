@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Smart Alarm</string>
     <string name="default_alarm_name">Alarm</string>
+    <string name="Stop_alarm_notification">Stop</string>
+    <string name="Snooze_alarm_notification">snooze</string>
+
 </resources>

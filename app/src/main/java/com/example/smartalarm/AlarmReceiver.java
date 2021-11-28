@@ -24,7 +24,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.smartalarm.receiver.SnoozeReceiver;
+import com.example.smartalarm.receiver.StopReceiver;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -33,6 +38,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     MediaPlayer mediaPlayer;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -41,14 +47,9 @@ public class AlarmReceiver extends BroadcastReceiver {
          * getting bundle from intent
          */
         Bundle bundle = intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
-        /*
-        Bundle bundleSong = intent.getExtras();
-        songs = (ArrayList) bundleSong.getParcelableArrayList("songList");
-        position = intent.getIntExtra("position", 0);
-        Uri uri = Uri.parse(songs.get(position).toString());
-        mediaPlayer = MediaPlayer.create(context, uri);
-        mediaPlayer.start();
-        */
+        AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
+                (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
+
 
         Log.i("bundle ", "bundle received from receiver");
         /**
@@ -61,31 +62,74 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.i("receiver", "found the bundle and intent extra with value");
         }
 
-        // AlarmWakeLock.acquireCpuWakeLock(context);
         /**
          * intent to cancelAlarm activity
          */
-        Intent newIntent = new Intent(context, CancelAlarm.class);
-        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+
+        ControlAlarm controlAlarm = new ControlAlarm(context);
+
+        /**
+         * intent for cancel activity
+         */
+//        Intent newIntent = new Intent(context, CancelAlarm.class);
+//        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+//        PendingIntent pendingIntent = PendingIntent.getActivity
+//                (context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /**
+         * intent for StopReceiver
+         */
+        Intent stopIntent = new Intent(context , StopReceiver.class);
+        stopIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        stopIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        stopIntent.setAction("stop alarm");
+        PendingIntent stopPendingIntent = PendingIntent.getBroadcast(context, 0,
+                stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        /**
+         * intent for SnoozeReceiver
+         */
+        Intent snoozeIntent = new Intent(context , SnoozeReceiver.class);
+        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        snoozeIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        snoozeIntent.setAction("snooze alarm");
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context, 0,
+                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-//        Intent fullScreenIntent = new Intent(this, CallActivity.class);
-//        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-//                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notification_alarm")
+        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
+                        (null,
+                        context.getString(R.string.Stop_alarm_notification),
+                        stopPendingIntent).build();
+        NotificationCompat.Action SnoozeAction = new NotificationCompat.Action.Builder
+                        (null,
+                        context.getString(R.string.Snooze_alarm_notification),
+                        snoozePendingIntent).build();
+
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context, "notification_alarm")
                 .setSmallIcon(R.drawable.baseline_access_alarms_24)
                 .setContentTitle("Smart Alarm Manager")
                 .setContentText("Notification")
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent);
+                .addAction(StopAction)
+                .addAction(SnoozeAction);
+//                .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-        notificationManagerCompat.notify(1, builder.build());
+
 //        context.startActivity(newIntent);
+        try {
+            controlAlarm.playAlarm(alarm , context.getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (notificationManagerCompat!=null)
+            notificationManagerCompat.notify(1, builder.build());
 
     }
 }

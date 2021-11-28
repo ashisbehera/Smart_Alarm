@@ -74,6 +74,21 @@
             android:enabled="true"
             android:exported="true"
             android:process=":remote" />
+        <receiver
+            android:name=".receiver.StopReceiver"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="stop alarm" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.SnoozeReceiver"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="snooze Alarm" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name=".data.AlarmDataProvider"
