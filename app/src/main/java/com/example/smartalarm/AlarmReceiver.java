@@ -37,7 +37,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     int position;
     MediaPlayer mediaPlayer;
 
-
     @RequiresApi(api = Build.VERSION_CODES.P)
     @SuppressLint("LongLogTag")
     @Override
