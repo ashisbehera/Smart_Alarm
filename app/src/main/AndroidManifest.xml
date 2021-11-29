@@ -90,6 +90,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".receiver.CancelAlarmReceiver"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="cancel alarm" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name=".data.AlarmDataProvider"
             android:authorities="com.example.smartalarm"

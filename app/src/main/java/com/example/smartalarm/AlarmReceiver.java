@@ -66,16 +66,16 @@ public class AlarmReceiver extends BroadcastReceiver {
          * intent to cancelAlarm activity
          */
 
-        ControlAlarm controlAlarm = new ControlAlarm(context);
+        ControlAlarm controlAlarm = new ControlAlarm();
 
         /**
          * intent for cancel activity
          */
-//        Intent newIntent = new Intent(context, CancelAlarm.class);
-//        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
-//        PendingIntent pendingIntent = PendingIntent.getActivity
-//                (context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent newIntent = new Intent(context, CancelAlarm.class);
+        newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        newIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        PendingIntent pendingIntent = PendingIntent.getActivity
+                (context, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         /**
          * intent for StopReceiver
@@ -117,8 +117,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .addAction(StopAction)
-                .addAction(SnoozeAction);
-//                .setContentIntent(pendingIntent);
+                .addAction(SnoozeAction)
+                .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
 //        context.startActivity(newIntent);

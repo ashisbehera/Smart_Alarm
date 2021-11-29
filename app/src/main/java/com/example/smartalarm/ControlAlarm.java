@@ -39,43 +39,13 @@ public class ControlAlarm extends AppCompatActivity implements
     /**
      *initialing the vibrator , ringtone and uri for ringtone
      */
-    private TextToSpeech tts;
-    Vibrator vibrator ;
+
+
     Uri ring;
-
-    public ControlAlarm(Context context){
-        tts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS){
-                    int result = tts.setLanguage(Locale.US);
-                    if (result == TextToSpeech.LANG_MISSING_DATA ||
-                            result == TextToSpeech.LANG_NOT_SUPPORTED){
-                        Toast.makeText(context.getApplicationContext(), "tts language not supported",
-                                Toast.LENGTH_SHORT).show();
-                        Log.i("tts language", "tts language not supported ");
-                    }
-                }else {
-                    Toast.makeText(context.getApplicationContext(), "tts  initialization failed",
-                            Toast.LENGTH_SHORT).show();
-                    Log.i("tts initialization", "tts  initialization failed");
-                }
-
-            }
-        });
-
-
-
-        vibrator = (Vibrator) context.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+    PlayMedia playMedia;
+    public ControlAlarm(){
+        playMedia = PlayMedia.getMediaPlayerInstance();
     }
-
-//    public static ControlAlarm getInstance() {
-//        if (INSTANCE == null) {
-//            INSTANCE = new ControlAlarm(Context);
-//        }
-//        return INSTANCE;
-//    }
-
 
 
     /**
@@ -85,12 +55,26 @@ public class ControlAlarm extends AppCompatActivity implements
     @SuppressLint("LongLogTag")
     public void stopAlarm(AlarmConstraints alarm , Context context){
         Log.i("stop alarm", "inside stop alarm ");
-        stopVib_ringtone();
-        stop_tts();
+
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm , context);
         Log.i(" alarm removed " , "successfully alarm removed");
         ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+
+        if(alarm.getTts_active() && alarm.getRingtone_active()){
+            stopRingtoneR();
+            stop_tts();
+            stopVibrateV();
+        }
+        else if(alarm.getTts_active()){
+            stop_tts();
+            stopVibrateV();
+        }
+        else if(alarm.getRingtone_active()){
+            stopRingtoneR();
+            stopVibrateV();
+        }
+
     }
 
 
@@ -105,40 +89,11 @@ public class ControlAlarm extends AppCompatActivity implements
             return;
         }
         Log.i("pkey", "pkey - "+alarm.getPKeyDB());
-        vibrator.vibrate(20000);
-//        if(alarm.getTts_active() && alarm.getRingtone_active()){
-//            playRingtone(alarm , context);
-//            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-//
-//
-//                @Override
-//                public void onStart(String s) {
-//                    ringtonePlay.pause();
-//                }
-//
-//                @Override
-//                public void onDone(String s) {
-//                    ringtonePlay.start();
-//                }
-//
-//                @Override
-//                public void onError(String s) {
-//
-//                }
-//            });
-//            HashMap<String, String> params = new HashMap<>();
-//            params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-//            final Handler handler = new Handler();
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-//                }
-//            }, 1000);
-//
-//
-//        }
-        if(alarm.getTts_active()){
+          vibrateV(context);
+        if(alarm.getTts_active() && alarm.getRingtone_active()){
+           playMedia.playRingtoneTts(alarm , context);
+        }
+        else if(alarm.getTts_active()){
             ttsSpeak(alarm , context);
         }
         else if(alarm.getRingtone_active()){
@@ -148,51 +103,40 @@ public class ControlAlarm extends AppCompatActivity implements
 
     /**will play tts **/
     public void ttsSpeak(AlarmConstraints alarm , Context context){
-
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, null);
-                handler.postDelayed(this , 5000);
-            }
-        };
-        handler.postDelayed(runnable , 1000);
-        TimerTask ttsTimer = new TimerTask() {
-            @Override
-            public void run() {
-                handler.removeCallbacks(runnable);
-            }
-        };
-        Timer timer = new Timer();
-        timer.schedule(ttsTimer, 10000);
+        playMedia.mediaPlayTts(alarm , context);
 
     }
+
     /**will stop the tts **/
     public void stop_tts(){
-        if (tts.isSpeaking())
-        tts.stop();
-        tts.shutdown();
+       playMedia.stop_tts();
     }
+
 
     public void playRingtone(AlarmConstraints alarm , Context context) throws IOException {
 
 
             Log.i("playringtone", "inside playringtone");
             ring = Uri.parse(alarm.getRingtoneUri());
-            Toast.makeText(context.getApplicationContext(), "uri  :"+alarm.getRingtoneUri(),
-                    Toast.LENGTH_SHORT).show();
-            PlayMedia playMedia = PlayMedia.getMediaPlayerInstance();
-            playMedia.playRingtone(context , ring);
+            playMedia.mediaPlayRingtone(context , ring);
+
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void vibrateV(Context context){
+        playMedia.vibrate(context.getApplicationContext());
+    }
+
+    public void stopVibrateV(){
+        playMedia.stopVibrate();
     }
 
     /**
      * stop the vibration and ringtone
      */
-    public void stopVib_ringtone() {
-        vibrator.cancel();
-        PlayMedia playMedia = PlayMedia.getMediaPlayerInstance();
-        playMedia.stopringtone();
+    public void stopRingtoneR() {
+        playMedia.stopRingtone();
     }
 
     /**
@@ -255,5 +199,4 @@ public class ControlAlarm extends AppCompatActivity implements
 
     }
 
-//
 }
