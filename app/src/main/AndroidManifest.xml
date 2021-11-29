@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -50,8 +51,7 @@
                   android:exported="true"
                   android:parentActivityName=".AlarmActivity"
                   android:showOnLockScreen="true"
-                  android:showWhenLocked="true"
-                  android:turnScreenOn="true"
+
                   android:showForAllUsers="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -73,7 +73,9 @@
             android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true"
-            android:process=":remote" />
+            android:process=":remote"
+            android:showOnLockScreen="true"
+            android:permission="@string/app_name"/>
         <receiver
             android:name=".receiver.StopReceiver"
             android:process=":remote">

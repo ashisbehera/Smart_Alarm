@@ -121,7 +121,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
-//        context.startActivity(newIntent);
+        context.startActivity(newIntent);
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());
         } catch (IOException e) {
