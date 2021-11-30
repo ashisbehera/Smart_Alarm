@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(alarm_intent);
         });
         world_clock_img.setOnClickListener(view -> {
-//            Intent edit_alarm_intent = new Intent(MainActivity.this, Ringtone.class);
-//            startActivity(edit_alarm_intent);
+            Intent worldClockIntent = new Intent(MainActivity.this, world_clock.class);
+            startActivity(worldClockIntent);
         });
         stopwatch_img.setOnClickListener(view -> {
             Intent stopwatch_intent = new Intent(MainActivity.this, Stopwatch.class);

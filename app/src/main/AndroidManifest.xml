@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartAlarm">
         <activity
+            android:name=".world_clock"
+            android:exported="false" />
+        <activity
             android:name=".Stopwatch"
             android:exported="false" />
         <activity
@@ -47,12 +50,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".CancelAlarm"
-                  android:exported="true"
-                  android:parentActivityName=".AlarmActivity"
-                  android:showOnLockScreen="true"
-
-                  android:showForAllUsers="true">
+        <activity
+            android:name=".CancelAlarm"
+            android:exported="true"
+            android:parentActivityName=".AlarmActivity"
+            android:showForAllUsers="true"
+            android:showOnLockScreen="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -73,9 +76,9 @@
             android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true"
+            android:permission="@string/app_name"
             android:process=":remote"
-            android:showOnLockScreen="true"
-            android:permission="@string/app_name"/>
+            android:showOnLockScreen="true" />
         <receiver
             android:name=".receiver.StopReceiver"
             android:process=":remote">
@@ -83,7 +86,6 @@
                 <action android:name="stop alarm" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".receiver.SnoozeReceiver"
             android:process=":remote">
@@ -91,7 +93,6 @@
                 <action android:name="snooze Alarm" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".receiver.CancelAlarmReceiver"
             android:process=":remote">

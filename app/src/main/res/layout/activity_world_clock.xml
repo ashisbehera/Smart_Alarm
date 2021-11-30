@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    tools:context=".world_clock">
+
+    <TextView
+        android:id="@+id/currentTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20sp"
+        android:paddingTop="50sp"
+        android:text="Current Time"
+        android:textColor="@color/white"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textCurrentTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:paddingLeft="20sp"
+        android:paddingTop="20sp"
+        android:paddingRight="300sp"
+        android:paddingBottom="100sp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="30sp"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/timeZone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20sp"
+        android:paddingTop="100sp"
+        android:paddingRight="150sp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textTimeZone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:paddingLeft="20sp"
+        android:paddingTop="20sp"
+        android:paddingRight="100sp"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+</LinearLayout>
