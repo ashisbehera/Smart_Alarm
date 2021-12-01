@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="#171717">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -46,14 +46,15 @@
             android:id="@+id/lable_llout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/label"
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="center|left"
+                android:layout_weight="1"
                 android:text="Label"
                 android:textColor="@color/white"
                 android:textSize="20sp"
@@ -63,15 +64,16 @@
 
             <EditText
                 android:id="@+id/label_edt_txt"
-                android:layout_weight="2"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_marginRight="26dp"
+                android:layout_weight="2"
                 android:background="@drawable/edittxt_back"
-                android:hint=" Enter Alarm name"
+                android:hint=" Enter alarm name"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
+                android:paddingLeft="10sp"
                 android:textColor="#FFFFFF"
-                android:layout_marginRight="26dp"
                 android:textColorHint="#C3C3C3"
                 android:textSize="15sp" />
 
@@ -81,14 +83,15 @@
             android:id="@+id/tts_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tts_txt"
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="center|left"
+                android:layout_weight="1"
                 android:text="TTS"
                 android:textColor="@color/white"
                 android:textSize="20sp"
@@ -98,13 +101,14 @@
 
             <EditText
                 android:id="@+id/tts_edt_txt"
-                android:layout_weight="2"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_weight="2"
                 android:background="@drawable/edittxt_back"
-                android:hint=" Enter Text to speech"
+                android:hint=" Enter text-to-speech"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
+                android:paddingLeft="10sp"
                 android:textColor="#FFFFFF"
                 android:textColorHint="#C3C3C3"
                 android:textSize="15sp" />
@@ -121,15 +125,16 @@
             android:id="@+id/ringtoneLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAlignment="textStart"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:text="Ringtone"
+                android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -145,11 +150,12 @@
                 android:gravity="center|right"
                 android:paddingRight="10dp"
                 android:text="Default ringtone" />
+
             <CheckBox
                 android:id="@+id/ringtone_ch_bt"
                 android:layout_width="26dp"
                 android:layout_height="35dp"
-                android:text="@null"/>
+                android:text="@null" />
         </LinearLayout>
 
 
@@ -157,13 +163,13 @@
             android:id="@+id/vibrate_llout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_height="35sp"
+                android:layout_gravity="center|left"
                 android:layout_weight="6"
                 android:gravity="center|left"
                 android:text="Vibrate"
@@ -174,27 +180,34 @@
                 tools:ignore="RtlCompat">
 
             </TextView>
+
             <Switch
                 android:id="@+id/vibrate_switch"
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:track="@drawable/toggle_widget_background"
-                android:thumb="@drawable/thumb"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:focusable="false"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/toggle_widget_background" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/snooze_llout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35sp"
+            android:layout_gravity="center|left"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toEndOf="@+id/vibrate_llout">
+
             <TextView
-                android:layout_weight="6"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_height="35sp"
+                android:layout_gravity="center|left"
+                android:layout_weight="6"
+                android:gravity="center|left"
                 android:text="Snooze"
                 android:textColor="@color/white"
                 android:textSize="20sp"
@@ -202,14 +215,14 @@
 
             <Switch
                 android:id="@+id/snooze_switch"
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:track="@drawable/toggle_widget_background"
-                android:thumb="@drawable/thumb"
+                android:layout_gravity="center"
+                android:layout_weight="1"
                 android:focusable="false"
                 android:textSize="15sp"
-                />
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/toggle_widget_background" />
         </LinearLayout>
 
     </LinearLayout>

@@ -22,10 +22,12 @@
         android:theme="@style/Theme.SmartAlarm">
         <activity
             android:name=".world_clock"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".Stopwatch"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.SmartAlarm">
