@@ -37,7 +37,6 @@ public class AlarmDataProvider extends ContentProvider {
          *  This URI is used to provide access to MULTIPLE rows in ringtone table
          */
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_RINGTONE,RINGTONE);
-
         /**
          * This URI is used to provide access to ONE single row
          */

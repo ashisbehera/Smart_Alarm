@@ -20,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartAlarm">
+
         <activity
             android:name=".world_clock"
             android:exported="false" />
@@ -46,6 +47,13 @@
         <activity
             android:name=".AddAlarm_Activity"
             android:parentActivityName=".AlarmActivity">
+            <intent-filter>
+                <action android:name="from alarmActivity" />
+                <action android:name="from ringtoneActivity" />
+                <action android:name="from alarmActivity new" />
+                <action android:name="from repeatDayActivity" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -62,6 +70,13 @@
         </activity>
         <activity
             android:name=".Ringtone"
+            android:exported="true"
+            android:parentActivityName=".AddAlarm_Activity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".RepeatDayActivity"
             android:exported="true"
             android:parentActivityName=".AddAlarm_Activity">
             <meta-data

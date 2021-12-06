@@ -14,5 +14,14 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Theme.SmartAlarm.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.SmartAlarm.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.SmartAlarm.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 
 </resources>

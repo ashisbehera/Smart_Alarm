@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartalarm.receiver.CancelAlarmReceiver;
 
+import java.util.concurrent.TimeUnit;
+
 
 public class CancelAlarm extends AppCompatActivity {
 
@@ -32,6 +34,11 @@ public class CancelAlarm extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // wake lock
+        PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+        sCpuWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK |
+                PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
+                "SmartAlarm:cpu wake");
+        sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -42,8 +49,6 @@ public class CancelAlarm extends AppCompatActivity {
         } else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        sCpuWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SmartAlarm:cpu wake");
         setContentView(R.layout.cancel_alarm);
 
 
@@ -105,6 +110,12 @@ public class CancelAlarm extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
     }
 }

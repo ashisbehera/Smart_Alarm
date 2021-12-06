@@ -147,9 +147,12 @@ public class ControlAlarm extends AppCompatActivity implements
         /**
          * set the toggle alarm (not to repeat the alarm)
          */
+
+        /** if snooze is active then don't turn off the toggle **/
+        if (!alarm.isSnooze_active())
         setToggleOnOfAfterAlarm(alarm , 0 , context);
         Log.i("toggled off","toggle" );
-        alarm.cancelAlarm(context.getApplicationContext());
+        alarm.cancelAlarm(context.getApplicationContext() , alarm);
         Log.i("this alarm has canceled","alarm");
 
 

@@ -14,6 +14,10 @@ public class StopReceiver extends BroadcastReceiver {
         AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
                 (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
         ControlAlarm controlAlarm = new ControlAlarm();
+        /**
+         * ir previously snooze activated then stop it because it is final cancel
+         */
+        alarm.setSnooze_active(false);
         controlAlarm.stopAlarm((AlarmConstraints)alarm , context);
         // Dismiss notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

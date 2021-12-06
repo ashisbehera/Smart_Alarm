@@ -20,16 +20,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.StreamCorruptedException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Alarm_Database extends SQLiteOpenHelper {
 
 
+    private final static String TAG = "Alarm_Database";
 
     /** Name of the database file */
     private static final String DATABASE_NAME = "alarm.db";
@@ -116,11 +119,13 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.TTS_STRING + " TEXT, "
                 + AlarmEntry.RINGTONE_STRING + " TEXT, "
                 + AlarmEntry.ALARM_RINGTONE_NAME + " TEXT, "
+                + AlarmEntry.ALARM_REPEAT_DAYS + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
-                + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 1, "
+                + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
         String SQL_CREATE_RINGTONE_TABLE = "CREATE TABLE " + AlarmEntry.RINGTONE_TABLE + " ("
@@ -147,7 +152,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 AlarmEntry.TTS_STRING,
                 AlarmEntry.ALARM_TIME,AlarmEntry.RINGTONE_STRING,AlarmEntry.ALARM_VIBRATE,
                 AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE,
-                AlarmEntry.TTS_ACTIVE,AlarmEntry.RINGTONE_ACTIVE};
+                AlarmEntry.TTS_ACTIVE,AlarmEntry.RINGTONE_ACTIVE,
+                AlarmEntry.ALARM_REPEAT_DAYS,AlarmEntry.IS_REPEATING};
         Log.i("columns arr created" , " string arr");
         /**
          * set the cursor
@@ -172,6 +178,46 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 alarms[i].setTtsString(cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING)));
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
                 alarms[i].setRingtoneUri(cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING)));
+                /**
+                 * TreeMap for collecting repeatDays
+                 */
+                TreeMap<Integer, String> treeMap = new TreeMap<>();
+                if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.IS_REPEATING))==1) {
+                    Log.i(TAG, "getAlarmsFromDataBase: alarm is repeating" + alarms[i].getPKeyDB());
+
+                    alarms[i].setRepeating(true);
+
+                    String repeatDays = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
+                    ArrayList<String> dayArrayList = new ArrayList<>();
+
+                    /**
+                     * split days from string then save to the treeMap
+                     */
+                    String[] array = repeatDays.split(",");
+                    for (int k = 0; k < array.length; k++) {
+                        dayArrayList.add(array[k]);
+                    }
+
+                    if (dayArrayList.contains("sunday"))
+                        treeMap.put(0, "sunday");
+                    if (dayArrayList.contains("monday"))
+                        treeMap.put(1, "monday");
+                    if (dayArrayList.contains("tuesday"))
+                        treeMap.put(2, "tuesday");
+                    if (dayArrayList.contains("wednesday"))
+                        treeMap.put(3, "wednesday");
+                    if (dayArrayList.contains("thursday"))
+                        treeMap.put(4, "thursday");
+                    if (dayArrayList.contains("friday"))
+                        treeMap.put(5, "friday");
+                    if (dayArrayList.contains("saturday"))
+                        treeMap.put(6, "saturday");
+                    alarms[i].setRepeatDayMap(treeMap);
+                }else{
+                    alarms[i].setRepeatDayMap(treeMap);
+                    alarms[i].setRepeating(false);
+                }
+
 
                 if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE))==1)
                     alarms[i].setToggleOnOff(true);
@@ -187,6 +233,11 @@ public class Alarm_Database extends SQLiteOpenHelper {
                     alarms[i].setRingtone_active(true);
                 else
                     alarms[i].setRingtone_active(false);
+
+                if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE))==1)
+                    alarms[i].setSnooze_active(true);
+                else
+                    alarms[i].setSnooze_active(false);
 
                 i++;
                 cursor.moveToNext();

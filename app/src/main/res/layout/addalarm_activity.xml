@@ -43,6 +43,37 @@
         app:layout_constraintVertical_weight="1">
 
         <LinearLayout
+            android:id="@+id/repeatLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            >
+            <TextView
+                android:id="@+id/repeat"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Repeat"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold">
+
+            </TextView>
+            <ImageView
+                android:id="@+id/repeatClickImg"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="100dp"
+                android:src="@drawable/outline_arrow_drop_up_white_24"
+                android:layout_gravity="right">
+
+            </ImageView>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/lable_llout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

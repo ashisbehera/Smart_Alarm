@@ -5,6 +5,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,8 +14,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +26,39 @@ import static android.os.Build.VERSION.SDK_INT;
 
 public class AlarmConstraints implements Parcelable  {
 
+    private final static String TAG = "AlarmConstraints";
+
+    public AlarmConstraints() {
+
+    }
+    /** this will save the repeat days int value as key and days as value (key , value) **/
+    private TreeMap<Integer , String>  repeatDayMap;
+    /**getRepeatDayMap
+     * @return
+     */
+    public TreeMap<Integer, String> getRepeatDayMap() {
+        return repeatDayMap;
+    }
+    /**setRepeatDayMap
+     * @param repeatDayMap
+     */
+    public void setRepeatDayMap(TreeMap<Integer, String> repeatDayMap) {
+        this.repeatDayMap = repeatDayMap;
+    }
+
+    private String label = "Alarm";
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * key to be use in every bundle
+     */
     public final static String ALARM_KEY="alarm";
 
     /**
@@ -48,25 +85,43 @@ public class AlarmConstraints implements Parcelable  {
     /**
      * this key will be same as the key of the database
      */
-    private int pKeyDB=0;
-
-    private String Label="Alarm";
-
+    private int pKeyDB= -1;
+    /** default tts string **/
     private  String ttsString = "";
-
+   /** default ringtone uri **/
     private  String ringtoneUri = "";
-
+    /** tts active or not **/
     private boolean tts_active = false;
-
+   /** ringtone active or not **/
     private boolean ringtone_active = false;
+    /** snooze active or not **/
+    private boolean snooze_active = false;
+    /** will use to cancel snooze after main alarm **/
+    private boolean cancel_snooze_alarm = false;
+
+    public boolean isSnooze_active() {
+        return snooze_active;
+    }
+
+    public void setSnooze_active(boolean snooze_active) {
+        this.snooze_active = snooze_active;
+    }
+
+    private boolean repeating = false;
+
+    public boolean isRepeating() {
+        return repeating;
+    }
+
+    public void setRepeating(boolean repeating) {
+        this.repeating = repeating;
+    }
+
     /**
      *calender to get the time
      */
     private Calendar calendar=Calendar.getInstance();
 
-    public AlarmConstraints() {
-
-    }
 
     /**
      * check if toggle on/off
@@ -76,20 +131,6 @@ public class AlarmConstraints implements Parcelable  {
     public boolean isAlarmOn()
     {
         return isAlarmOn;
-    }
-
-
-    /**
-     *will get the calender time
-     * for future use
-     */
-
-
-    public String getTime()
-    {
-        String hour=String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
-        String min=String.valueOf(calendar.get(Calendar.MINUTE));
-        return alarmTime=hour+":"+min;
     }
 
     /**
@@ -108,15 +149,7 @@ public class AlarmConstraints implements Parcelable  {
         return pKeyDB;
     }
 
-    /**
-     * SET label of the alarm
-     * @param label
-     */
 
-    public void setLabel(String label)
-    {
-        this.Label=label;
-    }
     /** will set the tts string from the data base **/
     public void setTtsString(String tts){
         ttsString = tts;
@@ -216,7 +249,7 @@ public class AlarmConstraints implements Parcelable  {
     /**
      *will convert the incoming time to millisecond to set the alarm
      */
-    private long convertTimeInMS(String time) {
+    private long convertTimeInMS(String time , boolean repeatingVal , TreeMap<Integer , String> dayMap) {
         standardTime=new StringBuilder();
         String []splitTime = time.split(":");
         /**
@@ -248,18 +281,71 @@ public class AlarmConstraints implements Parcelable  {
         }
 
         /**
+         *converting to millisecond
+         */
+        alarmTimeInMS= newCalendar.getTimeInMillis();
+        Log.i("UPDATE",String.valueOf(alarmTimeInMS));
+        /**
+         * if repeating then collect all the millisecond for the individual days
+         * then return the lowest one for the alarm
+         */
+        if (repeatingVal) {
+
+            TreeSet<Long> set = new TreeSet<>();
+            for (int i = 0; i < 7; i++) {
+                long repeatAlarmTime = alarmTimeInMS;
+                /**if day present in the days map **/
+                if (dayMap.containsKey(i)) {
+                    Calendar currentCalendar = Calendar.getInstance();
+                    int currDay = currentCalendar.get(Calendar.DAY_OF_WEEK);
+                    /** default day counting starts from 1 but we are taking from 0
+                     * sow decreasing by 1
+                     */
+                    currDay--;
+                    /**if today is the repeating day but time is already passed or to day is not
+                     * repeating day then calculate the times
+                     */
+                    if ((repeatAlarmTime < System.currentTimeMillis() && currDay == i)
+                            || currDay != i) {
+                        /**repeating day is in the future days but not in the next week **/
+                        if (i > currDay) {
+                            repeatAlarmTime += TimeUnit.MILLISECONDS.convert(i - currDay, TimeUnit.DAYS);
+                        }
+                        /** if repeating day is in the next week **/
+                        else {
+                            repeatAlarmTime += TimeUnit.MILLISECONDS.convert(7 - currDay, TimeUnit.DAYS);
+                            repeatAlarmTime += TimeUnit.MILLISECONDS.convert(i, TimeUnit.DAYS);
+                        }
+                        set.add(repeatAlarmTime);
+                    }
+                    /**if today is the repeating day but time is not passed the this is the minimun
+                     * so return this
+                     */
+                    else if(currDay == i){
+                        set.add(repeatAlarmTime);
+                    }
+                }
+
+            }
+            if (!set.isEmpty())
+            return set.first();
+        }
+
+        /** if not repeating then just calculate time **/
+
+        /**
          *if the time less than current time
          */
         if (newCalendar.before(Calendar.getInstance())) {
             newCalendar.add(Calendar.DAY_OF_WEEK,1);
         }
 
-        /**
-         *converting to millisecond
-         */
         alarmTimeInMS= newCalendar.getTimeInMillis();
-        Log.i("UPDATE",String.valueOf(alarmTimeInMS));
         return alarmTimeInMS;
+    }
+
+    public Long getMillisecondTime(String time , boolean repeatingVal , TreeMap<Integer , String> dayMap) {
+        return convertTimeInMS(time , repeatingVal , dayMap);
     }
 
     /**
@@ -293,9 +379,10 @@ public class AlarmConstraints implements Parcelable  {
      *pusing the alarm to the alarmmanager
      */
     @SuppressLint("LongLogTag")
-    public void scheduleAlarm(Context context , String time)
+    public void scheduleAlarm(Context context , String time ,
+                              boolean repeatingVal , TreeMap<Integer , String> dayMap)
     {
-        alarmTimeInMS = convertTimeInMS(time);
+        alarmTimeInMS = convertTimeInMS(time , repeatingVal , dayMap);
         /**
          *intent for broadcast manager
          */
@@ -305,7 +392,7 @@ public class AlarmConstraints implements Parcelable  {
         intent.putExtra(ALARM_KEY,bundle);
         Log.i("the pkey in alarmconstaints",String.valueOf(this.getPKeyDB()));
         PendingIntent pi = PendingIntent.getBroadcast
-                (context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                (context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         if (alarmManager == null)
@@ -326,25 +413,102 @@ public class AlarmConstraints implements Parcelable  {
         Log.i("alarm will ring in :",String.valueOf(getDurationBreakdown(alarmTimeInMS)));
 
     }
+
+    /**
+     * will set the alarm for snooze only
+     * @param context
+     * @param alarm
+     */
+    public void scheduleSnoozeAlarm(Context context , AlarmConstraints alarm){
+
+        Calendar calendar = Calendar.getInstance();
+        /** add the snooze time in current mills**/
+        calendar.add(Calendar.MILLISECOND, 60000);
+        long snoozeTimeInMs = calendar.getTimeInMillis();
+
+        Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
+        Bundle bundle=new Bundle();
+        bundle.putParcelable(alarm.ALARM_KEY,alarm);
+        snoozeIntent.putExtra(alarm.ALARM_KEY,bundle);
+        /** use pKeyDB to differentiate the pending intent **/
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
+                (context, alarm.getPKeyDB(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.i("TAG", "scheduleSnoozeAlarm: "+alarm.getPKeyDB());
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null)
+            return;
+        Toast.makeText(context, "alarm is snoozed :"+
+                        "1m",
+                Toast.LENGTH_SHORT).show();
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    snoozeTimeInMs , snoozePendingIntent);
+        } else if (android.os.Build.VERSION.SDK_INT >= 19
+                && android.os.Build.VERSION.SDK_INT < 23) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, snoozeTimeInMs , snoozePendingIntent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, snoozeTimeInMs , snoozePendingIntent);
+        }
+        Log.i("TAG", "scheduleSnoozeAlarm: snooze set");
+    }
     /**
      *will cancel the alarm
      */
-    public void cancelAlarm(Context context){
+    public void cancelAlarm(Context context , AlarmConstraints alarm){
 
         try {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            intent = new Intent(context, AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast
-                    (context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                intent = new Intent(context, AlarmReceiver.class);
+                PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
+                        (context, alarm.getPKeyDB(), intent, PendingIntent.FLAG_NO_CREATE);
 
-            Log.i("removefrmSchedule", "going to remove");
-            if (alarmManager != null) {
-                alarmManager.cancel(pendingIntent);
-                Log.i("removefrmSchedule", "removed");
-            }
+
+                PendingIntent pendingIntent = PendingIntent.getBroadcast
+                        (context, 0, intent, PendingIntent.FLAG_NO_CREATE);
+
+                Log.i("removefrmSchedule", "going to remove");
+                if (alarmManager != null) {
+                    if (snoozePendingIntent !=null){
+                        alarmManager.cancel(snoozePendingIntent);
+                        Log.i("TAG", "cancelAlarm: snoozependingintent canceled");
+                    }
+                    if (pendingIntent !=null){
+                        alarmManager.cancel(pendingIntent);
+                        Log.i("TAG", "cancelAlarm: mainalarm pendingintent canceled");
+                    }
+                    Log.i("removefrmSchedule", "removed");
+                }
+
+
+
         }
         catch (NullPointerException NPE) {
             Log.i("remove alarm",NPE.getLocalizedMessage());
+        }
+    }
+
+    /** will cancel the snooze alarm only
+     * @param context
+     * @param key
+     */
+    public void cancelSnoozeAlarm(Context context , int key) {
+        try {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            intent = new Intent(context, AlarmReceiver.class);
+            PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
+                    (context, key, intent, PendingIntent.FLAG_NO_CREATE);
+
+            if (alarmManager != null) {
+                if (snoozePendingIntent != null) {
+                    alarmManager.cancel(snoozePendingIntent);
+                    Toast.makeText(context, " snooze canceled :"
+                                     ,
+                            Toast.LENGTH_SHORT).show();
+                    Log.i("TAG", "cancelSnoozeAlarm: snoozependingintent canceled");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -365,7 +529,8 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeString(ringtoneUri);
         parcel.writeInt(tts_active ? 1 : 0);
         parcel.writeInt(ringtone_active ? 1 : 0);
-        //parcel.writeParcelable(intent, i);
+        parcel.writeInt(snooze_active ? 1 : 0);
+        parcel.writeInt(cancel_snooze_alarm ? 1 : 0);
 
     }
 
@@ -379,7 +544,8 @@ public class AlarmConstraints implements Parcelable  {
         ringtoneUri = in.readString();
         tts_active = in.readInt() == 1;
         ringtone_active = in.readInt() == 1;
-        //intent = in.readParcelable(Intent.class.getClassLoader());
+        snooze_active = in.readInt() == 1;
+        cancel_snooze_alarm = in.readInt() == 1;
     }
 
     public static final Parcelable.Creator<AlarmConstraints> CREATOR = new ClassLoaderCreator<AlarmConstraints>() {
@@ -399,9 +565,7 @@ public class AlarmConstraints implements Parcelable  {
         }
     };
 
-    public Long getMillisecondTime(String time) {
-        return convertTimeInMS(time);
-    }
+
 
     public String getTimeToRing(long timeInM){
         return getDurationBreakdown(timeInM);

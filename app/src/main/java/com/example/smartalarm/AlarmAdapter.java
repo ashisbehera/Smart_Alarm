@@ -23,10 +23,9 @@ import android.widget.TextView;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
-public class AlarmAdapter extends CursorAdapter{
+public class AlarmAdapter extends CursorAdapter {
 
-    LayoutInflater layoutInflater;
-    Context context;
+    private final static String TAG = "AlarmAdapter";
 
     public AlarmAdapter(Context context, Cursor c) {
         super(context, c,0);
@@ -34,8 +33,8 @@ public class AlarmAdapter extends CursorAdapter{
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-         return LayoutInflater.from(context).
-                 inflate(R.layout.list_alarm, viewGroup, false);
+        return LayoutInflater.from(context).
+                inflate(R.layout.list_alarm, viewGroup, false);
     }
 
     @Override
@@ -78,11 +77,10 @@ public class AlarmAdapter extends CursorAdapter{
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 Log.i("in alarmadapter", "toggle clicked");
-                boolean on = alarmSwitch.isChecked();
                 /**if the toggle button is turned on then update the data base with the specified rowid
                  * with value 1 which is on.
                  */
-                if(on){
+                if(b){
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 1);
                     Log.i("in alarmadapter", "database updated with rowid :"+rowId);
@@ -98,6 +96,12 @@ public class AlarmAdapter extends CursorAdapter{
                     Log.i("in alarmadapter", "database updated with rowid :"+rowId);
                     Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,rowId);
                     context.getContentResolver().update(currentPetUri , values, null, null);
+                    /**
+                     * this will stop if there is any pending snooze
+                     */
+                    alarm.setPKeyDB(rowId);
+                    Log.i("TAG", "onCheckedChanged: "+rowId);
+                    alarm.cancelSnoozeAlarm(context.getApplicationContext() , rowId);
                     ScheduleService.updateAlarmSchedule(context);
                 }
             }

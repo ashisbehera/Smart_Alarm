@@ -1,6 +1,7 @@
 package com.example.smartalarm;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,6 +16,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -33,10 +35,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    ArrayList<File> songs;
-    int position;
-    MediaPlayer mediaPlayer;
-
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     @SuppressLint("LongLogTag")
@@ -116,11 +114,15 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .addAction(StopAction)
                 .addAction(SnoozeAction)
+                .addAction(StopAction)
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-
+        PowerManager pm = (PowerManager) context
+                .getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        /** if screen is on then only show notification otherwise open activity **/
+        boolean isScreenOn = pm.isInteractive();
+        if (!isScreenOn)
         context.startActivity(newIntent);
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());

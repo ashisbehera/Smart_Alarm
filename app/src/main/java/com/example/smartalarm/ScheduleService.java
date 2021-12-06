@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class ScheduleService extends Service {
-
+   private final static String TAG = "scheduleService";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -34,6 +34,7 @@ public class ScheduleService extends Service {
      */
     public static void updateAlarmSchedule(Context context)
     {
+        Log.i(TAG, "updateAlarmSchedule: inside schedule service");
         Intent intent=new Intent(context,ScheduleService.class);
         context.startService(intent);
     }
@@ -55,7 +56,7 @@ public class ScheduleService extends Service {
             if (alarm != null) {
                 Log.i("the pkey in scheduleservice",String.valueOf(alarm.getPKeyDB()));
 
-                alarm.scheduleAlarm(getApplicationContext() , alarm.getAlarmTime());
+                alarm.scheduleAlarm(getApplicationContext() , alarm.getAlarmTime() , alarm.isRepeating() , alarm.getRepeatDayMap());
                   Log.i("scheduleAlarm","alarm schedule in time");
             }
         }
@@ -90,7 +91,10 @@ public class ScheduleService extends Service {
             @Override
             public int compare(AlarmConstraints lhs, AlarmConstraints rhs) {
                 int result = 0;
-                long diff = lhs.getMillisecondTime(lhs.getAlarmTime()) - rhs.getMillisecondTime(rhs.getAlarmTime());
+                long diff = lhs.getMillisecondTime(lhs.getAlarmTime() , lhs.isRepeating() ,
+                                     lhs.getRepeatDayMap()) -
+                                      rhs.getMillisecondTime(rhs.getAlarmTime() , rhs.isRepeating() ,
+                                              rhs.getRepeatDayMap());
 
                 if(diff > 0){
                     return 1;
@@ -110,7 +114,7 @@ public class ScheduleService extends Service {
         if (alarms.isEmpty()){
             AlarmConstraints alarm = new AlarmConstraints();
             Log.i("active on/off", "alarms list is empty");
-            alarm.cancelAlarm(getApplicationContext());
+            alarm.cancelAlarm(getApplicationContext() , alarm);
         }
 
 
@@ -140,7 +144,7 @@ public class ScheduleService extends Service {
             AlarmConstraints alarm = new AlarmConstraints();
             Log.i("active on/off", "no active alarm");
             Toast.makeText(getApplicationContext(),"no active alarms",Toast.LENGTH_LONG).show();
-            alarm.cancelAlarm(getApplicationContext());
+            alarm.cancelAlarm(getApplicationContext() , alarm);
             return null;
         }
 
