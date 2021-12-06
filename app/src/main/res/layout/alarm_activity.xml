@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".AlarmActivity"
-    android:background="@drawable/gradient_background">
+    android:background="#171717">
 
     <!--   -->
     <ListView

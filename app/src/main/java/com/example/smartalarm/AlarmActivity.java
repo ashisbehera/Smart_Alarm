@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +47,8 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     private final static String TAG = "AlarmActivity";
     private static final int ALARM_LOADER = 0;
     AlarmAdapter aAdapter;
+    Parcelable state;
+    ListView alarmListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,13 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         });
 
-        ListView alarmListView = (ListView) findViewById(R.id.list);
+        alarmListView = (ListView) findViewById(R.id.list);
 
         aAdapter = new AlarmAdapter(this, null);
 
         alarmListView.setAdapter(aAdapter);
+        if (state != null)
+            alarmListView.onRestoreInstanceState(state);
 
         alarmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -126,6 +131,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     protected void onPause() {
+        state = alarmListView.onSaveInstanceState();
         super.onPause();
         getLoaderManager().initLoader(ALARM_LOADER, null, this);
     }
