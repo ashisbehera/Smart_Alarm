@@ -187,6 +187,10 @@ public class AlarmConstraints implements Parcelable  {
     {
         isAlarmOn=val;
     }
+
+    public boolean getToggleOnOff(){
+        return isAlarmOn;
+    }
     /**
      *will set the time from the timepicker to alarmtime
      */

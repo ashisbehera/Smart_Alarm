@@ -33,6 +33,7 @@ import java.util.Calendar;
 
 public class AddAlarm_Activity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
+    AlarmAdapter adapter;
     private static final int ALARM_LOADER_E = 0;
     private String label;
     private String speechText;
@@ -63,7 +64,6 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     public static final String TIME_AM_PM = "AM_PM";
     private final StringBuilder timeBuilder = new StringBuilder();
     private final StringBuilder daysString = new StringBuilder();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -260,6 +260,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
      */
     private void saveAlarmToDataBase(AlarmConstraints alarm) {
         String alarmName = alarmNameEditText.getText().toString();
+        if (alarmName.isEmpty())
+            alarmName = "Alarm";
         String ringtoneNameToShow = setRingtone.getText().toString();
         /** tts string from edit text **/
         String ttsString = ttsEditText.getText().toString();
@@ -314,7 +316,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
         values.put(AlarmEntry.TTS_ACTIVE, tts_ch_box?1:0);
         values.put(AlarmEntry.RINGTONE_ACTIVE, ring_ch_box?1:0);
-        values.put(AlarmEntry.ALARM_ACTIVE, alarm.isAlarmOn()?1:0);
+        values.put(AlarmEntry.ALARM_ACTIVE, 1);
 
         /** if the uri is null then insert new alarm to the database **/
         if (editUri==null){
@@ -341,6 +343,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 
         return timeBuilder.toString();
     }
+
 
     /** in background thread cursor will project the specific row id **/
     @Override

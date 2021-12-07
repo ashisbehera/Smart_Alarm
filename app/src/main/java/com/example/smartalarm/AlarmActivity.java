@@ -34,6 +34,8 @@ import android.widget.TextView;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 import com.example.smartalarm.data.Alarm_Database;
@@ -42,13 +44,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private final static String TAG = "AlarmActivity";
     private static final int ALARM_LOADER = 0;
     AlarmAdapter aAdapter;
     Parcelable state;
-    ListView alarmListView;
+    RecyclerView alarmRecycleView;
+    LinkedList<AlarmConstraints> alarms;
+    Alarm_Database alarmDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,29 +73,32 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         });
 
-        alarmListView = (ListView) findViewById(R.id.list);
+        alarmDatabase= Alarm_Database.getInstance(getApplicationContext());
+        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+        alarmRecycleView = (RecyclerView) findViewById(R.id.list);
 
-        aAdapter = new AlarmAdapter(this, null);
+        aAdapter = new AlarmAdapter(alarms , getApplicationContext());
 
-        alarmListView.setAdapter(aAdapter);
-        if (state != null)
-            alarmListView.onRestoreInstanceState(state);
+        alarmRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
-        alarmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.i("onclick listner","clicked");
-                Intent intent = new Intent(AlarmActivity.this , AddAlarm_Activity.class);
-                intent.setAction("from alarmActivity");
-                /** send the uri with it id of the alarm database **/
-                Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
-                /**  set the uri in the intent **/
-                intent.setData(editUri);
-                startActivity(intent);
-            }
-        });
+        alarmRecycleView.setAdapter(aAdapter);
+        aAdapter.notifyDataSetChanged();
         getLoaderManager().initLoader(ALARM_LOADER, null, this);
+//                setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//                Log.i("onclick listner","clicked");
+//                Intent intent = new Intent(AlarmActivity.this , AddAlarm_Activity.class);
+//                intent.setAction("from alarmActivity");
+//                /** send the uri with it id of the alarm database **/
+//                Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
+//                /**  set the uri in the intent **/
+//                intent.setData(editUri);
+//                startActivity(intent);
+//            }
+//        });
+//        getLoaderManager().initLoader(ALARM_LOADER, null, this);
 
     }
 
@@ -111,6 +118,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
             case R.id.delete_all_alarms:
                 deleteAllPets();
+
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -120,26 +128,30 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         int rowsDeleted = getContentResolver().delete
                 (AlarmEntry.CONTENT_URI, null, null);
         Log.v("AlarmActivity", rowsDeleted + " all alarms are deleted ");
+
          ScheduleService.updateAlarmSchedule(getApplicationContext());
+         alarmRecycleView.removeAllViewsInLayout();
+         alarms.clear();
+         aAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+        aAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause() {
-        state = alarmListView.onSaveInstanceState();
         super.onPause();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+        aAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+        aAdapter.notifyDataSetChanged();
+
     }
 
 
@@ -162,11 +174,11 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor d) {
-          aAdapter.swapCursor(d);
+        aAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        aAdapter.swapCursor(null);
+        aAdapter.notifyDataSetChanged();
     }
 }
