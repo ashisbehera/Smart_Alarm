@@ -3,6 +3,7 @@ package com.example.smartalarm.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.example.smartalarm.AlarmActivity;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 public class AlarmDataProvider extends ContentProvider {
 
@@ -31,7 +35,7 @@ public class AlarmDataProvider extends ContentProvider {
 
         /**
          *  This URI is used to provide access to MULTIPLE rows in alarm table
-          */
+         */
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_ALARM,ALARMS);
         /**
          *  This URI is used to provide access to MULTIPLE rows in ringtone table
@@ -117,12 +121,12 @@ public class AlarmDataProvider extends ContentProvider {
 
         /**
          *  If the data at this URI changes, then we know we need to update the Cursor.
-          */
+         */
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         /**
          * Return the cursor
-          */
+         */
         return cursor;
     }
 
