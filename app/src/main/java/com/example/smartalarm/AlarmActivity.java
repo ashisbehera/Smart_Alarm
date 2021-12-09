@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,8 +34,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +65,10 @@ public class AlarmActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_activity);
         setTitle("Alarms");
+//        finish();
+//        overridePendingTransition(0, 0);
+//        startActivity(getIntent());
+//        overridePendingTransition(0, 0);
 
         /**floating button for @AddAlarm_Activity **/
         FloatingActionButton add_alarm_fab = findViewById(R.id.add_alarm_fb);
@@ -149,7 +156,6 @@ public class AlarmActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         aAdapter.notifyDataSetChanged();
-
     }
 
     @Override

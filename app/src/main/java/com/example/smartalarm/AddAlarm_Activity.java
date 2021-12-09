@@ -37,6 +37,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private static final int ALARM_LOADER_E = 0;
     private String label;
     private String speechText;
+    private boolean tts_checked;
+    private boolean ringtone_checked;
+    private boolean vibrate_checked;
+    private boolean snooze_checked;
     private int timeMinute;
     private int timeHour;
     /**
@@ -61,6 +65,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     public static final String SPEECHTEXT = "speech_text";
     public static final String TIME_M = "minute";
     public static final String TIME_H = "hour";
+    public static final String TTS_CHECKBOX = "tts_checkbox";
+    public static final String RINGTONE_CHECKBOX = "ringtone_checkbox";
+    public static final String VIBRATE_TOGGLE = "vibrate_toggle";
+    public static final String SNOOZE_TOGGLE = "snooze_toggle";
     public static final String TIME_AM_PM = "AM_PM";
     private final StringBuilder timeBuilder = new StringBuilder();
     private final StringBuilder daysString = new StringBuilder();
@@ -79,7 +87,6 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         tts_check_bx = findViewById(R.id.tts_ch_bt);
         ringtone_check_bx = findViewById(R.id.ringtone_ch_bt);
         snoozeSwitch = findViewById(R.id.snooze_switch);
-
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         setRingtone = findViewById(R.id.setRingtone);
@@ -218,6 +225,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         editor.putString(SPEECHTEXT, ttsEditText.getText().toString());
         editor.putInt(TIME_H, timePicker.getCurrentHour());
         editor.putInt(TIME_M, timePicker.getCurrentMinute());
+        editor.putBoolean(TTS_CHECKBOX, tts_check_bx.isChecked());
+        editor.putBoolean(RINGTONE_CHECKBOX, ringtone_check_bx.isChecked());
+        editor.putBoolean(VIBRATE_TOGGLE, vibrateSwitch.isChecked());
+        editor.putBoolean(SNOOZE_TOGGLE, snoozeSwitch.isChecked());
         editor.apply();
     }
 
@@ -230,6 +241,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         speechText = sharedPreferences.getString(SPEECHTEXT, "");
         timeHour = sharedPreferences.getInt(TIME_H, timeNow.get(Calendar.HOUR));
         timeMinute = sharedPreferences.getInt(TIME_M,timeNow.get(Calendar.MINUTE));
+        tts_checked = sharedPreferences.getBoolean(TTS_CHECKBOX, false);
+        ringtone_checked = sharedPreferences.getBoolean(RINGTONE_CHECKBOX, false);
+        vibrate_checked = sharedPreferences.getBoolean(VIBRATE_TOGGLE, false);
+        snooze_checked = sharedPreferences.getBoolean(SNOOZE_TOGGLE, false);
     }
 
     /** update the saved information to the correct place **/
@@ -238,6 +253,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         ttsEditText.setText(speechText);
         timePicker.setCurrentHour(timeHour);
         timePicker.setCurrentMinute(timeMinute);
+        tts_check_bx.setChecked(tts_checked);
+        ringtone_check_bx.setChecked(ringtone_checked);
+        vibrateSwitch.setChecked(vibrate_checked);
+        snoozeSwitch.setChecked(snooze_checked);
     }
 
     @Override
