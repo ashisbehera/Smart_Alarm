@@ -7,25 +7,23 @@
     android:background="#171717"
     tools:context=".MainActivity">
 
-        <com.tomerrosenfeld.customanalogclockview.CustomAnalogClock
-            android:id="@+id/analog_clock"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            app:default_watchface="true"
+    <com.tomerrosenfeld.customanalogclockview.CustomAnalogClock
+        android:id="@+id/analog_clock"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        app:default_watchface="true" />
 
-            android:layout_centerInParent="true"
-            android:layout_centerVertical="true"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/recycleview_bg"
+        android:saveEnabled="false"
+        app:itemRippleColor="@color/white"
+        app:itemTextColor="@color/white"
+        app:menu="@menu/menu_navigation" />
 
-       <com.google.android.material.bottomnavigation.BottomNavigationView
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:id="@+id/bottom_nv"
-           app:itemBackground="@color/gray"
-           app:itemTextColor="@color/white"
-           app:itemRippleColor="@color/white"
-           android:saveEnabled="false"
-           app:menu="@menu/menu_navigation"
-           android:layout_alignParentBottom="true">
-
-       </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>

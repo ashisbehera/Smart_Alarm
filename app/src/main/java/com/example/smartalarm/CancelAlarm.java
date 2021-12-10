@@ -11,6 +11,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,7 +53,7 @@ public class CancelAlarm extends AppCompatActivity {
         setContentView(R.layout.cancel_alarm);
 
 
-        Button cancelb = findViewById(R.id.cancel_button);
+        ImageView cancelb = findViewById(R.id.cancel_button);
 
 
         /**

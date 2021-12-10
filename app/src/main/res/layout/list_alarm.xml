@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:layout_marginBottom="5dp"
     android:background="@drawable/recycleview_bg"
-    android:padding="22dp"
-    android:layout_marginBottom="5dp">
+    android:orientation="horizontal"
+    android:padding="22dp">
 
     <LinearLayout
 
@@ -22,7 +22,8 @@
             android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/gray_white"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/alarm_name"
@@ -33,6 +34,7 @@
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@color/gray_white" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,13 +44,12 @@
         <Switch
             android:id="@+id/alarm_active_switch"
             android:layout_width="wrap_content"
-            android:minWidth="70dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:track="@drawable/toggle_widget_background"
-            android:thumb="@drawable/thumb"
             android:focusable="false"
-            />
+            android:minWidth="70dp"
+            android:thumb="@drawable/thumb"
+            android:track="@drawable/toggle_widget_background" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -36,7 +36,7 @@ public class RepeatDayActivity extends AppCompatActivity{
     private Uri editUri;
     Intent in;
     Button okButton;
-    String arr[] = {"sunday" , "monday" , "tuesday" , "wednesday" , "thursday" , "friday" , "saturday"};
+    String arr[] = {"Sunday" , "Monday" , "Tuesday" , "Wednesday" , "Thursday" , "Friday" , "Saturday"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

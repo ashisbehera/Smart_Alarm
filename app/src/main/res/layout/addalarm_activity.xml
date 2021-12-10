@@ -36,6 +36,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="20dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,11 +66,11 @@
             <ImageView
                 android:id="@+id/repeatClickImg"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:layout_weight="1"
                 android:paddingLeft="100dp"
-                android:src="@drawable/outline_arrow_drop_up_white_24">
+                app:srcCompat="@drawable/arrow_right">
 
             </ImageView>
         </LinearLayout>
@@ -100,8 +101,9 @@
                 android:layout_height="35dp"
                 android:layout_marginRight="26dp"
                 android:layout_weight="2"
-                android:background="@drawable/edittxt_back"
-                android:hint=" Enter Alarm name"
+                android:background="@drawable/recycleview_bg"
+                android:hint="Alarm name"
+                android:paddingLeft="10sp"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 android:textColor="#FFFFFF"
@@ -135,8 +137,9 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_weight="2"
-                android:background="@drawable/edittxt_back"
-                android:hint=" Enter Text to speech"
+                android:background="@drawable/recycleview_bg"
+                android:hint="Text-to-speech"
+                android:paddingLeft="10sp"
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 android:textColor="#FFFFFF"
@@ -256,7 +259,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="done"
         android:foregroundGravity="right|bottom"
-        android:src="@drawable/outline_check_24"
+        app:srcCompat="@drawable/outline_check_24"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent">
@@ -270,7 +273,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="done"
         android:foregroundGravity="left|bottom"
-        android:src="@drawable/baseline_delete_24"
+        app:srcCompat="@drawable/baseline_delete_24"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
