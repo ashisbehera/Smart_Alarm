@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,7 +46,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 import com.example.smartalarm.data.AlarmDataProvider;
 import com.example.smartalarm.data.Alarm_Database;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

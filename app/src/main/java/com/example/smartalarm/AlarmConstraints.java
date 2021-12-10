@@ -96,6 +96,17 @@ public class AlarmConstraints implements Parcelable  {
     private boolean ringtone_active = false;
     /** snooze active or not **/
     private boolean snooze_active = false;
+
+    private boolean vibrate_active = false;
+
+    public boolean isVibrate_active() {
+        return vibrate_active;
+    }
+
+    public void setVibrate_active(boolean vibrate_active) {
+        this.vibrate_active = vibrate_active;
+    }
+
     /** will use to cancel snooze after main alarm **/
     private boolean cancel_snooze_alarm = false;
 
@@ -535,6 +546,7 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeInt(ringtone_active ? 1 : 0);
         parcel.writeInt(snooze_active ? 1 : 0);
         parcel.writeInt(cancel_snooze_alarm ? 1 : 0);
+        parcel.writeInt(vibrate_active ? 1 : 0);
 
     }
 
@@ -550,6 +562,7 @@ public class AlarmConstraints implements Parcelable  {
         ringtone_active = in.readInt() == 1;
         snooze_active = in.readInt() == 1;
         cancel_snooze_alarm = in.readInt() == 1;
+        vibrate_active = in.readInt() == 1;
     }
 
     public static final Parcelable.Creator<AlarmConstraints> CREATOR = new ClassLoaderCreator<AlarmConstraints>() {

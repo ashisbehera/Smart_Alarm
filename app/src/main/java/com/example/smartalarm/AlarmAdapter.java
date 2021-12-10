@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -46,6 +47,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
         return viewHolder;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AlarmConstraints alarm = alarmList.get(position);
@@ -54,10 +56,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
        holder.timeTextView.setText(standardTime);
        holder.nameTextView.setText(alarm.getLabel());
        boolean switchStage  = alarm.getToggleOnOff();
-       if (switchStage)
-       holder.alarmSwitch.setChecked(true);
-       else
-       holder.alarmSwitch.setChecked(false);
+       if (switchStage) {
+           holder.alarmSwitch.setChecked(true);
+           holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
+           holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
+       }
+       else {
+           holder.alarmSwitch.setChecked(false);
+           holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+           holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+       }
 
        holder.itemView.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -77,12 +85,16 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
             public void onClick(View view) {
                 boolean on = holder.alarmSwitch.isChecked();
                 if (on){
+                    holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                    holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 1);
                     Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());
                     context.getContentResolver().update(currentPetUri , values, null, null);
                     ScheduleService.updateAlarmSchedule(context);
                 }else {
+                    holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+                    holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 0);
                     Log.i("in alarmadapter", "database updated with rowid :"+alarm.getPKeyDB());

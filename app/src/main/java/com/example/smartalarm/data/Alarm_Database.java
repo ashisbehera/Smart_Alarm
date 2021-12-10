@@ -239,6 +239,11 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 else
                     alarms[i].setSnooze_active(false);
 
+                if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE))==1)
+                    alarms[i].setVibrate_active(true);
+                else
+                    alarms[i].setVibrate_active(false);
+
                 i++;
                 cursor.moveToNext();
             }

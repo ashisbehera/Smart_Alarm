@@ -1,6 +1,7 @@
 package com.example.smartalarm;
 
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,8 +26,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class PlayMedia {
+    private static final String TAG = "PlayMedia";
     private static PlayMedia Instance;
-    private static Vibrator vibrator;
+    Vibrator vibrator;
     TextToSpeech tts;
     MediaPlayer ringtonePlay;
     AudioManager audioManager;
@@ -50,8 +52,8 @@ public class PlayMedia {
         ringtonePlay.setDataSource(context.getApplicationContext(), ring);
         audioManager = (AudioManager)
                 context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager.getStreamVolume(AudioManager.STREAM_RING) != 0) {
-            ringtonePlay.setAudioStreamType(AudioManager.STREAM_RING);
+        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+            ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
             ringtonePlay.setLooping(true);
             ringtonePlay.prepare();
             ringtonePlay.start();
@@ -249,10 +251,28 @@ public class PlayMedia {
 
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void vibrate(Context context) {
-        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(200,VibrationEffect.DEFAULT_AMPLITUDE));
+
+    public void vibrate(Context context) {
+
+            vibrator = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
+        long[] pattern = {0, 20000, 1000, 20000, 2000};
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0),
+                        new AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .setUsage(AudioAttributes.USAGE_ALARM)
+                                .build());
+                Log.i(TAG, "vibrate: success");
+            } else {
+                vibrator.vibrate(pattern, 0);
+                Log.i(TAG, "vibrate: success");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.i(TAG, "vibrate: failed");
+        }
+        
     }
 
     /**
@@ -277,15 +297,22 @@ public class PlayMedia {
             if (tts.isSpeaking())
                 tts.stop();
             tts.shutdown();
+            Log.i(TAG, "stop_tts: success");
         }catch (Exception e){
             e.printStackTrace();
+            Log.i(TAG, "stop_tts: failed");
         }
     }
 
     /**
      * will stop vibrate
      */
-    public void stopVibrate(){
+    public void stopVibrate(){try {
         vibrator.cancel();
+        Log.i(TAG, "stopVibrate: success");
+    }catch (Exception e){
+        Log.i(TAG, "stopVibrate: failed");
+    }
+
     }
 }

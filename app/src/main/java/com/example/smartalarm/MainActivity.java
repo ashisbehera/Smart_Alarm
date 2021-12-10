@@ -3,47 +3,56 @@ package com.example.smartalarm;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 
 public class MainActivity extends AppCompatActivity {
-
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         createNotificationChannel();
+
+        bottomNavigationView= findViewById(R.id.bottom_nv);
+        bottomNavigationView.setSelected(false);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.stopWatch_nv_bt:
+                        Intent intent1 = new Intent(MainActivity.this, Stopwatch.class);
+                        startActivity(intent1);
+                        return true;
+                    case R.id.clock_nv_bt:
+                        Intent intent2 = new Intent(MainActivity.this, world_clock.class);
+                        startActivity(intent2);
+                        return true;
+                    case R.id.alarm_nv_bt:
+                        Intent intent3 = new Intent(MainActivity.this, AlarmActivity.class);
+                        startActivity(intent3);
+                        return true;
+                }
+               return true;
+            }
+        });
+
+
+
         // clock
         CustomAnalogClock customAnalogClock = (CustomAnalogClock) findViewById(R.id.analog_clock);
         // three menu buttons
-        ImageView alarm_img = findViewById(R.id.alarm_img_v);
-        ImageView world_clock_img = findViewById(R.id.world_clock);
-        ImageView stopwatch_img = findViewById(R.id.stopw_img_v);
-        // customize clock
-        customAnalogClock.setAutoUpdate(true);
-        customAnalogClock.setScale(1.25f);
-        // alarm clock
-        alarm_img.setOnClickListener(v -> {
-            Intent alarm_intent = new Intent(MainActivity.this, AlarmActivity.class);
-            startActivity(alarm_intent);
-        });
-        // world clock
-        world_clock_img.setOnClickListener(view -> {
-            Intent worldClockIntent = new Intent(MainActivity.this, world_clock.class);
-            startActivity(worldClockIntent);
-        });
-        // stopwatch
-        stopwatch_img.setOnClickListener(view -> {
-            Intent stopwatch_intent = new Intent(MainActivity.this, Stopwatch.class);
-            startActivity(stopwatch_intent);
-        });
     }
 
     private void createNotificationChannel() {

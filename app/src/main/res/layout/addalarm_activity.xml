@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     android:background="#171717">
 
     <LinearLayout
@@ -12,7 +13,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="30dp"
+        android:paddingTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,9 +56,9 @@
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:text="Repeat"
+                android:fontFamily="sans-serif"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold">
+                android:textSize="20sp">
 
             </TextView>
 
@@ -90,7 +90,7 @@
                 android:text="Label"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold">
+                android:fontFamily="sans-serif">
 
             </TextView>
 
@@ -126,7 +126,7 @@
                 android:text="TTS"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold">
+                android:fontFamily="sans-serif">
 
             </TextView>
 
@@ -166,7 +166,7 @@
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif"
                 tools:ignore="RtlCompat">
 
             </TextView>
@@ -205,20 +205,19 @@
                 android:textAlignment="textStart"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif"
                 tools:ignore="RtlCompat">
 
             </TextView>
 
             <Switch
                 android:id="@+id/vibrate_switch"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:minWidth="70dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:textSize="15sp"
+                android:track="@drawable/toggle_widget_background"
                 android:thumb="@drawable/thumb"
-                android:track="@drawable/toggle_widget_background" />
+                android:focusable="false" />
         </LinearLayout>
 
         <LinearLayout
@@ -236,17 +235,16 @@
                 android:text="Snooze"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif" />
 
             <Switch
                 android:id="@+id/snooze_switch"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:minWidth="70dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:textSize="15sp"
+                android:track="@drawable/toggle_widget_background"
                 android:thumb="@drawable/thumb"
-                android:track="@drawable/toggle_widget_background" />
+                android:focusable="false" />
         </LinearLayout>
 
     </LinearLayout>
@@ -256,17 +254,12 @@
         android:id="@+id/set_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="28dp"
         android:contentDescription="done"
         android:foregroundGravity="right|bottom"
         android:src="@drawable/outline_check_24"
-        app:backgroundTint="#DADADA"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:pressedTranslationZ="12dp">
+        app:layout_constraintRight_toRightOf="parent">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
@@ -275,17 +268,12 @@
         android:id="@+id/delete_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginBottom="28dp"
         android:contentDescription="done"
         android:foregroundGravity="left|bottom"
         android:src="@drawable/baseline_delete_24"
-        app:backgroundTint="#DADADA"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:pressedTranslationZ="12dp">
+        app:layout_constraintLeft_toLeftOf="parent">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 

@@ -83,13 +83,14 @@ public class ControlAlarm extends AppCompatActivity implements
      * @param alarm
      * play the alarm and ringtone
      */
-    @RequiresApi(api = Build.VERSION_CODES.P)
     public void playAlarm(final AlarmConstraints alarm , Context context) throws IOException {
         if(alarm == null) {
             return;
         }
         Log.i("pkey", "pkey - "+alarm.getPKeyDB());
-          vibrateV(context);
+        if (alarm.isVibrate_active()) {
+            vibrateV(context.getApplicationContext());
+        }
         if(alarm.getTts_active() && alarm.getRingtone_active()){
            playMedia.playRingtoneTts(alarm , context);
         }
@@ -123,7 +124,6 @@ public class ControlAlarm extends AppCompatActivity implements
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void vibrateV(Context context){
         playMedia.vibrate(context.getApplicationContext());
     }
