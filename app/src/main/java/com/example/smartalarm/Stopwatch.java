@@ -14,6 +14,12 @@ public class Stopwatch extends AppCompatActivity {
     private boolean running;
     private long pauseOffset;
     private LottieAnimationView lottieAnimationView;
+    Runnable updateSecsThread = new Runnable() {
+        @Override
+        public void run() {
+            // timeInMillis = SystemClock
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
