@@ -15,6 +15,7 @@ public class CancelAlarmReceiver extends BroadcastReceiver {
         AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
                 (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
         ControlAlarm controlAlarm = new ControlAlarm();
+        alarm.setSnooze_active(false);
         /**
          * will stop the alarm from cancel alarm activity
          */
@@ -22,7 +23,5 @@ public class CancelAlarmReceiver extends BroadcastReceiver {
         /**
          * then cancel the notification
          */
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (notificationManager != null) notificationManager.cancelAll();
     }
 }

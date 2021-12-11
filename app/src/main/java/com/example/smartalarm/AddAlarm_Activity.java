@@ -33,6 +33,7 @@ import java.util.Calendar;
 
 public class AddAlarm_Activity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = "AddAlarm_Activity";
     AlarmAdapter adapter;
     private static final int ALARM_LOADER_E = 0;
     private String label;
@@ -122,6 +123,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 updateViews();
             }
             else if(i.getAction() == "from repeatDayActivity"){
+                loadData();
+                updateViews();
                 /**collect the list from repeatDay activity **/
                 dayArrayList = i.getStringArrayListExtra("arrayList");
             }
@@ -135,7 +138,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 dayArrayList = new ArrayList<String>();
             }
             else if (i.getAction()=="from repeatDayActivity"){
+                loadData();
+                updateViews();
                 dayArrayList = i.getStringArrayListExtra("arrayList");
+
             }
             else if(i.getAction() == "from ringtoneActivity"){
                 dayArrayList = i.getStringArrayListExtra("arrayList");
@@ -184,6 +190,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         repeatAlarmImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                saveData();
                 Intent intent = new Intent(AddAlarm_Activity.this, RepeatDayActivity.class);
                 /** will take the dayArrayList so that we can show or save in RepeatDayActivity **/
                 intent.putStringArrayListExtra("arrayList" , dayArrayList);
@@ -320,7 +327,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             values.put(AlarmEntry.IS_REPEATING, 0);
         }
 
-        Log.i("TAG", "saveAlarmToDataBase: "+dayArrayList.size());
+        Log.i(TAG, "saveAlarmToDataBase: "+dayArrayList.size());
 
         /**if we are coming from alarmActivity and don't want to edit ringtone the
          * put in database
@@ -401,7 +408,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         if (cursor == null || cursor.getCount() < 1) {
             return;
         }
-       if(i.getData()!=null && i.getExtras()==null) { /** if coming from alarm_activity for editing **/
+       if(i.getAction() != "from ringtoneActivity" && i.getAction() != "from repeatDayActivity"){ /** if coming from alarm_activity for editing **/
            if (cursor.moveToFirst()) {
                int alarmNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
                Log.i("name restored", "alarm name");

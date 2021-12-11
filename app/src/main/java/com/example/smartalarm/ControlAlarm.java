@@ -59,6 +59,7 @@ public class ControlAlarm extends AppCompatActivity implements
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm , context);
         Log.i(" alarm removed " , "successfully alarm removed");
+
         ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
         if(alarm.getTts_active() && alarm.getRingtone_active()){
@@ -119,7 +120,7 @@ public class ControlAlarm extends AppCompatActivity implements
 
             Log.i("playringtone", "inside playringtone");
             ring = Uri.parse(alarm.getRingtoneUri());
-            playMedia.mediaPlayRingtone(context , ring);
+            playMedia.mediaPlayRingtone(context , ring , alarm);
 
     }
 
@@ -149,7 +150,7 @@ public class ControlAlarm extends AppCompatActivity implements
          */
 
         /** if snooze is active then don't turn off the toggle **/
-        if (!alarm.isSnooze_active())
+        if (!alarm.isSnooze_active() && !alarm.isRepeating())
         setToggleOnOfAfterAlarm(alarm , 0 , context);
         Log.i("toggled off","toggle" );
         alarm.cancelAlarm(context.getApplicationContext() , alarm);

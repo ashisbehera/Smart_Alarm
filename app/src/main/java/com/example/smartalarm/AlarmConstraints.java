@@ -60,6 +60,7 @@ public class AlarmConstraints implements Parcelable  {
      * key to be use in every bundle
      */
     public final static String ALARM_KEY="alarm";
+    public final static String SNOOZE_KEY="alarm";
 
     /**
      * this will be alarmtime
@@ -305,7 +306,6 @@ public class AlarmConstraints implements Parcelable  {
          * then return the lowest one for the alarm
          */
         if (repeatingVal) {
-
             TreeSet<Long> set = new TreeSet<>();
             for (int i = 0; i < 7; i++) {
                 long repeatAlarmTime = alarmTimeInMS;
@@ -407,7 +407,7 @@ public class AlarmConstraints implements Parcelable  {
         intent.putExtra(ALARM_KEY,bundle);
         Log.i("the pkey in alarmconstaints",String.valueOf(this.getPKeyDB()));
         PendingIntent pi = PendingIntent.getBroadcast
-                (context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                (context, this.getPKeyDB(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         if (alarmManager == null)
@@ -447,14 +447,15 @@ public class AlarmConstraints implements Parcelable  {
         snoozeIntent.putExtra(alarm.ALARM_KEY,bundle);
         /** use pKeyDB to differentiate the pending intent **/
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
-                (context, alarm.getPKeyDB(), snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                (context, (alarm.getPKeyDB()-alarm.getPKeyDB())-alarm.getPKeyDB(),
+                           snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Log.i("TAG", "scheduleSnoozeAlarm: "+alarm.getPKeyDB());
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null)
             return;
-        Toast.makeText(context, "alarm is snoozed :"+
-                        "1m",
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context.getApplicationContext(), "alarm is snoozed :"+
+//                        "1m",
+//                Toast.LENGTH_SHORT).show();
         if (android.os.Build.VERSION.SDK_INT >= 23) {
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     snoozeTimeInMs , snoozePendingIntent);
@@ -474,12 +475,13 @@ public class AlarmConstraints implements Parcelable  {
         try {
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 intent = new Intent(context, AlarmReceiver.class);
-                PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
-                        (context, alarm.getPKeyDB(), intent, PendingIntent.FLAG_NO_CREATE);
-
-
                 PendingIntent pendingIntent = PendingIntent.getBroadcast
-                        (context, 0, intent, PendingIntent.FLAG_NO_CREATE);
+                        (context, alarm.getPKeyDB(), intent, PendingIntent.FLAG_NO_CREATE);
+                Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
+                snoozeIntent.putExtra(alarm.SNOOZE_KEY , alarm.getPKeyDB());
+            PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
+                    (context, (alarm.getPKeyDB()-alarm.getPKeyDB())-alarm.getPKeyDB(),
+                            intent, PendingIntent.FLAG_NO_CREATE);
 
                 Log.i("removefrmSchedule", "going to remove");
                 if (alarmManager != null) {
@@ -499,31 +501,6 @@ public class AlarmConstraints implements Parcelable  {
         }
         catch (NullPointerException NPE) {
             Log.i("remove alarm",NPE.getLocalizedMessage());
-        }
-    }
-
-    /** will cancel the snooze alarm only
-     * @param context
-     * @param key
-     */
-    public void cancelSnoozeAlarm(Context context , int key) {
-        try {
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            intent = new Intent(context, AlarmReceiver.class);
-            PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
-                    (context, key, intent, PendingIntent.FLAG_NO_CREATE);
-
-            if (alarmManager != null) {
-                if (snoozePendingIntent != null) {
-                    alarmManager.cancel(snoozePendingIntent);
-                    Toast.makeText(context, " snooze canceled :"
-                                     ,
-                            Toast.LENGTH_SHORT).show();
-                    Log.i("TAG", "cancelSnoozeAlarm: snoozependingintent canceled");
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
 
@@ -547,6 +524,7 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeInt(snooze_active ? 1 : 0);
         parcel.writeInt(cancel_snooze_alarm ? 1 : 0);
         parcel.writeInt(vibrate_active ? 1 : 0);
+        parcel.writeInt(repeating ? 1 : 0);
 
     }
 
@@ -563,6 +541,7 @@ public class AlarmConstraints implements Parcelable  {
         snooze_active = in.readInt() == 1;
         cancel_snooze_alarm = in.readInt() == 1;
         vibrate_active = in.readInt() == 1;
+        repeating = in.readInt() == 1;
     }
 
     public static final Parcelable.Creator<AlarmConstraints> CREATOR = new ClassLoaderCreator<AlarmConstraints>() {

@@ -183,7 +183,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                  */
                 TreeMap<Integer, String> treeMap = new TreeMap<>();
                 if(cursor.getInt(cursor.getColumnIndex(AlarmEntry.IS_REPEATING))==1) {
-                    Log.i(TAG, "getAlarmsFromDataBase: alarm is repeating" + alarms[i].getPKeyDB());
+                    Log.i(TAG, "getAlarmsFromDataBase: alarm is repeating " + alarms[i].getPKeyDB());
 
                     alarms[i].setRepeating(true);
 
@@ -198,19 +198,19 @@ public class Alarm_Database extends SQLiteOpenHelper {
                         dayArrayList.add(array[k]);
                     }
 
-                    if (dayArrayList.contains("sunday"))
+                    if (dayArrayList.contains("Sunday"))
                         treeMap.put(0, "sunday");
-                    if (dayArrayList.contains("monday"))
+                    if (dayArrayList.contains("Monday"))
                         treeMap.put(1, "monday");
-                    if (dayArrayList.contains("tuesday"))
+                    if (dayArrayList.contains("Tuesday"))
                         treeMap.put(2, "tuesday");
-                    if (dayArrayList.contains("wednesday"))
+                    if (dayArrayList.contains("Wednesday"))
                         treeMap.put(3, "wednesday");
-                    if (dayArrayList.contains("thursday"))
+                    if (dayArrayList.contains("Thursday"))
                         treeMap.put(4, "thursday");
-                    if (dayArrayList.contains("friday"))
+                    if (dayArrayList.contains("Friday"))
                         treeMap.put(5, "friday");
-                    if (dayArrayList.contains("saturday"))
+                    if (dayArrayList.contains("Saturday"))
                         treeMap.put(6, "saturday");
                     alarms[i].setRepeatDayMap(treeMap);
                 }else{

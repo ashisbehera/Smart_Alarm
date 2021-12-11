@@ -92,6 +92,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                     Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());
                     context.getContentResolver().update(currentPetUri , values, null, null);
                     ScheduleService.updateAlarmSchedule(context);
+
                 }else {
                     holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
                     holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
@@ -103,8 +104,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                     /**
                      * this will stop if there is any pending snooze
                      */
-                    alarm.cancelSnoozeAlarm(context.getApplicationContext() , alarm.getPKeyDB());
-                    ScheduleService.updateAlarmSchedule(context);
+                    alarm.cancelAlarm(context.getApplicationContext() , alarm);
+                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
                 }
             }
         });
