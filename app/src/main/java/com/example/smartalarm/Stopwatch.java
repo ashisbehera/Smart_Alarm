@@ -19,7 +19,7 @@ public class Stopwatch extends AppCompatActivity {
     private long tMilliSec, tStart, tBuff, tUpdate = 0L;
     private int secs, mins, milliSecs;
     private ImageView startPause;
-    private TextView millis;
+    private TextView millis, seconds;
     private LottieAnimationView lottieAnimationView;
     private Handler handler;
     private Chronometer chronometer;
@@ -31,6 +31,7 @@ public class Stopwatch extends AppCompatActivity {
         lottieAnimationView = findViewById(R.id.animationView);
         chronometer = findViewById(R.id.chronometer);
         startPause = findViewById(R.id.startPause);
+        seconds = findViewById(R.id.seconds);
         millis = findViewById(R.id.millis);
         ImageView reset = findViewById(R.id.reset);
         handler = new Handler();
@@ -52,8 +53,8 @@ public class Stopwatch extends AppCompatActivity {
             String milliSecsStr = String.format(Locale.ENGLISH, "%02d", milliSecs);
             String minsStr = String.format(Locale.ENGLISH, "%02d", mins);
             String secsStr = String.format(Locale.ENGLISH, "%02d", secs);
-            String minsSecs = minsStr + ":" + secsStr;
-            chronometer.setText(minsSecs);
+            chronometer.setText(minsStr);
+            seconds.setText(secsStr);
             millis.setText(milliSecsStr);
             handler.postDelayed(this, 60);
         }
@@ -97,9 +98,11 @@ public class Stopwatch extends AppCompatActivity {
         secs = 0;
         mins = 0;
         milliSecs = 0;
-        String defaultMinsSecs = "00:00";
+        String defaultMins = "00";
+        String defaultSecs = "00";
         String defaultMillis = "00";
-        chronometer.setText(defaultMinsSecs);
+        chronometer.setText(defaultMins);
+        seconds.setText(defaultSecs);
         millis.setText(defaultMillis);
         running = false;
     }
