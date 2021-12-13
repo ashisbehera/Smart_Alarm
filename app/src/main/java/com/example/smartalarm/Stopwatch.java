@@ -1,25 +1,28 @@
 package com.example.smartalarm;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.Chronometer;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import java.util.Locale;
+
 public class Stopwatch extends AppCompatActivity {
-    private Chronometer chronometer;
     private boolean running;
-    private long pauseOffset;
+    private long tMilliSec, tStart, tBuff, tUpdate = 0L;
+    private int secs, mins, milliSecs;
+    private ImageView startPause;
+    private TextView millis;
     private LottieAnimationView lottieAnimationView;
-    Runnable updateSecsThread = new Runnable() {
-        @Override
-        public void run() {
-            // timeInMillis = SystemClock
-        }
-    };
+    private Handler handler;
+    private Chronometer chronometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,41 +30,77 @@ public class Stopwatch extends AppCompatActivity {
         setContentView(R.layout.activity_stopwatch);
         lottieAnimationView = findViewById(R.id.animationView);
         chronometer = findViewById(R.id.chronometer);
+        startPause = findViewById(R.id.startPause);
+        millis = findViewById(R.id.millis);
+        ImageView reset = findViewById(R.id.reset);
+        handler = new Handler();
         lottieAnimationView.pauseAnimation();
-        // chronometer.setFormat("Time: %s");
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        chronometer.setOnChronometerTickListener(chronometer -> {
-            if (SystemClock.elapsedRealtime() - chronometer.getBase() >= 10000) {
-                chronometer.setBase(SystemClock.elapsedRealtime());
-            }
-        });
+        startPause.setOnClickListener(this::startPauseStopwatch);
+        reset.setOnClickListener(this::resetStopwatch);
     }
 
-    // start stopwatch
-    public void startChronometer(View view) {
+    // thread to calculate the stopwatch mins, secs and milliseconds
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            tMilliSec = SystemClock.uptimeMillis() - tStart;
+            tUpdate = tBuff + tMilliSec;
+            secs = (int) (tUpdate / 1000);
+            mins = secs / 60;
+            secs %= 60;
+            milliSecs = (int) (tUpdate % 100);
+            String milliSecsStr = String.format(Locale.ENGLISH, "%02d", milliSecs);
+            String minsStr = String.format(Locale.ENGLISH, "%02d", mins);
+            String secsStr = String.format(Locale.ENGLISH, "%02d", secs);
+            String minsSecs = minsStr + ":" + secsStr;
+            chronometer.setText(minsSecs);
+            millis.setText(milliSecsStr);
+            handler.postDelayed(this, 60);
+        }
+    };
+
+    // start or pause stopwatch
+    public void startPauseStopwatch(View view) {
         if (!running) {
-            chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
+            startPause.setImageResource(R.drawable.outline_pause_circle_filled_24);
+            tStart = SystemClock.uptimeMillis();
+            handler.postDelayed(runnable, 0);
             chronometer.start();
             lottieAnimationView.resumeAnimation();
             running = true;
-        }
-    }
-
-    // pause stopwatch
-    public void pauseChronometer(View view) {
-        if (running) {
+        } else {
+            startPause.setImageResource(R.drawable.outline_play_circle_filled_24);
+            tBuff += tMilliSec;
+            handler.removeCallbacks(runnable);
             chronometer.stop();
             lottieAnimationView.pauseAnimation();
-            pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             running = false;
         }
     }
 
     // reset stopwatch
-    public void resetChronometer(View view) {
+    public void resetStopwatch(View view) {
+        if (running) {
+            startPause.setImageResource(R.drawable.outline_play_circle_filled_24);
+            tBuff += tMilliSec;
+            handler.removeCallbacks(runnable);
+            chronometer.stop();
+            running = false;
+        }
         lottieAnimationView.playAnimation();
         lottieAnimationView.pauseAnimation();
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        pauseOffset = 0;
+        startPause.setImageResource(R.drawable.outline_play_circle_filled_24);
+        tMilliSec = 0L;
+        tStart = 0L;
+        tBuff = 0L;
+        tUpdate = 0L;
+        secs = 0;
+        mins = 0;
+        milliSecs = 0;
+        String defaultMinsSecs = "00:00";
+        String defaultMillis = "00";
+        chronometer.setText(defaultMinsSecs);
+        millis.setText(defaultMillis);
+        running = false;
     }
 }

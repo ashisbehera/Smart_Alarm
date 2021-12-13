@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,60 +11,64 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
         android:layout_width="match_parent"
-        android:adjustViewBounds="true"
         android:layout_height="500dp"
         android:layout_marginBottom="24dp"
+        android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         app:lottie_autoPlay="true"
         app:lottie_fileName="stopwatch.json"
         app:lottie_loop="true" />
 
-    <Chronometer
-        android:id="@+id/chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="80dp"
-        android:textStyle="bold"
-        android:translationY="-270dp" />
-
-    <ImageView
-        android:id="@+id/reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:maxWidth="70dp"
-        android:onClick="resetChronometer"
-        android:layout_gravity="center"
-        android:translationY="10dp"
-        app:srcCompat="@drawable/reset" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:translationY="-200dp">
+        android:translationY="300sp">
 
-        <ImageView
-            android:id="@+id/start"
-            android:layout_width="0dp"
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:minHeight="40dp"
-            android:onClick="startChronometer"
-            android:src="@drawable/outline_play_circle_filled_24" />
+            android:format="00:00"
+            android:gravity="right"
+            android:textColor="#FFFFFF"
+            android:textSize="60sp"
+            android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/pause"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
+        <TextView
+            android:id="@+id/millis"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="pauseChronometer"
-            android:src="@drawable/outline_pause_circle_filled_24" />
-
+            android:gravity="bottom"
+            android:text="@string/_00"
+            android:textSize="40sp" />
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/animationView"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/startPause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/start_pause"
+            android:minHeight="40dp"
+            app:srcCompat="@drawable/outline_play_circle_filled_24" />
+
+        <ImageView
+            android:id="@+id/reset"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="@string/reset"
+            android:minHeight="40dp"
+            app:srcCompat="@drawable/reset" />
+    </LinearLayout>
+</RelativeLayout>
