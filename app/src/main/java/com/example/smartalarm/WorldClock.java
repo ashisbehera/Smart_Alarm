@@ -1,7 +1,5 @@
 package com.example.smartalarm;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.sql.Time;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +21,7 @@ public class WorldClock extends AppCompatActivity {
     TextView timeZone, textTimeZoneTime, world_clock_current_date;
     long milliseconds;
     ArrayAdapter<String> adapter;
-    SimpleDateFormat simpleDateFormat;
+    SimpleDateFormat simpleDateFormat, formatter;
     Date resultDate;
 
     @SuppressLint("SimpleDateFormat")
@@ -37,6 +36,7 @@ public class WorldClock extends AppCompatActivity {
         world_clock_current_date = findViewById(R.id.world_clock_current_date);
         // array to fetch all the timezones
         String[] array = TimeZone.getAvailableIDs();
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
         setDate();
         // date format
         simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy  HH:mm");
@@ -53,14 +53,13 @@ public class WorldClock extends AppCompatActivity {
                 getGMTTime();
                 String selectedID = (String) (adapterView.getItemAtPosition(i));
                 TimeZone tz = TimeZone.getTimeZone(selectedID);
-                String timeZoneName = tz.getDisplayName();
                 int timeZoneOffset = tz.getRawOffset() / (60 * 1000);
                 int hrs = timeZoneOffset / 60;
                 int mins = timeZoneOffset % 60;
                 milliseconds += tz.getRawOffset();
                 resultDate = new Date(milliseconds);
                 System.out.println(simpleDateFormat.format(resultDate));
-                timeZone.setText(timeZoneName);
+                timeZone.setText(tz.getDisplayName());
                 textTimeZoneTime.setText("" + simpleDateFormat.format(resultDate) + "   GMT" + hrs + "." + mins);
                 milliseconds = 0;
             }
@@ -89,7 +88,7 @@ public class WorldClock extends AppCompatActivity {
 
     public void setDate() {
         Date today = Calendar.getInstance().getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
         String date = formatter.format(today);
         world_clock_current_date.setText(date);
     }

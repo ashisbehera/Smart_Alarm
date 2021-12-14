@@ -32,13 +32,15 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/world_clock_current_date"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:scaleX="1.7"
             android:scaleY="1.7" />
     </LinearLayout>
@@ -66,7 +68,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="20sp"
-            android:paddingRight="150sp"
             android:textSize="28sp"
             android:textStyle="bold" />
 
