@@ -16,10 +16,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class world_clock extends AppCompatActivity {
+public class WorldClock extends AppCompatActivity {
     Calendar current;
     Spinner spinner;
-    TextView timeZone, textTimeZoneTime, textCurrentTime;
+    TextView timeZone, textTimeZoneTime, world_clock_current_date;
     long milliseconds;
     ArrayAdapter<String> adapter;
     SimpleDateFormat simpleDateFormat;
@@ -33,12 +33,13 @@ public class world_clock extends AppCompatActivity {
         // find ids
         spinner = findViewById(R.id.spinner);
         timeZone = findViewById(R.id.timeZone);
-        textCurrentTime = findViewById(R.id.textCurrentTime);
         textTimeZoneTime = findViewById(R.id.textTimeZone);
+        world_clock_current_date = findViewById(R.id.world_clock_current_date);
         // array to fetch all the timezones
         String[] array = TimeZone.getAvailableIDs();
+        setDate();
         // date format
-        simpleDateFormat = new SimpleDateFormat("EEEE, dd MMMM yy HH:mm:ss");
+        simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy  HH:mm");
         // dropdown menu for timezones
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -59,8 +60,8 @@ public class world_clock extends AppCompatActivity {
                 milliseconds += tz.getRawOffset();
                 resultDate = new Date(milliseconds);
                 System.out.println(simpleDateFormat.format(resultDate));
-                timeZone.setText(timeZoneName + " GMT " + hrs + "." + mins);
-                textTimeZoneTime.setText("" + simpleDateFormat.format(resultDate));
+                timeZone.setText(timeZoneName);
+                textTimeZoneTime.setText("" + simpleDateFormat.format(resultDate) + "   GMT" + hrs + "." + mins);
                 milliseconds = 0;
             }
 
@@ -71,11 +72,10 @@ public class world_clock extends AppCompatActivity {
         });
     }
 
-    // function to fetch current time
+    // function to fetch gmt time
     @SuppressLint("SetTextI18n")
     private void getGMTTime() {
         current = Calendar.getInstance();
-        textCurrentTime.setText("" + current.getTime());
         milliseconds = current.getTimeInMillis();
         TimeZone timeZoneCurrent = current.getTimeZone();
         int offset = timeZoneCurrent.getRawOffset();
@@ -85,5 +85,12 @@ public class world_clock extends AppCompatActivity {
         milliseconds -= offset;
         resultDate = new Date(milliseconds);
         System.out.println(simpleDateFormat.format(resultDate));
+    }
+
+    public void setDate() {
+        Date today = Calendar.getInstance().getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String date = formatter.format(today);
+        world_clock_current_date.setText(date);
     }
 }

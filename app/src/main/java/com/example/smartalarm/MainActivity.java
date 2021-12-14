@@ -3,13 +3,10 @@ package com.example.smartalarm;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent1);
                         return true;
                     case R.id.clock_nv_bt:
-                        Intent intent2 = new Intent(MainActivity.this, world_clock.class);
+                        Intent intent2 = new Intent(MainActivity.this, WorldClock.class);
                         startActivity(intent2);
                         return true;
                     case R.id.alarm_nv_bt:

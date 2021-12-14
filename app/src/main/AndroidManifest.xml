@@ -24,7 +24,7 @@
             android:name=".About"
             android:exported="false" />
         <activity
-            android:name=".world_clock"
+            android:name=".WorldClock"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
