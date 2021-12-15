@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home_nv_bt"
+        android:icon="@drawable/baseline_doorbell_24"
+        android:title="Home"></item>
+
     <item
         android:id="@+id/stopWatch_nv_bt"
         android:icon="@drawable/baseline_timer_24"

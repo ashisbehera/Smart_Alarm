@@ -28,6 +28,7 @@ public class Stopwatch extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
+        setTitle("Stop Watch");
         lottieAnimationView = findViewById(R.id.animationView);
         chronometer = findViewById(R.id.chronometer);
         startPause = findViewById(R.id.startPause);

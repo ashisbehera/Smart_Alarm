@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
 
         bottomNavigationView= findViewById(R.id.bottom_nv);
-        bottomNavigationView.setSelected(false);
+        bottomNavigationView.setSelectedItemId(R.id.home_nv_bt);
+        bottomNavigationView.setSelected(true);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -81,5 +82,25 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bottomNavigationView.setSelectedItemId(R.id.home_nv_bt);
+        bottomNavigationView.setSelected(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomNavigationView.setSelectedItemId(R.id.home_nv_bt);
+        bottomNavigationView.setSelected(true);
     }
 }

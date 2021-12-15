@@ -29,6 +29,7 @@ public class WorldClock extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_world_clock);
+        setTitle("World Clock");
         // find ids
         spinner = findViewById(R.id.spinner);
         timeZone = findViewById(R.id.timeZone);
