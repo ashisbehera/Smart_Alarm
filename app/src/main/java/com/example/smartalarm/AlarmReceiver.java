@@ -20,6 +20,7 @@ import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -36,7 +37,8 @@ import java.util.ArrayList;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+    private RemoteViews remoteViews;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -96,42 +98,51 @@ public class AlarmReceiver extends BroadcastReceiver {
                 snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
-        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
-                        (null,
-                        context.getString(R.string.Stop_alarm_notification),
-                        stopPendingIntent).build();
-        NotificationCompat.Action SnoozeAction = new NotificationCompat.Action.Builder
-                        (null,
-                        context.getString(R.string.Snooze_alarm_notification),
-                        snoozePendingIntent).build();
+//        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
+//                        (null,
+//                        context.getString(R.string.Stop_alarm_notification),
+//                        stopPendingIntent).build();
+//        NotificationCompat.Action SnoozeAction = new NotificationCompat.Action.Builder
+//                        (null,
+//                        context.getString(R.string.Snooze_alarm_notification),
+//                        snoozePendingIntent).build();
+
+        remoteViews = new RemoteViews("com.example.smartalarm" ,
+                                          R.layout.notification_layout);
+        remoteViews.setTextViewText(R.id.noti_alarm_name , alarm.getLabel());
+        alarm.setStandardTime(alarm.getAlarmTime());
+        StringBuilder standardTime = alarm.getStandardTime();
+        remoteViews.setTextViewText(R.id.noti_alarm_time , standardTime);
+        remoteViews.setOnClickPendingIntent(R.id.noti_snooze_button , snoozePendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.noti_stop_button , stopPendingIntent);
 
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "notification_alarm")
                 .setSmallIcon(R.drawable.baseline_access_alarms_24)
-                .setContentTitle("Smart Alarm Manager")
-                .setContentText("Notification")
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .addAction(SnoozeAction)
-                .addAction(StopAction)
+//                .addAction(SnoozeAction)
+//                .addAction(StopAction)
+                .setCustomContentView(remoteViews)
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         PowerManager pm = (PowerManager) context
                 .getApplicationContext().getSystemService(Context.POWER_SERVICE);
         /** if screen is on then only show notification otherwise open activity **/
         boolean isScreenOn = pm.isInteractive();
-        if (!isScreenOn)
-        context.startActivity(newIntent);
+        if (!isScreenOn) {
+            context.startActivity(newIntent);
+        }else{
+            if (notificationManagerCompat!=null)
+                notificationManagerCompat.notify(1, builder.build());
+        }
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (notificationManagerCompat!=null)
-            notificationManagerCompat.notify(1, builder.build());
 
     }
 }

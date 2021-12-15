@@ -62,9 +62,7 @@
         </activity>
         <activity
             android:name=".CancelAlarm"
-            android:exported="true"
-            android:parentActivityName=".AlarmActivity"
-            android:showForAllUsers="true"
+            android:launchMode="singleTop"
             android:showOnLockScreen="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
