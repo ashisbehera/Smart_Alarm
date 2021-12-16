@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="118dp"
-    android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/gra">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/gra"
+    android:paddingTop="15sp"
+    android:paddingBottom="10dp">
+
     <LinearLayout
-        android:id="@+id/time_name_linear_lout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/noti_alarm_time"
+            android:id="@+id/small_noti_alarm_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="15dp"
@@ -22,7 +23,7 @@
             android:textSize="20sp">
         </TextView>
         <TextView
-            android:id="@+id/noti_alarm_name"
+            android:id="@+id/small_noti_alarm_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="15dp"
@@ -30,35 +31,37 @@
             android:textColor="@color/white"
             android:textSize="15sp">
         </TextView>
-
     </LinearLayout>
 
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal">
+        android:paddingTop="9dp"
+        android:layout_alignParentRight="true"
+        android:paddingRight="10dp">
+
         <Button
-            android:id="@+id/noti_snooze_button"
+            android:id="@+id/small_noti_snooze_button"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:text="snooze"
+            android:layout_marginRight="20dp"
             android:textColor="@color/white"
-            android:background="@drawable/recycleview_bg">
+            android:background="@color/gra">
 
         </Button>
-        
+
         <Button
-            android:id="@+id/noti_stop_button"
+            android:id="@+id/small_noti_stop_button"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:text="stop"
             android:textColor="@color/white"
-            android:background="@drawable/recycleview_bg">
+            android:background="@color/gra">
 
         </Button>
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>

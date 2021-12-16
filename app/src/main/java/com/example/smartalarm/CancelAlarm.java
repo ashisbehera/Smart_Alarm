@@ -30,7 +30,7 @@ public class CancelAlarm extends AppCompatActivity {
     Bundle bundle;
     private PowerManager.WakeLock sCpuWakeLock;
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +90,7 @@ public class CancelAlarm extends AppCompatActivity {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+
     @SuppressLint("MissingSuperCall")
     @Override
     public void onNewIntent(Intent intent) {

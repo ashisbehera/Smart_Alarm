@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
-    private RemoteViews remoteViews;
+    private RemoteViews largeRemoteViews , smallRemoteView;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @SuppressLint("LongLogTag")
     @Override
@@ -97,7 +97,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context, 0,
                 snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
+//
 //        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
 //                        (null,
 //                        context.getString(R.string.Stop_alarm_notification),
@@ -107,25 +107,38 @@ public class AlarmReceiver extends BroadcastReceiver {
 //                        context.getString(R.string.Snooze_alarm_notification),
 //                        snoozePendingIntent).build();
 
-        remoteViews = new RemoteViews("com.example.smartalarm" ,
+        largeRemoteViews = new RemoteViews("com.example.smartalarm" ,
                                           R.layout.notification_layout);
-        remoteViews.setTextViewText(R.id.noti_alarm_name , alarm.getLabel());
-        alarm.setStandardTime(alarm.getAlarmTime());
-        StringBuilder standardTime = alarm.getStandardTime();
-        remoteViews.setTextViewText(R.id.noti_alarm_time , standardTime);
-        remoteViews.setOnClickPendingIntent(R.id.noti_snooze_button , snoozePendingIntent);
-        remoteViews.setOnClickPendingIntent(R.id.noti_stop_button , stopPendingIntent);
+
+
+            largeRemoteViews.setTextViewText(R.id.noti_alarm_name , alarm.getLabel());
+            alarm.setStandardTime(alarm.getAlarmTime());
+            StringBuilder standardTime = alarm.getStandardTime();
+            largeRemoteViews.setTextViewText(R.id.noti_alarm_time , standardTime);
+            largeRemoteViews.setOnClickPendingIntent(R.id.noti_snooze_button , snoozePendingIntent);
+            largeRemoteViews.setOnClickPendingIntent(R.id.noti_stop_button , stopPendingIntent);
+
+            smallRemoteView = new RemoteViews("com.example.smartalarm" ,
+                    R.layout.small_notification_layout);
+            smallRemoteView.setTextViewText(R.id.small_noti_alarm_name , alarm.getLabel());
+            smallRemoteView.setTextViewText(R.id.small_noti_alarm_time , standardTime);
+            smallRemoteView.setOnClickPendingIntent(R.id.small_noti_snooze_button , snoozePendingIntent);
+            smallRemoteView.setOnClickPendingIntent(R.id.small_noti_stop_button , stopPendingIntent);
+
 
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "notification_alarm")
                 .setSmallIcon(R.drawable.baseline_access_alarms_24)
+//                .setContentTitle("Smart Alarm Manager")
+//                .setContentText("Notification")
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 //                .addAction(SnoozeAction)
 //                .addAction(StopAction)
-                .setCustomContentView(remoteViews)
+                .setCustomContentView(smallRemoteView)
+                .setCustomBigContentView(largeRemoteViews)
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         PowerManager pm = (PowerManager) context
