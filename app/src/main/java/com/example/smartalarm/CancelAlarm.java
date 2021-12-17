@@ -40,7 +40,7 @@ public class CancelAlarm extends AppCompatActivity {
                 PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
                 "SmartAlarm:cpu wake");
         sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
@@ -118,5 +118,11 @@ public class CancelAlarm extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sCpuWakeLock.release();
     }
 }

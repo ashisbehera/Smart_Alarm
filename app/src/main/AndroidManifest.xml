@@ -12,6 +12,13 @@
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        android:maxSdkVersion="19" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        android:maxSdkVersion="22" />
 
     <application
         android:allowBackup="true"
@@ -62,8 +69,12 @@
         </activity>
         <activity
             android:name=".CancelAlarm"
-            android:launchMode="singleTop"
-            android:showOnLockScreen="true">
+            android:configChanges="screenSize|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:resizeableActivity="false"
+            android:showOnLockScreen="true"
+            android:taskAffinity="">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -114,6 +125,14 @@
             android:process=":remote">
             <intent-filter>
                 <action android:name="cancel alarm" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.BootUpReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
 

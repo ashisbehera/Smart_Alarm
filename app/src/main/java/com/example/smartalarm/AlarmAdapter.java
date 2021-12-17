@@ -21,6 +21,7 @@ import android.widget.CursorAdapter;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -87,6 +88,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                 if (on){
                     holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
                     holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
+
+                    long milisec = alarm.convertTimeInMS(alarm.getAlarmTime(),
+                            alarm.isRepeating() , alarm.getRepeatDayMap());
+
+                    Toast.makeText(context, "alarm will ring in : "+
+                                    String.valueOf(alarm.getDurationBreakdown(milisec)),
+                            Toast.LENGTH_SHORT).show();
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 1);
                     Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());

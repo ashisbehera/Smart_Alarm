@@ -180,8 +180,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center|right"
-                android:paddingRight="10dp"
-                android:text="Default ringtone" />
+                android:paddingRight="10dp"/>
 
             <CheckBox
                 android:id="@+id/ringtone_ch_bt"

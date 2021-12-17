@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 public class AddAlarm_Activity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -44,6 +46,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private boolean snooze_checked;
     private int timeMinute;
     private int timeHour;
+    private String time;
     /**
      * list will contain repeat day list
      */
@@ -59,8 +62,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private LinearLayout ringtoneLayout;
     private String ringtoneUri="";
     private String ringtoneName="";
-    Uri editUri ;
-    Intent i;
+    private Uri editUri ;
+    private Uri defaultRingtoneUri;
+    private Intent i;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String LABEL = "label";
     public static final String SPEECHTEXT = "speech_text";
@@ -91,6 +95,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         setRingtone = findViewById(R.id.setRingtone);
+
+
+
 
         /**
          *time picker
@@ -127,6 +134,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 updateViews();
                 /**collect the list from repeatDay activity **/
                 dayArrayList = i.getStringArrayListExtra("arrayList");
+                ringtoneName = i.getStringExtra("ringtoneName");
+                setRingtone.setText(ringtoneName);
+                /**set ringtone uri from the extra **/
+                ringtoneUri = i.getStringExtra("ringtoneUri");
             }
             /** if it is add alarm activity then delete button will invisible **/
             delete_alarm.setVisibility(View.GONE);
@@ -141,7 +152,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 loadData();
                 updateViews();
                 dayArrayList = i.getStringArrayListExtra("arrayList");
-
+                ringtoneName = i.getStringExtra("ringtoneName");
+                setRingtone.setText(ringtoneName);
+                /**set ringtone uri from the extra **/
+                ringtoneUri = i.getStringExtra("ringtoneUri");
             }
             else if(i.getAction() == "from ringtoneActivity"){
                 dayArrayList = i.getStringArrayListExtra("arrayList");
@@ -155,7 +169,18 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             }
 
             getLoaderManager().initLoader(ALARM_LOADER_E, null, this);
+
         }
+        if (ringtoneName=="" && ringtoneUri=="") {
+            defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_ALARM);
+            ringtoneUri = defaultRingtoneUri.toString();
+            android.media.Ringtone ring = RingtoneManager.getRingtone(getApplicationContext(), defaultRingtoneUri);
+            ringtoneName = ring.getTitle(getApplicationContext());
+            if (setRingtone.getText().toString().isEmpty()) {
+                setRingtone.setText(ringtoneName);
+            }
+        }
+
 
 
         /**
@@ -171,7 +196,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                  */
                 saveAlarmToDataBase(newAlarm);
                 Log.i("data saved to data base", "database created");
-                newAlarm.setAlarmTime(getPickerTime());
+
                 /**
                  * updating the service
                  */
@@ -180,6 +205,33 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.clear();
                 editor.apply();
+
+                TreeMap<Integer, String> treeMapDays = new TreeMap<>();
+                if(!dayArrayList.isEmpty()) {
+                    newAlarm.setRepeating(true);
+                    if (dayArrayList.contains("Sunday"))
+                        treeMapDays.put(0, "sunday");
+                    if (dayArrayList.contains("Monday"))
+                        treeMapDays.put(1, "monday");
+                    if (dayArrayList.contains("Tuesday"))
+                        treeMapDays.put(2, "tuesday");
+                    if (dayArrayList.contains("Wednesday"))
+                        treeMapDays.put(3, "wednesday");
+                    if (dayArrayList.contains("Thursday"))
+                        treeMapDays.put(4, "thursday");
+                    if (dayArrayList.contains("Friday"))
+                        treeMapDays.put(5, "friday");
+                    if (dayArrayList.contains("Saturday"))
+                        treeMapDays.put(6, "saturday");
+                }else
+                    newAlarm.setRepeating(false);
+                newAlarm.setRepeatDayMap(treeMapDays);
+                long milisec = newAlarm.convertTimeInMS(time,
+                        newAlarm.isRepeating() , newAlarm.getRepeatDayMap());
+
+                Toast.makeText(getApplicationContext(), "alarm will ring in : "+
+                                String.valueOf(newAlarm.getDurationBreakdown(milisec)),
+                        Toast.LENGTH_SHORT).show();
                 /**
                  *will return to the previous activity
                  */
@@ -194,6 +246,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 Intent intent = new Intent(AddAlarm_Activity.this, RepeatDayActivity.class);
                 /** will take the dayArrayList so that we can show or save in RepeatDayActivity **/
                 intent.putStringArrayListExtra("arrayList" , dayArrayList);
+                intent.putExtra("ringtoneName",ringtoneName);
+                intent.putExtra("ringtoneUri",ringtoneUri);
                 intent.setData(editUri);
                 startActivity(intent);
 
@@ -288,28 +342,16 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         String alarmName = alarmNameEditText.getText().toString();
         if (alarmName.isEmpty())
             alarmName = "Alarm";
-        String ringtoneNameToShow = setRingtone.getText().toString();
-        /** tts string from edit text **/
-        String ttsString = ttsEditText.getText().toString();
-        String time = getPickerTime();
-        int vibrate_on_off;
+        time = getPickerTime();
         boolean vibrate = vibrateSwitch.isChecked();
-        if (vibrate) {
-            vibrate_on_off = 1;
-        } else vibrate_on_off = 0;
-
-        int snooze_on_off;
         boolean snooze = snoozeSwitch.isChecked();
-        if (snooze) {
-            snooze_on_off = 1;
-        } else snooze_on_off = 0;
         boolean tts_ch_box = tts_check_bx.isChecked();
         boolean ring_ch_box = ringtone_check_bx.isChecked();
 
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME, alarmName);
         /** insert into data base **/
-        values.put(AlarmEntry.TTS_STRING, ttsString);
+        values.put(AlarmEntry.TTS_STRING, ttsEditText.getText().toString());
 
         /**
          * convert arrayList to String to save in the data base
@@ -329,17 +371,11 @@ public class AddAlarm_Activity extends AppCompatActivity implements
 
         Log.i(TAG, "saveAlarmToDataBase: "+dayArrayList.size());
 
-        /**if we are coming from alarmActivity and don't want to edit ringtone the
-         * put in database
-         */
-
-        if(i.getExtras()!=null)
-            values.put(AlarmEntry.RINGTONE_STRING , ringtoneUri);
-
-        values.put(AlarmEntry.ALARM_RINGTONE_NAME , ringtoneNameToShow);
+        values.put(AlarmEntry.RINGTONE_STRING , ringtoneUri);
+        values.put(AlarmEntry.ALARM_RINGTONE_NAME , setRingtone.getText().toString());
         values.put(AlarmEntry.ALARM_TIME, time);
-        values.put(AlarmEntry.ALARM_VIBRATE, vibrate_on_off);
-        values.put(AlarmEntry.ALARM_SNOOZE, snooze_on_off);
+        values.put(AlarmEntry.ALARM_VIBRATE, vibrate?1:0);
+        values.put(AlarmEntry.ALARM_SNOOZE, snooze?1:0);
         values.put(AlarmEntry.TTS_ACTIVE, tts_ch_box?1:0);
         values.put(AlarmEntry.RINGTONE_ACTIVE, ring_ch_box?1:0);
         values.put(AlarmEntry.ALARM_ACTIVE, 1);
@@ -415,6 +451,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                int ttsStringCIn = cursor.getColumnIndex(AlarmEntry.TTS_STRING);
                // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
                int alarmRingtoneNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME);
+               int alarmRingtoneUri = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
                int alarmTimeCIn = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
                int VibCIn = cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE);
                int SnzCIn = cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE);
@@ -429,6 +466,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 * get RepeatDays from the database and save them to arrayList.
                 */
                String alarmRiName = cursor.getString(alarmRingtoneNameCIn);
+               String alarmRiUri = cursor.getString(alarmRingtoneUri);
+               ringtoneName = alarmRiName;
+               ringtoneUri = alarmRiUri;
                String RepeatDaysString = cursor.getString(repeatDaysCIn);
                Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
                if (RepeatDaysString!=null) {

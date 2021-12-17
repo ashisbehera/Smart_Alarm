@@ -31,9 +31,12 @@ import java.util.ArrayList;
 
 public class RepeatDayActivity extends AppCompatActivity{
 
+    private static final String TAG = "RepeatDayActivity";
     private ArrayList<String> arrayList;
     private RepeatDaysAdapter adapter;
     private Uri editUri;
+    private String ringtoneUri="";
+    private String ringtoneName="";
     Intent in;
     Button okButton;
     String arr[] = {"Sunday" , "Monday" , "Tuesday" , "Wednesday" , "Thursday" , "Friday" , "Saturday"};
@@ -44,6 +47,9 @@ public class RepeatDayActivity extends AppCompatActivity{
         setContentView(R.layout.activity_repeat_day);
         setTitle("Repeat days");
         in = getIntent();
+        ringtoneName = in.getStringExtra("ringtoneName");
+        Log.i(TAG, "onCreate: ringtoneName is "+ ringtoneName);
+        ringtoneUri = in.getStringExtra("ringtoneUri");
         arrayList = in.getStringArrayListExtra("arrayList");
         editUri = in.getData();
         ListView listView = findViewById(R.id.daysList);
@@ -57,6 +63,8 @@ public class RepeatDayActivity extends AppCompatActivity{
                 Intent intent = new Intent(RepeatDayActivity.this, AddAlarm_Activity.class);
                 intent.putStringArrayListExtra("arrayList" , arrayList);
                 intent.setAction("from repeatDayActivity");
+                intent.putExtra("ringtoneName",ringtoneName);
+                intent.putExtra("ringtoneUri",ringtoneUri);
                 intent.setData(editUri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 finish();

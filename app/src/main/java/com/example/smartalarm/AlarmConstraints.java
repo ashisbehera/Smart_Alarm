@@ -265,7 +265,7 @@ public class AlarmConstraints implements Parcelable  {
     /**
      *will convert the incoming time to millisecond to set the alarm
      */
-    private long convertTimeInMS(String time , boolean repeatingVal , TreeMap<Integer , String> dayMap) {
+    public long convertTimeInMS(String time , boolean repeatingVal , TreeMap<Integer , String> dayMap) {
         standardTime=new StringBuilder();
         String []splitTime = time.split(":");
         /**
@@ -369,24 +369,31 @@ public class AlarmConstraints implements Parcelable  {
      * @return
      */
     public String getDurationBreakdown(long time) {
+        Log.i(TAG, "getDurationBreakdown: time "+ time);
         if(time < 0) {
             throw new IllegalArgumentException("Duration must be greater than zero!");
         }
-        long millis = time - Calendar.getInstance().getTimeInMillis();
-        long hours = TimeUnit.MILLISECONDS.toHours(millis);
-        millis -= TimeUnit.HOURS.toMillis(hours);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-        millis -= TimeUnit.MINUTES.toMillis(minutes);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        long remainingMillis = time - Calendar.getInstance().getTimeInMillis();
+
+        long days = TimeUnit.MILLISECONDS.toDays(remainingMillis);
+        long daysMillis = TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(remainingMillis - daysMillis);
+        long hoursMillis = TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis - daysMillis - hoursMillis);
+        long minutesMillis = TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(remainingMillis - daysMillis - hoursMillis - minutesMillis);
+
 
         StringBuilder sb = new StringBuilder(64);
+        sb.append(days);
+        sb.append(":d ");
         sb.append(hours);
         sb.append(":H ");
         sb.append(minutes);
         sb.append(":M ");
         sb.append(seconds);
         sb.append(":S");
-
+        Log.i(TAG, "getDurationBreakdown: duration "+sb);
         return(sb.toString());
     }
 
@@ -422,9 +429,7 @@ public class AlarmConstraints implements Parcelable  {
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
         }
-        Toast.makeText(context, "alarm will ring in :"+
-                        String.valueOf(getDurationBreakdown(alarmTimeInMS)) ,
-                Toast.LENGTH_SHORT).show();
+
         Log.i("alarm will ring in :",String.valueOf(getDurationBreakdown(alarmTimeInMS)));
 
     }
