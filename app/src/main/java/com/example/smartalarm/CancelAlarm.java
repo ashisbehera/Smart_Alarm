@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smartalarm.databinding.CancelAlarmBinding;
 import com.example.smartalarm.receiver.CancelAlarmReceiver;
 
 import java.util.concurrent.TimeUnit;
@@ -27,29 +29,26 @@ public class CancelAlarm extends AppCompatActivity {
      * initialing the vibrator , ringtone and uri for ringtone
      */
 
-    Bundle bundle;
-    private PowerManager.WakeLock sCpuWakeLock;
-
+    private Bundle bundle;
 
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // wake lock
-        PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-        sCpuWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK |
-                PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
-                "SmartAlarm:cpu wake");
-        sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
-        if (Build.VERSION.SDK_INT >= 27) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
-            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-            // show over lock screen
-            if (keyguardManager != null)
-                keyguardManager.requestDismissKeyguard(this, null);
         } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
         setContentView(R.layout.cancel_alarm);
 
 
@@ -68,23 +67,28 @@ public class CancelAlarm extends AppCompatActivity {
         /**
          * cancel the alarm
          */
-        cancelb.setOnClickListener(view -> {
-            /**
-             * pending intent for cancelAlarmReceiver to stop the alarm.
-             */
-            Intent cancelIntent = new Intent(getApplicationContext(), CancelAlarmReceiver.class);
-            cancelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            cancelIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
-            cancelIntent.setAction("cancel alarm");
-            PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                    cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            try {
-                cancelPendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            KeyguardManager keyguardManager = (KeyguardManager) this.getSystemService(KEYGUARD_SERVICE);
+            keyguardManager.requestDismissKeyguard(this, null);
+        }
+        cancelb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cancelIntent = new Intent(getApplicationContext(), CancelAlarmReceiver.class);
+                cancelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                cancelIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+                cancelIntent.setAction("cancel alarm");
+                PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                        cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                try {
+                    cancelPendingIntent.send();
+                } catch (PendingIntent.CanceledException e) {
+                    e.printStackTrace();
+                }
+                Log.i("on cancelb", "successfully canceled alarm");
+                finish();
             }
-            Log.i("on cancelb", "successfully canceled alarm");
-            finish();
         });
 
     }
@@ -111,18 +115,15 @@ public class CancelAlarm extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        sCpuWakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sCpuWakeLock.release();
     }
 }

@@ -126,7 +126,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             smallRemoteView.setOnClickPendingIntent(R.id.small_noti_stop_button , stopPendingIntent);
 
 
-
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "notification_alarm")
                 .setSmallIcon(R.drawable.baseline_access_alarms_24)
@@ -141,16 +140,23 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setCustomBigContentView(largeRemoteViews)
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-        PowerManager pm = (PowerManager) context
-                .getApplicationContext().getSystemService(Context.POWER_SERVICE);
+
         /** if screen is on then only show notification otherwise open activity **/
-        boolean isScreenOn = pm.isInteractive();
+
+        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = powerManager.isInteractive();
         if (!isScreenOn) {
-            context.startActivity(newIntent);
-        }else{
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
+                    PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                    "smart_alarm:AlarmReceiver");
+            wakeLock.acquire(10000);
+
+            builder.setFullScreenIntent(pendingIntent , true);
+        }
+
             if (notificationManagerCompat!=null)
                 notificationManagerCompat.notify(1, builder.build());
-        }
+
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());
         } catch (IOException e) {
