@@ -10,5 +10,7 @@
     <color name="gray">#808080</color>
     <color name="gra">#EB3F4150</color>
     <color name="gray_white">#6BFFFFFF</color>
+    <color name="mate_black">#292222</color>
     <color name="orange">#FF3F03</color>
+    <color name="buttom_nav">#454546</color>
 </resources>

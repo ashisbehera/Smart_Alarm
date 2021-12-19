@@ -420,11 +420,12 @@ public class AlarmConstraints implements Parcelable  {
         if (alarmManager == null)
             return;
 
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    alarmTimeInMS , pi);
-        } else if (android.os.Build.VERSION.SDK_INT >= 19
-                && android.os.Build.VERSION.SDK_INT < 23) {
+//        if (android.os.Build.VERSION.SDK_INT >= 23) {
+//            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+//                    alarmTimeInMS , pi);
+//        } else
+
+        if (android.os.Build.VERSION.SDK_INT >= 19) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
@@ -461,11 +462,11 @@ public class AlarmConstraints implements Parcelable  {
 //        Toast.makeText(context.getApplicationContext(), "alarm is snoozed :"+
 //                        "1m",
 //                Toast.LENGTH_SHORT).show();
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    snoozeTimeInMs , snoozePendingIntent);
-        } else if (android.os.Build.VERSION.SDK_INT >= 19
-                && android.os.Build.VERSION.SDK_INT < 23) {
+//        if (android.os.Build.VERSION.SDK_INT >= 23) {
+//            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+//                    snoozeTimeInMs , snoozePendingIntent);
+//        } else
+        if (android.os.Build.VERSION.SDK_INT >= 19) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, snoozeTimeInMs , snoozePendingIntent);
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, snoozeTimeInMs , snoozePendingIntent);

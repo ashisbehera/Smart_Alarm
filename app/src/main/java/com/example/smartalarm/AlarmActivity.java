@@ -49,6 +49,7 @@ import com.example.smartalarm.data.Alarm_Database;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
+import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -63,6 +64,7 @@ public class AlarmActivity extends AppCompatActivity{
     LinkedList<AlarmConstraints> alarms;
     Alarm_Database alarmDatabase;
     BroadcastReceiver broadcastReceiver;
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,31 @@ public class AlarmActivity extends AppCompatActivity{
 //        overridePendingTransition(0, 0);
 //        startActivity(getIntent());
 //        overridePendingTransition(0, 0);
+
+        createNotificationChannel();
+
+        bottomNavigationView= findViewById(R.id.bottom_nv);
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.stopWatch_nv_bt:
+                        Intent intent1 = new Intent(AlarmActivity.this, Stopwatch.class);
+                        startActivity(intent1);
+                        return true;
+                    case R.id.clock_nv_bt:
+                        Intent intent2 = new Intent(AlarmActivity.this, WorldClock.class);
+                        startActivity(intent2);
+                        return true;
+                }
+                return true;
+            }
+        });
+
+
+
 
         /**floating button for @AddAlarm_Activity **/
         FloatingActionButton add_alarm_fab = findViewById(R.id.add_alarm_fb);
@@ -110,6 +137,19 @@ public class AlarmActivity extends AppCompatActivity{
     }
 
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            CharSequence name = "Testing Alarm";
+            String description = "Alarm";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("notification_alarm", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
     /** will inflate menu in the activity **/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,7 +164,10 @@ public class AlarmActivity extends AppCompatActivity{
 
             case R.id.delete_all_alarms:
                 deleteAllPets();
-
+                return true;
+            case R.id.about_menu:
+                Intent about_intent = new Intent(AlarmActivity.this, About.class);
+                startActivity(about_intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -147,6 +190,8 @@ public class AlarmActivity extends AppCompatActivity{
         IntentFilter intentFilter = new IntentFilter("com.example.smartalarm.dataChangeListener");
         registerReceiver(broadcastReceiver , intentFilter);
         aAdapter.notifyDataSetChanged();
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
     }
 
     @Override
@@ -159,6 +204,8 @@ public class AlarmActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         aAdapter.notifyDataSetChanged();
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
     }
 
     @Override
