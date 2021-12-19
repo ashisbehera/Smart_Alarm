@@ -60,7 +60,6 @@ public class AlarmConstraints implements Parcelable  {
      * key to be use in every bundle
      */
     public final static String ALARM_KEY="alarm";
-    public final static String SNOOZE_KEY="alarm";
 
     /**
      * this will be alarmtime
@@ -484,7 +483,7 @@ public class AlarmConstraints implements Parcelable  {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast
                         (context, alarm.getPKeyDB(), intent, PendingIntent.FLAG_NO_CREATE);
                 Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
-                snoozeIntent.putExtra(alarm.SNOOZE_KEY , alarm.getPKeyDB());
+                snoozeIntent.putExtra(alarm.ALARM_KEY , alarm.getPKeyDB());
             PendingIntent snoozePendingIntent = PendingIntent.getBroadcast
                     (context, (alarm.getPKeyDB()-alarm.getPKeyDB())-alarm.getPKeyDB(),
                             intent, PendingIntent.FLAG_NO_CREATE);
@@ -531,6 +530,7 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeInt(cancel_snooze_alarm ? 1 : 0);
         parcel.writeInt(vibrate_active ? 1 : 0);
         parcel.writeInt(repeating ? 1 : 0);
+        parcel.writeString(label);
 
     }
 
@@ -548,6 +548,7 @@ public class AlarmConstraints implements Parcelable  {
         cancel_snooze_alarm = in.readInt() == 1;
         vibrate_active = in.readInt() == 1;
         repeating = in.readInt() == 1;
+        label = in.readString();
     }
 
     public static final Parcelable.Creator<AlarmConstraints> CREATOR = new ClassLoaderCreator<AlarmConstraints>() {

@@ -1,5 +1,6 @@
 package com.example.smartalarm;
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
@@ -85,7 +86,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
          *set alarm button
          */
 
-        alarmNameEditText = (EditText) findViewById(R.id.label_edt_txt);
+        alarmNameEditText = findViewById(R.id.label_edt_txt);
         ttsEditText = findViewById(R.id.tts_edt_txt);
         repeatAlarmImg = findViewById(R.id.repeatClickImg);
         vibrateSwitch = findViewById(R.id.vibrate_switch);
@@ -181,7 +182,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             }
         }
 
-
+        if (!dayArrayList.isEmpty()){
+            repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
+        }
 
         /**
          *initialing the alarmcontraints button
@@ -327,10 +330,10 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
-        Intent intent = new Intent(AddAlarm_Activity.this, AlarmActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        Intent intent = new Intent(AddAlarm_Activity.this, AlarmActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
-        startActivity(intent);
+//        startActivity(intent);
     }
 
 
@@ -439,6 +442,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
      * @param loader
      * @param cursor
      */
+    @SuppressLint("Range")
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor == null || cursor.getCount() < 1) {
@@ -446,43 +450,32 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         }
        if(i.getAction() != "from ringtoneActivity" && i.getAction() != "from repeatDayActivity"){ /** if coming from alarm_activity for editing **/
            if (cursor.moveToFirst()) {
-               int alarmNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
-               Log.i("name restored", "alarm name");
-               int ttsStringCIn = cursor.getColumnIndex(AlarmEntry.TTS_STRING);
-               // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
-               int alarmRingtoneNameCIn = cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME);
-               int alarmRingtoneUri = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
-               int alarmTimeCIn = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
-               int VibCIn = cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE);
-               int SnzCIn = cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE);
-               int ttsCIn = cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE);
-               int ringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE);
-               int repeatDaysCIn = cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS);
 
-               String alarmName = cursor.getString(alarmNameCIn);
-               String ttsString = cursor.getString(ttsStringCIn);
-               String alarmTime = cursor.getString(alarmTimeCIn);
+               vibrateSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE)) == 1 ? true : false);
+               snoozeSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE)) == 1 ? true : false);
+               tts_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE)) == 1 ? true : false);
+               ringtone_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE)) == 1 ? true : false);
+               // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
+
+               String alarmName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_NAME));
+               String ttsString = cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING));
+               String alarmTime = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME));
                /**
                 * get RepeatDays from the database and save them to arrayList.
                 */
-               String alarmRiName = cursor.getString(alarmRingtoneNameCIn);
-               String alarmRiUri = cursor.getString(alarmRingtoneUri);
+               String alarmRiName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME));
                ringtoneName = alarmRiName;
-               ringtoneUri = alarmRiUri;
-               String RepeatDaysString = cursor.getString(repeatDaysCIn);
+               ringtoneUri = cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING));
+               String RepeatDaysString = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
                Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
                if (RepeatDaysString!=null) {
                    String[] array = RepeatDaysString.split(",");
                    for (int i = 0; i < array.length; i++) {
                        dayArrayList.add(array[i]);
                    }
+                   repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
                }
 
-
-               int vib = cursor.getInt(VibCIn);
-               int snooze = cursor.getInt(SnzCIn);
-               int tts_active = cursor.getInt(ttsCIn);
-               int ringtone_active = cursor.getInt(ringCIn);
 
                alarmNameEditText.setText(alarmName);
                ttsEditText.setText(ttsString);
@@ -493,10 +486,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
                timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));
 
-               vibrateSwitch.setChecked(vib == 1 ? true : false);
-               snoozeSwitch.setChecked(snooze == 1 ? true : false);
-               tts_check_bx.setChecked(tts_active == 1 ? true : false);
-               ringtone_check_bx.setChecked(ringtone_active == 1 ? true : false);
+
            }
        }
 
