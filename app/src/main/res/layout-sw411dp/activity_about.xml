@@ -14,27 +14,27 @@
         android:paddingStart="20dp"
         android:paddingLeft="20dp"
         android:text="Smart Alarm"
-        android:textSize="50sp"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/descrip1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.22" />
+        app:layout_constraintVertical_bias="0.128" />
 
     <TextView
         android:id="@+id/descrip1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:paddingLeft="20sp"
-        android:paddingRight="20sp"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:text="This app is made by A&amp;A."
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/descrip2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -69,7 +69,7 @@
         android:id="@+id/descrip4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="192dp"
+        android:layout_marginBottom="116dp"
         android:paddingLeft="20sp"
         android:paddingRight="20sp"
         android:text="We are so glad that you decided to checkout our app. Hope we could deliver what you expected."

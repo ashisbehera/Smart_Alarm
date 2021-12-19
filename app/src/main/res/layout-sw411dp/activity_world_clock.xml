@@ -11,7 +11,7 @@
     <DigitalClock
         android:id="@+id/world_clock_digital"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="90dp"
         android:gravity="center|left"
         android:paddingStart="20dp"
         android:paddingLeft="20dp"
@@ -50,7 +50,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/world_clock_lottie"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="250dp"
         android:layout_below="@id/spinner_layout"
         android:scaleX="1.7"
         android:scaleY="1.7"

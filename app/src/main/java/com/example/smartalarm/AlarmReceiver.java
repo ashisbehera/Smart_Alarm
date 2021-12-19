@@ -2,6 +2,7 @@ package com.example.smartalarm;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -152,6 +154,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             wakeLock.acquire(10000);
 
             builder.setFullScreenIntent(pendingIntent , true);
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+            builder.setCategory(NotificationCompat.CATEGORY_ALARM);
         }
 
             if (notificationManagerCompat!=null)
