@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
@@ -59,7 +60,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private EditText alarmNameEditText , ttsEditText;
     TextView setRingtone;
     private ImageView repeatAlarmImg;
-    private Switch vibrateSwitch,snoozeSwitch;
+    private SwitchCompat vibrateSwitch,snoozeSwitch;
     private CheckBox tts_check_bx , ringtone_check_bx;
     private AlarmConstraints newAlarm;
     private LinearLayout ringtoneLayout;

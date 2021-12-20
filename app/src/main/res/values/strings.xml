@@ -27,5 +27,7 @@
     <string name="start_pause">start_pause</string>
     <string name="reset">reset</string>
     <string name="_00">00</string>
+    <string name="repeat">Repeat</string>
+    <string name="days_of_week">days_of_week</string>
 
 </resources>

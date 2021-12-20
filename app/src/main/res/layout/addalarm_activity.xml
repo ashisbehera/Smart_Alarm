@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="20dp"
+        android:paddingBottom="50dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -215,7 +216,7 @@
 
             </TextView>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/vibrate_switch"
                 android:layout_width="wrap_content"
                 android:minWidth="70dp"
@@ -242,7 +243,7 @@
                 android:textSize="20sp"
                 android:fontFamily="sans-serif" />
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/snooze_switch"
                 android:layout_width="wrap_content"
                 android:minWidth="70dp"
@@ -264,7 +265,6 @@
         app:srcCompat="@drawable/outline_check_24"
         app:fabSize="auto"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -279,7 +279,6 @@
         app:srcCompat="@drawable/baseline_delete_24"
         app:fabSize="auto"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
