@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.example.smartalarm.data.AlarmContract;
 
@@ -46,6 +48,7 @@ public class RepeatDayActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repeat_day);
         setTitle("Repeat days");
+
         in = getIntent();
         ringtoneName = in.getStringExtra("ringtoneName");
         Log.i(TAG, "onCreate: ringtoneName is "+ ringtoneName);
@@ -74,6 +77,20 @@ public class RepeatDayActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     class RepeatDaysAdapter extends ArrayAdapter<String> {
         TextView textView;

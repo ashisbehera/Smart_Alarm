@@ -30,7 +30,7 @@
         android:layout_marginBottom="20dp"
         android:paddingLeft="20sp"
         android:paddingRight="20sp"
-        android:text="This app is made by A&amp;A."
+        android:text="This app is made by Ashis Behera and Ankan Mandal"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/descrip2"
         app:layout_constraintEnd_toEndOf="parent"
