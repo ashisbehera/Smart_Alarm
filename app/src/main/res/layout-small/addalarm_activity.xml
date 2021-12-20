@@ -23,7 +23,7 @@
         <TimePicker
             android:id="@+id/timePicker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:timePickerMode="spinner" />
     </LinearLayout>
@@ -33,8 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="20dp"
-        android:paddingBottom="50dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
