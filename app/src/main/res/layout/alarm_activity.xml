@@ -29,9 +29,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/buttom_nav"
+        android:background="@drawable/recycleview_bg"
         android:saveEnabled="false"
         app:itemRippleColor="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemTextColor="@color/buttom_navigation_color"
+        app:itemIconTint="@color/buttom_navigation_color"
         app:menu="@menu/menu_navigation" />
 </RelativeLayout>

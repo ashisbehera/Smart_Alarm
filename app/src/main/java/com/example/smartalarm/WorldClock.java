@@ -1,8 +1,10 @@
 package com.example.smartalarm;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +15,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,13 +32,32 @@ public class WorldClock extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     SimpleDateFormat simpleDateFormat, formatter;
     Date resultDate;
-
+    BottomNavigationView bottomNavigationView;
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_world_clock);
         setTitle("World Clock");
+        bottomNavigationView= findViewById(R.id.bottom_nv);
+        bottomNavigationView.setSelectedItemId(R.id.clock_nv_bt);
+        bottomNavigationView.setSelected(true);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.alarm_nv_bt:
+                        Intent intent1 = new Intent(WorldClock.this, AlarmActivity.class);
+                        startActivity(intent1);
+                        return true;
+                    case R.id.stopWatch_nv_bt:
+                        Intent intent2 = new Intent(WorldClock.this, Stopwatch.class);
+                        startActivity(intent2);
+                        return true;
+                }
+                return true;
+            }
+        });
         // find ids
         spinner = findViewById(R.id.spinner);
         timeZone = findViewById(R.id.timeZone);

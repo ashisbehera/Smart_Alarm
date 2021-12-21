@@ -38,7 +38,8 @@
             android:name=".Stopwatch"
             android:exported="false"
             android:parentActivityName=".AlarmActivity" />
-        <activity android:name=".AlarmActivity">
+        <activity
+            android:name=".AlarmActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

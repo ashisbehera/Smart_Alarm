@@ -1,16 +1,21 @@
 package com.example.smartalarm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Locale;
 
@@ -23,11 +28,30 @@ public class Stopwatch extends AppCompatActivity {
     private LottieAnimationView lottieAnimationView;
     private Handler handler;
     private Chronometer chronometer;
-
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stopwatch);
+        bottomNavigationView= findViewById(R.id.bottom_nv);
+        bottomNavigationView.setSelectedItemId(R.id.stopWatch_nv_bt);
+        bottomNavigationView.setSelected(true);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.alarm_nv_bt:
+                        Intent intent1 = new Intent(Stopwatch.this, AlarmActivity.class);
+                        startActivity(intent1);
+                        return true;
+                    case R.id.clock_nv_bt:
+                        Intent intent2 = new Intent(Stopwatch.this, WorldClock.class);
+                        startActivity(intent2);
+                        return true;
+                }
+                return true;
+            }
+        });
         setTitle("Stop Watch");
         lottieAnimationView = findViewById(R.id.animationView);
         chronometer = findViewById(R.id.chronometer);

@@ -85,4 +85,15 @@
             android:minHeight="40dp"
             app:srcCompat="@drawable/reset" />
     </LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/recycleview_bg"
+        android:saveEnabled="false"
+        app:itemRippleColor="@color/white"
+        app:itemTextColor="@color/buttom_navigation_color"
+        app:itemIconTint="@color/buttom_navigation_color"
+        app:menu="@menu/menu_navigation" />
 </RelativeLayout>
