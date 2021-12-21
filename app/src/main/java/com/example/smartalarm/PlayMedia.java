@@ -1,5 +1,6 @@
 package com.example.smartalarm;
 
+import android.app.NotificationManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -33,6 +34,7 @@ import java.util.TimerTask;
 public class PlayMedia {
     private static final String TAG = "PlayMedia";
     private static PlayMedia Instance;
+    private long timeToPlay = 30000;
     Vibrator vibrator;
     TextToSpeech tts;
     MediaPlayer ringtonePlay;
@@ -40,7 +42,7 @@ public class PlayMedia {
     Uri ringM;
     HashMap<String, String> params;
     Timer ringTimer,ttsTimer,ttsRingTimer, vibrateTimer;
-    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateActive;
+    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateTimerActive;
     static PlayMedia getMediaPlayerInstance() {
         if (Instance == null) {
             return Instance = new PlayMedia();
@@ -80,8 +82,9 @@ public class PlayMedia {
                         update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
                     }
                     ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                    Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
-                    context.getApplicationContext().sendBroadcast(dataChangeIntent);
+
+                    intentSender(context);
+                    removeNotification(context);
                 }
             };
             ringTimer = new Timer();
@@ -99,92 +102,107 @@ public class PlayMedia {
         context.getContentResolver().update(currentPetUri , values, null, null);
     }
 
+    private void intentSender(Context context){
+        Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
+        context.getApplicationContext().sendBroadcast(dataChangeIntent);
+        Intent cancelAlarmActivityIntent = new Intent("com.example.smartalarm.cancelAlarm");
+        context.getApplicationContext().sendBroadcast(cancelAlarmActivityIntent);
+    }
+
+
+    private void removeNotification(Context context){
+        NotificationManager notificationManager = (NotificationManager)
+                context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) notificationManager.cancelAll();
+    }
+
     /**
      * will play only tts
      * @param alarm
      * @param context
      */
     public void mediaPlayTts(AlarmConstraints alarm , Context context){
-    try {
-        tts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = tts.setLanguage(Locale.US);
-                    if (result == TextToSpeech.LANG_MISSING_DATA ||
-                            result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Toast.makeText(context.getApplicationContext(), "tts language not supported",
-                                Toast.LENGTH_SHORT).show();
-                        Log.i("tts language", "tts language not supported ");
-                    }
-                } else {
-                    Toast.makeText(context.getApplicationContext(), "tts  initialization failed",
-                            Toast.LENGTH_SHORT).show();
-                    Log.i("tts initialization", "tts  initialization failed");
-                }
-
-            }
-        });
-
-        TimerTask ttsTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                stop_tts();
-                alarm.cancelAlarm(context.getApplicationContext(), alarm);
-
-                if (alarm.isSnooze_active())
-                    alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
-                if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
-                    update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
-                }
-                ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
-                context.getApplicationContext().sendBroadcast(dataChangeIntent);
-            }
-        };
-        ttsTimer = new Timer();
-        ttsTimer.schedule(ttsTimerTask, 180000);
-        isTtsTimerActive = true;
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-
-                    @Override
-                    public void onStart(String s) {
-
-                    }
-
-                    @Override
-                    public void onDone(String s) {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+        try {
+            tts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        int result = tts.setLanguage(Locale.US);
+                        if (result == TextToSpeech.LANG_MISSING_DATA ||
+                                result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                            Toast.makeText(context.getApplicationContext(), "tts language not supported",
+                                    Toast.LENGTH_SHORT).show();
+                            Log.i("tts language", "tts language not supported ");
                         }
-                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                    } else {
+                        Toast.makeText(context.getApplicationContext(), "tts  initialization failed",
+                                Toast.LENGTH_SHORT).show();
+                        Log.i("tts initialization", "tts  initialization failed");
                     }
 
-                    @Override
-                    public void onError(String s) {
+                }
+            });
 
+            TimerTask ttsTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    stop_tts();
+                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
+
+                    if (alarm.isSnooze_active())
+                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
+                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
                     }
-                });
-                params = new HashMap<>();
-                params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                Log.i(TAG, "run: tts string is " + alarm.getTtsString());
-            }
-        };
+                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
-        handler.postDelayed(runnable, 1000);
-      }catch (Exception e){
-        e.printStackTrace();
-    }
+                    intentSender(context);
+                    removeNotification(context);
+                }
+            };
+            ttsTimer = new Timer();
+            ttsTimer.schedule(ttsTimerTask, 30000);
+            isTtsTimerActive = true;
+            final Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                        @Override
+                        public void onStart(String s) {
+
+                        }
+
+                        @Override
+                        public void onDone(String s) {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                        }
+
+                        @Override
+                        public void onError(String s) {
+
+                        }
+                    });
+                    params = new HashMap<>();
+                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
+                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                    Log.i(TAG, "run: tts string is " + alarm.getTtsString());
+                }
+            };
+
+            handler.postDelayed(runnable, 1000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -237,12 +255,13 @@ public class PlayMedia {
                     update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
                 }
                 ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
-                context.getApplicationContext().sendBroadcast(dataChangeIntent);
+
+                intentSender(context);
+                removeNotification(context);
             }
         };
         ttsRingTimer = new Timer();
-        ttsRingTimer.schedule(ttsRingTimerTask, 180000);
+        ttsRingTimer.schedule(ttsRingTimerTask, 30000);
         isTtsRingTimerActive = true;
 
         final Handler handl = new Handler();
@@ -334,28 +353,29 @@ public class PlayMedia {
         TimerTask vibrateTimerTask = new TimerTask() {
             @Override
             public void run() {
-               stopVibrate();
+                stopVibrate();
                 if (alarm.getToggleOnOff()) {
-                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
+                    alarm.cancelAlarm(context.getApplicationContext() , alarm);
 
-                    if (alarm.isSnooze_active())
+                    if (alarm.isSnooze_active()) {
                         alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+                    }
 
-                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
-                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
+                    else if (!alarm.isSnooze_active() && !alarm.isRepeating()){
+                        update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
                     }
                     ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                    Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
-                    context.getApplicationContext().sendBroadcast(dataChangeIntent);
+                    intentSender(context);
+                    removeNotification(context);
                 }
             }
         };
 
         vibrateTimer = new Timer();
         vibrateTimer.schedule(vibrateTimerTask, 30000);
-        isVibrateActive = true;
+        isVibrateTimerActive = true;
 
-        
+
     }
 
     /**
@@ -381,14 +401,14 @@ public class PlayMedia {
 
     /**will stop the tts **/
     public void stop_tts() {
-     try {
+        try {
             if (tts.isSpeaking())
                 tts.stop();
             tts.shutdown();
             if (isTtsTimerActive)
-            ttsTimer.cancel();
+                ttsTimer.cancel();
             if (isTtsRingTimerActive)
-            ttsRingTimer.cancel();
+                ttsRingTimer.cancel();
             Log.i(TAG, "stop_tts: success");
         }catch (Exception e){
             e.printStackTrace();
@@ -400,12 +420,17 @@ public class PlayMedia {
      * will stop vibrate
      */
     public void stopVibrate(){
-      try {
-        vibrator.cancel();
-        Log.i(TAG, "stopVibrate: success");
-    }catch (Exception e){
-        Log.i(TAG, "stopVibrate: failed");
-    }
+        try {
+            vibrator.cancel();
+            Log.i(TAG, "stopVibrate: success");
+
+            if (isVibrateTimerActive) {
+                vibrateTimer.cancel();
+                Log.i(TAG, "stopRingtone: vibrateTimer canceled");
+            }
+        }catch (Exception e){
+            Log.i(TAG, "stopVibrate: failed");
+        }
 
     }
 }

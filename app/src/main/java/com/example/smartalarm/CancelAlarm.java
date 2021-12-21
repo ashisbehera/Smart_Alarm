@@ -3,8 +3,10 @@ package com.example.smartalarm;
 import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -36,6 +38,7 @@ public class CancelAlarm extends AppCompatActivity {
     private Bundle bundle;
     private LottieAnimationView cancelAnimation;
     private TextView alarmTimeTxt , alarmLblTxt , snoozeTxt;
+    private BroadcastReceiver broadcastReceiver;
 
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +137,16 @@ public class CancelAlarm extends AppCompatActivity {
             }
         });
 
+
+         broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction() == "com.example.smartalarm.cancelAlarm") {
+                    finish();
+                }
+            }
+        };
+
     }
 
 
@@ -163,10 +176,15 @@ public class CancelAlarm extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter("com.example.smartalarm.cancelAlarm");
+        registerReceiver(broadcastReceiver , intentFilter);
     }
 
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(broadcastReceiver);
     }
 }
