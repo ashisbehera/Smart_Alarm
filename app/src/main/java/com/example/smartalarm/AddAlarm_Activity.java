@@ -2,6 +2,7 @@ package com.example.smartalarm;
 
 import android.annotation.SuppressLint;
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -264,11 +265,14 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         delete_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (editUri!=null){
+                    long id = ContentUris.parseId(editUri);
+                    newAlarm.setPKeyDB((int) id);
+                    Log.i(TAG, "delete_onClick: id to be delete " + id);
+                    newAlarm.cancelAlarm(getApplicationContext() ,newAlarm );
                     getContentResolver().delete(editUri, null, null);
                     ScheduleService.updateAlarmSchedule(getApplicationContext());
                     finish();
-                }
+
             }
         });
        /**select ringtone if clicked on ringtone **/

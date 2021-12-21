@@ -49,10 +49,12 @@ public class WorldClock extends AppCompatActivity {
                     case R.id.alarm_nv_bt:
                         Intent intent1 = new Intent(WorldClock.this, AlarmActivity.class);
                         startActivity(intent1);
+                        finish();
                         return true;
                     case R.id.stopWatch_nv_bt:
                         Intent intent2 = new Intent(WorldClock.this, Stopwatch.class);
                         startActivity(intent2);
+                        finish();
                         return true;
                 }
                 return true;
@@ -107,6 +109,17 @@ public class WorldClock extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+
     }
 
     // function to fetch gmt time

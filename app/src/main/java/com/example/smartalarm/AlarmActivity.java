@@ -87,10 +87,12 @@ public class AlarmActivity extends AppCompatActivity{
                     case R.id.stopWatch_nv_bt:
                         Intent intent1 = new Intent(AlarmActivity.this, Stopwatch.class);
                         startActivity(intent1);
+                        finish();
                         return true;
                     case R.id.clock_nv_bt:
                         Intent intent2 = new Intent(AlarmActivity.this, WorldClock.class);
                         startActivity(intent2);
+                        finish();
                         return true;
                 }
                 return true;
@@ -174,6 +176,11 @@ public class AlarmActivity extends AppCompatActivity{
     }
 
     private void deleteAllPets() {
+        for (AlarmConstraints alarm:alarms){
+            if (alarm.getToggleOnOff()){
+                alarm.cancelAlarm(getApplicationContext() , alarm);
+            }
+        }
         int rowsDeleted = getContentResolver().delete
                 (AlarmEntry.CONTENT_URI, null, null);
         Log.v("AlarmActivity", rowsDeleted + " all alarms are deleted ");
@@ -212,5 +219,11 @@ public class AlarmActivity extends AppCompatActivity{
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+
     }
 }

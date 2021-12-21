@@ -43,10 +43,12 @@ public class Stopwatch extends AppCompatActivity {
                     case R.id.alarm_nv_bt:
                         Intent intent1 = new Intent(Stopwatch.this, AlarmActivity.class);
                         startActivity(intent1);
+                        finish();
                         return true;
                     case R.id.clock_nv_bt:
                         Intent intent2 = new Intent(Stopwatch.this, WorldClock.class);
                         startActivity(intent2);
+                        finish();
                         return true;
                 }
                 return true;
@@ -63,6 +65,12 @@ public class Stopwatch extends AppCompatActivity {
         lottieAnimationView.pauseAnimation();
         startPause.setOnClickListener(this::startPauseStopwatch);
         reset.setOnClickListener(this::resetStopwatch);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+
     }
 
     // thread to calculate the stopwatch mins, secs and milliseconds
