@@ -60,7 +60,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     private EditText alarmNameEditText , ttsEditText;
     TextView setRingtone;
     private ImageView repeatAlarmImg;
-    private SwitchCompat vibrateSwitch,snoozeSwitch;
+    private Switch vibrateSwitch,snoozeSwitch;
     private CheckBox tts_check_bx , ringtone_check_bx;
     private AlarmConstraints newAlarm;
     private LinearLayout ringtoneLayout;

@@ -1,13 +1,17 @@
 package com.example.smartalarm;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
@@ -42,8 +46,17 @@ public class WorldClock extends AppCompatActivity {
         // date format
         simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy  HH:mm");
         // dropdown menu for timezones
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, array);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, array){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                 View view = super.getView(position , convertView , parent);
+                ((TextView) view).setTextSize(10);
+                ((TextView) view).setTextColor(Color.parseColor("#ffffff"));
+                return view;
+            }
+        };
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spinner.setAdapter(adapter);
         getGMTTime();
         // calculate and set the time according to the timezone

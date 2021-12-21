@@ -90,7 +90,7 @@ public class ControlAlarm extends AppCompatActivity implements
         }
         Log.i("pkey", "pkey - "+alarm.getPKeyDB());
         if (alarm.isVibrate_active()) {
-            vibrateV(context.getApplicationContext());
+            vibrateV(context.getApplicationContext() , alarm);
         }
         if(alarm.getTts_active() && alarm.getRingtone_active()){
            playMedia.playRingtoneTts(alarm , context);
@@ -125,8 +125,8 @@ public class ControlAlarm extends AppCompatActivity implements
     }
 
 
-    public void vibrateV(Context context){
-        playMedia.vibrate(context.getApplicationContext());
+    public void vibrateV(Context context, AlarmConstraints alarm){
+        playMedia.vibrate(context.getApplicationContext() , alarm);
     }
 
     public void stopVibrateV(){

@@ -34,9 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@id/world_clock_current_date"
-        android:gravity="center"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:gravity="center">
 
         <Spinner
             android:id="@+id/spinner"

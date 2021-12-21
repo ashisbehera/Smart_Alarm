@@ -39,8 +39,8 @@ public class PlayMedia {
     AudioManager audioManager;
     Uri ringM;
     HashMap<String, String> params;
-    Timer ringTimer,ttsTimer,ttsRingTimer;
-    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive;
+    Timer ringTimer,ttsTimer,ttsRingTimer, vibrateTimer;
+    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateActive;
     static PlayMedia getMediaPlayerInstance() {
         if (Instance == null) {
             return Instance = new PlayMedia();
@@ -71,8 +71,10 @@ public class PlayMedia {
                     stopRingtone();
                     alarm.cancelAlarm(context.getApplicationContext() , alarm);
 
-                    if (alarm.isSnooze_active())
-                        alarm.scheduleSnoozeAlarm(context.getApplicationContext() , alarm);
+                    if (alarm.isSnooze_active()) {
+                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+                    }
 
                     if (!alarm.isSnooze_active() && !alarm.isRepeating()){
                         update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
@@ -83,7 +85,7 @@ public class PlayMedia {
                 }
             };
             ringTimer = new Timer();
-            ringTimer.schedule(ringtoneTimerTask, 180000);
+            ringTimer.schedule(ringtoneTimerTask, 30000);
             isRingTimerActive = true;
         }
 
@@ -309,9 +311,9 @@ public class PlayMedia {
 
 
 
-    public void vibrate(Context context) {
+    public void vibrate(Context context , AlarmConstraints alarm) {
 
-            vibrator = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
+        vibrator = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
         long[] pattern = {0, 20000, 1000, 20000, 2000};
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -329,6 +331,30 @@ public class PlayMedia {
             e.printStackTrace();
             Log.i(TAG, "vibrate: failed");
         }
+        TimerTask vibrateTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+               stopVibrate();
+                if (alarm.getToggleOnOff()) {
+                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
+
+                    if (alarm.isSnooze_active())
+                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
+                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
+                    }
+                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                    Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
+                    context.getApplicationContext().sendBroadcast(dataChangeIntent);
+                }
+            }
+        };
+
+        vibrateTimer = new Timer();
+        vibrateTimer.schedule(vibrateTimerTask, 30000);
+        isVibrateActive = true;
+
         
     }
 
