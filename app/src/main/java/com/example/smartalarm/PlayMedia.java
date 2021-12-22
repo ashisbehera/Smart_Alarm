@@ -1,22 +1,29 @@
 package com.example.smartalarm;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyCallback;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,14 +31,17 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 
 import com.example.smartalarm.data.AlarmContract;
+import com.example.smartalarm.receiver.SnoozeReceiver;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executor;
 
-public class PlayMedia {
+
+public class PlayMedia{
     private static final String TAG = "PlayMedia";
     private static PlayMedia Instance;
     private long timeToPlay = 30000;
@@ -43,6 +53,7 @@ public class PlayMedia {
     HashMap<String, String> params;
     Timer ringTimer,ttsTimer,ttsRingTimer, vibrateTimer;
     boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateTimerActive;
+    TelephonyManager telephonyManager;
     static PlayMedia getMediaPlayerInstance() {
         if (Instance == null) {
             return Instance = new PlayMedia();
@@ -57,42 +68,160 @@ public class PlayMedia {
      * @param alarm
      * @throws IOException
      */
-    public void mediaPlayRingtone(Context context, Uri ring, AlarmConstraints alarm) throws IOException {
+    public void mediaPlayRingtone(Context context, Uri ring,
+                                  AlarmConstraints alarm) throws IOException {
         ringtonePlay = new MediaPlayer();
         ringtonePlay.setDataSource(context.getApplicationContext(), ring);
         audioManager = (AudioManager)
                 context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-            ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
-            ringtonePlay.setLooping(true);
-            ringtonePlay.prepare();
-            ringtonePlay.start();
-            TimerTask ringtoneTimerTask = new TimerTask() {
+
+        telephonyManager = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (Build.VERSION.SDK_INT < 31){
+            Log.i(TAG, "mediaPlayRingtone: android version is < 31");
+            PhoneStateListener phoneStateListener = new PhoneStateListener(){
                 @Override
-                public void run() {
-                    stopRingtone();
-                    alarm.cancelAlarm(context.getApplicationContext() , alarm);
+                public void onCallStateChanged(int state, String phoneNumber) {
+                    switch (state) {
+                        case TelephonyManager.CALL_STATE_RINGING:
+                            Log.i(TAG, "onCallStateChanged: call ringing");
+                            try {
+                                sendSnoozeIntent(context , alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case TelephonyManager.CALL_STATE_OFFHOOK:
+                            Log.i(TAG, "onCallStateChanged: on call");
+                            try{
+                                sendSnoozeIntent(context, alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        case TelephonyManager.CALL_STATE_IDLE:
+                            Log.i(TAG, "onCallStateChanged: no call");
+                            try {
+                                if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+                                    ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
+                                    ringtonePlay.setLooping(true);
+                                    ringtonePlay.prepare();
+                                    ringtonePlay.start();
+                                    TimerTask ringtoneTimerTask = new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            stopRingtone();
+                                            alarm.cancelAlarm(context.getApplicationContext() , alarm);
 
-                    if (alarm.isSnooze_active()) {
-                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+                                            if (alarm.isSnooze_active()) {
+                                                alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
 
+                                            }
+
+                                            if (!alarm.isSnooze_active() && !alarm.isRepeating()){
+                                                update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+                                            }
+                                            ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+
+                                            intentSender(context);
+                                            removeNotification(context);
+                                        }
+                                    };
+                                    ringTimer = new Timer();
+                                    ringTimer.schedule(ringtoneTimerTask, 30000);
+                                    isRingTimerActive = true;
+                                }
+                            }
+                            catch (IllegalStateException | IOException e) {
+
+                            }
+                            break;
                     }
-
-                    if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                        update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
-                    }
-                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-
-                    intentSender(context);
-                    removeNotification(context);
+                    super.onCallStateChanged(state, phoneNumber);
                 }
             };
-            ringTimer = new Timer();
-            ringTimer.schedule(ringtoneTimerTask, 30000);
-            isRingTimerActive = true;
+            if(telephonyManager!=null)
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
+        else {
+            /**
+             * for android 12
+             */
+        TelephonyCallback.CallStateListener callback = new TelephonyCallback.CallStateListener() {
+
+
+            @Override
+            public void onCallStateChanged(int state) {
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        Log.i(TAG, "onCallStateChanged: call ringing");
+                        try {
+                            sendSnoozeIntent(context , alarm);
+                            intentSender(context);
+                            removeNotification(context);
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                        Log.i(TAG, "onCallStateChanged: on call");
+                        try{
+                            sendSnoozeIntent(context, alarm);
+                            intentSender(context);
+                            removeNotification(context);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        Log.i(TAG, "onCallStateChanged: no call");
+                        try {
+                            if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+                                ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
+                                ringtonePlay.setLooping(true);
+                                ringtonePlay.prepare();
+                                ringtonePlay.start();
+                                TimerTask ringtoneTimerTask = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        stopRingtone();
+                                        alarm.cancelAlarm(context.getApplicationContext() , alarm);
+
+                                        if (alarm.isSnooze_active()) {
+                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+                                        }
+
+                                        if (!alarm.isSnooze_active() && !alarm.isRepeating()){
+                                            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+                                        }
+                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+
+                                        intentSender(context);
+                                        removeNotification(context);
+                                    }
+                                };
+                                ringTimer = new Timer();
+                                ringTimer.schedule(ringtoneTimerTask, 30000);
+                                isRingTimerActive = true;
+                            }
+                        }
+                        catch (IllegalStateException | IOException e) {
+
+                        }
+                        break;
+                }
+               }
+           };
+
+            if(telephonyManager!=null)
+                telephonyManager.registerTelephonyCallback(context.getMainExecutor() ,
+                        (TelephonyCallback) callback);
         }
 
-    }
+    } /** end of MedeaPlayRingtone **/
 
     public void update_db(int id, int zero, Context context){
         int alarm_on_off = zero;
@@ -114,6 +243,24 @@ public class PlayMedia {
         NotificationManager notificationManager = (NotificationManager)
                 context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) notificationManager.cancelAll();
+    }
+
+
+    private void sendSnoozeIntent(Context context , AlarmConstraints alarm){
+        Intent snoozeIntent = new Intent(context.getApplicationContext(), SnoozeReceiver.class);
+        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Bundle bundle=new Bundle();
+        bundle.putParcelable(alarm.ALARM_KEY,alarm);
+        snoozeIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        snoozeIntent.setAction("snooze Alarm");
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0,
+                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            snoozePendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "onClick: successfully snoozed");
     }
 
     /**
@@ -142,64 +289,101 @@ public class PlayMedia {
 
                 }
             });
+            telephonyManager = (TelephonyManager)
+                    context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT < 31){
+            Log.i(TAG, "mediaPlayTts: "+Build.VERSION.SDK_INT);
+                PhoneStateListener phoneStateListener = new PhoneStateListener(){
+                    @Override
+                    public void onCallStateChanged(int state, String phoneNumber) {
+                        switch (state) {
+                            case TelephonyManager.CALL_STATE_RINGING:
+                                Log.i(TAG, "onCallStateChanged: call ringing");
+                                try {
+                                    sendSnoozeIntent(context, alarm);
+                                    intentSender(context);
+                                    removeNotification(context);
+                                } catch (IllegalStateException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case TelephonyManager.CALL_STATE_OFFHOOK:
+                                Log.i(TAG, "onCallStateChanged: on call");
+                                try {
+                                    sendSnoozeIntent(context, alarm);
+                                    intentSender(context);
+                                    removeNotification(context);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            case TelephonyManager.CALL_STATE_IDLE:
+                                TimerTask ttsTimerTask = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        stop_tts();
+                                        alarm.cancelAlarm(context.getApplicationContext(), alarm);
 
-            TimerTask ttsTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    stop_tts();
-                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
+                                        if (alarm.isSnooze_active())
+                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
 
-                    if (alarm.isSnooze_active())
-                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+                                        if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
+                                            update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
+                                        }
+                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
-                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
-                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
+                                        intentSender(context);
+                                        removeNotification(context);
+                                    }
+                                };
+                                ttsTimer = new Timer();
+                                ttsTimer.schedule(ttsTimerTask, 30000);
+                                isTtsTimerActive = true;
+                                final Handler handler = new Handler();
+                                Runnable runnable = new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                                            @Override
+                                            public void onStart(String s) {
+
+                                            }
+
+                                            @Override
+                                            public void onDone(String s) {
+                                                try {
+                                                    Thread.sleep(3000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                            }
+
+                                            @Override
+                                            public void onError(String s) {
+
+                                            }
+                                        });
+                                        params = new HashMap<>();
+                                        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
+                                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                        Log.i(TAG, "run: tts string is " + alarm.getTtsString());
+                                    }
+                                };
+
+                                handler.postDelayed(runnable, 1000);
+                        }
+
+                        super.onCallStateChanged(state, phoneNumber);
                     }
-                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                };
 
-                    intentSender(context);
-                    removeNotification(context);
-                }
-            };
-            ttsTimer = new Timer();
-            ttsTimer.schedule(ttsTimerTask, 30000);
-            isTtsTimerActive = true;
-            final Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
+                if(telephonyManager!=null)
+                    telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+            }
 
-                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-
-                        @Override
-                        public void onStart(String s) {
-
-                        }
-
-                        @Override
-                        public void onDone(String s) {
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                        }
-
-                        @Override
-                        public void onError(String s) {
-
-                        }
-                    });
-                    params = new HashMap<>();
-                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                    Log.i(TAG, "run: tts string is " + alarm.getTtsString());
-                }
-            };
-
-            handler.postDelayed(runnable, 1000);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -214,18 +398,19 @@ public class PlayMedia {
      */
     public void playRingtoneTts(AlarmConstraints alarm , Context context) throws IOException {
 
+        try{
         tts = new TextToSpeech(context.getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS){
+                if (status == TextToSpeech.SUCCESS) {
                     int result = tts.setLanguage(Locale.US);
                     if (result == TextToSpeech.LANG_MISSING_DATA ||
-                            result == TextToSpeech.LANG_NOT_SUPPORTED){
+                            result == TextToSpeech.LANG_NOT_SUPPORTED) {
                         Toast.makeText(context.getApplicationContext(), "tts language not supported",
                                 Toast.LENGTH_SHORT).show();
                         Log.i("tts language", "tts language not supported ");
                     }
-                }else {
+                } else {
                     Toast.makeText(context.getApplicationContext(), "tts  initialization failed",
                             Toast.LENGTH_SHORT).show();
                     Log.i("tts initialization", "tts  initialization failed");
@@ -235,77 +420,124 @@ public class PlayMedia {
         });
 
         ringM = Uri.parse(alarm.getRingtoneUri());
-        /**
-         * call ringtone player
-         */
-        playRingWithTts(context , ringM);
 
-        TimerTask ttsRingTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                stopRingtone();
-                stop_tts();
+        telephonyManager = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (Build.VERSION.SDK_INT < 31) {
+            PhoneStateListener phoneStateListener = new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String phoneNumber) {
+                    switch (state) {
+                        case TelephonyManager.CALL_STATE_RINGING:
+                            Log.i(TAG, "onCallStateChanged: call ringing");
+                            try {
+                                sendSnoozeIntent(context, alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case TelephonyManager.CALL_STATE_OFFHOOK:
+                            Log.i(TAG, "onCallStateChanged: on call");
+                            try {
+                                sendSnoozeIntent(context, alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        case TelephonyManager.CALL_STATE_IDLE:
+                            Log.i(TAG, "onCallStateChanged: ringTts playing");
+                            /**
+                             * call ringtone player
+                             */
+                            try {
+                                playRingWithTts(context, ringM);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-                alarm.cancelAlarm(context.getApplicationContext() , alarm);
+                            TimerTask ttsRingTimerTask = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    stopRingtone();
+                                    stop_tts();
 
-                if (alarm.isSnooze_active())
-                    alarm.scheduleSnoozeAlarm(context.getApplicationContext() , alarm);
+                                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
 
-                if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                    update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+                                    if (alarm.isSnooze_active())
+                                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+                                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
+                                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
+                                    }
+                                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+
+                                    intentSender(context);
+                                    removeNotification(context);
+                                }
+                            };
+                            ttsRingTimer = new Timer();
+                            ttsRingTimer.schedule(ttsRingTimerTask, 30000);
+                            isTtsRingTimerActive = true;
+
+                            final Handler handl = new Handler();
+                            Runnable runnabl = new Runnable() {
+                                @Override
+                                public void run() {
+                                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                                        @Override
+                                        public void onStart(String s) {
+                                            ringtonePlay.pause();
+                                        }
+
+                                        @Override
+                                        public void onDone(String s) {
+                                            try {
+                                                Thread.sleep(1000);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                            ringtonePlay.start();
+                                            try {
+                                                Thread.sleep(8000);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+
+                                        }
+
+                                        @Override
+                                        public void onError(String s) {
+
+                                        }
+                                    });
+                                    params = new HashMap<>();
+                                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
+                                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                }
+                            };
+
+                            handl.postDelayed(runnabl, 1000);
+
+                    }
+
+
+                    super.onCallStateChanged(state, phoneNumber);
                 }
-                ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+            };
 
-                intentSender(context);
-                removeNotification(context);
-            }
-        };
-        ttsRingTimer = new Timer();
-        ttsRingTimer.schedule(ttsRingTimerTask, 30000);
-        isTtsRingTimerActive = true;
+            if(telephonyManager!=null)
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
 
-        final Handler handl = new Handler();
-        Runnable runnabl = new Runnable() {
-            @Override
-            public void run() {
-                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-
-                    @Override
-                    public void onStart(String s) {
-                        ringtonePlay.pause();
-                    }
-
-                    @Override
-                    public void onDone(String s) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        ringtonePlay.start();
-                        try {
-                            Thread.sleep(8000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-
-                    }
-
-                    @Override
-                    public void onError(String s) {
-
-                    }
-                });
-                params = new HashMap<>();
-                params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-            }
-        };
-
-        handl.postDelayed(runnabl , 1000);
-
+       }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -319,8 +551,8 @@ public class PlayMedia {
         ringtonePlay.setDataSource(context.getApplicationContext(), ring);
         audioManager = (AudioManager)
                 context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager.getStreamVolume(AudioManager.STREAM_RING) != 0) {
-            ringtonePlay.setAudioStreamType(AudioManager.STREAM_RING);
+        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+            ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
             ringtonePlay.setLooping(true);
             ringtonePlay.prepare();
             ringtonePlay.start();
@@ -333,47 +565,88 @@ public class PlayMedia {
     public void vibrate(Context context , AlarmConstraints alarm) {
 
         vibrator = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
-        long[] pattern = {0, 20000, 1000, 20000, 2000};
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0),
-                        new AudioAttributes.Builder()
-                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                .setUsage(AudioAttributes.USAGE_ALARM)
-                                .build());
-                Log.i(TAG, "vibrate: success");
-            } else {
-                vibrator.vibrate(pattern, 0);
-                Log.i(TAG, "vibrate: success");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.i(TAG, "vibrate: failed");
-        }
-        TimerTask vibrateTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                stopVibrate();
-                if (alarm.getToggleOnOff()) {
-                    alarm.cancelAlarm(context.getApplicationContext() , alarm);
 
-                    if (alarm.isSnooze_active()) {
-                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+        telephonyManager = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            PhoneStateListener phoneStateListener = new PhoneStateListener() {
+                @Override
+                public void onCallStateChanged(int state, String phoneNumber) {
+                    switch (state) {
+                        case TelephonyManager.CALL_STATE_RINGING:
+                            Log.i(TAG, "onCallStateChanged: call ringing");
+                            try {
+                                sendSnoozeIntent(context, alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case TelephonyManager.CALL_STATE_OFFHOOK:
+                            Log.i(TAG, "onCallStateChanged: on call");
+                            try {
+                                sendSnoozeIntent(context, alarm);
+                                intentSender(context);
+                                removeNotification(context);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        case TelephonyManager.CALL_STATE_IDLE:
+
+                            long[] pattern = {0, 20000, 1000, 20000, 2000};
+                            try {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0),
+                                            new AudioAttributes.Builder()
+                                                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                                    .setUsage(AudioAttributes.USAGE_ALARM)
+                                                    .build());
+                                    Log.i(TAG, "vibrate: success");
+                                } else {
+                                    vibrator.vibrate(pattern, 0);
+                                    Log.i(TAG, "vibrate: success");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                Log.i(TAG, "vibrate: failed");
+                            }
+                            TimerTask vibrateTimerTask = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    stopVibrate();
+                                    if (alarm.getToggleOnOff()) {
+                                        alarm.cancelAlarm(context.getApplicationContext() , alarm);
+
+                                        if (alarm.isSnooze_active()) {
+                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+                                        }
+
+                                        else if (!alarm.isSnooze_active() && !alarm.isRepeating()){
+                                            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+                                        }
+                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                                        intentSender(context);
+                                        removeNotification(context);
+                                    }
+                                }
+                            };
+
+                            vibrateTimer = new Timer();
+                            vibrateTimer.schedule(vibrateTimerTask, 30000);
+                            isVibrateTimerActive = true;
+
+
                     }
 
-                    else if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                        update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
-                    }
-                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                    intentSender(context);
-                    removeNotification(context);
+                    super.onCallStateChanged(state, phoneNumber);
                 }
-            }
-        };
+            };
+            if(telephonyManager!=null)
+                telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
 
-        vibrateTimer = new Timer();
-        vibrateTimer.schedule(vibrateTimerTask, 30000);
-        isVibrateTimerActive = true;
+
 
 
     }
@@ -436,4 +709,6 @@ public class PlayMedia {
         }
 
     }
+
+
 }
