@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.smartalarm.AlarmConstraints;
 import com.example.smartalarm.AlarmReceiver;
+import com.example.smartalarm.CancelAlarm;
 import com.example.smartalarm.ControlAlarm;
 
 public class SnoozeReceiver extends BroadcastReceiver {
@@ -41,6 +42,9 @@ public class SnoozeReceiver extends BroadcastReceiver {
          * after stopping the main alarm then snooze the alarm
          */
         alarm.scheduleSnoozeAlarm(context , alarm);
+
+        Intent cancelAlarmActivityIntent = new Intent("com.example.smartalarm.cancelAlarm");
+        context.sendBroadcast(cancelAlarmActivityIntent);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) notificationManager.cancelAll();
     }

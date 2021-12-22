@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
+    private static final String TAG = "AlarmReceiver";
     private RemoteViews largeRemoteViews , smallRemoteView;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @SuppressLint("LongLogTag")
@@ -149,7 +150,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         boolean isScreenOn = powerManager.isInteractive();
         if (!isScreenOn) {
             PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
-                    PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                    PowerManager.PARTIAL_WAKE_LOCK
+                            | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
                     "smart_alarm:AlarmReceiver");
             wakeLock.acquire(10000);
 

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -102,38 +103,14 @@ public class CancelAlarm extends AppCompatActivity {
         cancelAnimation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent cancelIntent = new Intent(getApplicationContext(), CancelAlarmReceiver.class);
-                cancelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                cancelIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
-                cancelIntent.setAction("cancel alarm");
-                PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                        cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                try {
-                    cancelPendingIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-                Log.i("on cancelb", "successfully canceled alarm");
-                finish();
+                sendCancelIntent();
             }
         });
 
         snoozeTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent snoozeIntent = new Intent(getApplicationContext(), SnoozeReceiver.class);
-                snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                snoozeIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
-                snoozeIntent.setAction("snooze Alarm");
-                PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
-                        snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                try {
-                    snoozePendingIntent.send();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
-                Log.i(TAG, "onClick: successfully snoozed");
-                finish();
+                sendSnoozeIntent();
             }
         });
 
@@ -147,6 +124,39 @@ public class CancelAlarm extends AppCompatActivity {
             }
         };
 
+    }
+
+
+    private void sendCancelIntent(){
+        Intent cancelIntent = new Intent(getApplicationContext(), CancelAlarmReceiver.class);
+        cancelIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        cancelIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        cancelIntent.setAction("cancel alarm");
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            cancelPendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+        Log.i("on cancelb", "successfully canceled alarm");
+        finish();
+    }
+
+    private void sendSnoozeIntent(){
+        Intent snoozeIntent = new Intent(getApplicationContext(), SnoozeReceiver.class);
+        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        snoozeIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
+        snoozeIntent.setAction("snooze Alarm");
+        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
+                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            snoozePendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "onClick: successfully snoozed");
+        finish();
     }
 
 
@@ -169,6 +179,28 @@ public class CancelAlarm extends AppCompatActivity {
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+        int action = event.getAction();
+        int keyCode = event.getKeyCode();
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (action == KeyEvent.ACTION_UP) {
+                    sendCancelIntent();
+                }
+                return true;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (action == KeyEvent.ACTION_UP) {
+                    sendSnoozeIntent();
+                }
+                return true;
+            default:
+                return super.dispatchKeyEvent(event);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
@@ -186,5 +218,10 @@ public class CancelAlarm extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

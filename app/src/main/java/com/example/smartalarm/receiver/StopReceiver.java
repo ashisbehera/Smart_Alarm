@@ -27,6 +27,9 @@ public class StopReceiver extends BroadcastReceiver {
         Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
         context.sendBroadcast(dataChangeIntent);
         // Dismiss notification
+
+        Intent cancelAlarmActivityIntent = new Intent("com.example.smartalarm.cancelAlarm");
+        context.sendBroadcast(cancelAlarmActivityIntent);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) notificationManager.cancelAll();
     }

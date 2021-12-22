@@ -44,28 +44,30 @@ public class ScheduleService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         boolean isEmpty = true;
-        Log.i("service received" , "now");
+        Log.i(TAG + " service received" , "now");
         try {
 
-            Alarm_Database alarmDatabase= Alarm_Database.getInstance(getApplicationContext());
+            Alarm_Database alarmDatabase = Alarm_Database.getInstance(getApplicationContext());
 
             List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
-            for(AlarmConstraints alarm : alarms)
-            {
-                if(alarm.isAlarmOn())
-                {
+            for (AlarmConstraints alarm : alarms) {
+                if (alarm.isAlarmOn()) {
                     isEmpty = false;
-                    alarm.scheduleAlarm(getApplicationContext() ,
-                            alarm.getAlarmTime() , alarm.isRepeating() ,
+                    alarm.scheduleAlarm(getApplicationContext(),
+                            alarm.getAlarmTime(), alarm.isRepeating(),
                             alarm.getRepeatDayMap());
                     Log.i(TAG, "onStartCommand: alarm set for pkeyid" + alarm.getPKeyDB());
 
                 }
+
             }
 
             if (isEmpty) {
                 Toast.makeText(getApplicationContext(), "no active alarms", Toast.LENGTH_LONG).show();
-            }
+            } else{
+                Log.e(TAG, "onStartCommand: scheduled for all");
+                Log.w(TAG, "onStartCommand: scheduled for all");
+           }
         }
         catch (Exception e)
         {

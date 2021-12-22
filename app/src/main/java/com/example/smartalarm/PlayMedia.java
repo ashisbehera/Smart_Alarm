@@ -385,8 +385,11 @@ public class PlayMedia {
         try {
             if (ringtonePlay != null) {
                 ringtonePlay.stop();
+                Log.i(TAG, "stopRingtone: stopped");
                 ringtonePlay.reset();
+                Log.i(TAG, "stopRingtone: reset");
                 ringtonePlay.release();
+                Log.i(TAG, "stopRingtone: release");
             }
             if (isRingTimerActive) {
                 ringTimer.cancel();
