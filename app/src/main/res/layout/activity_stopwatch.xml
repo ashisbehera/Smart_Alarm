@@ -90,7 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/recycleview_bg"
+        android:background="@drawable/buttom_nv_view_bg"
         android:saveEnabled="false"
         app:itemRippleColor="@color/white"
         app:itemTextColor="@color/buttom_navigation_color"

@@ -77,8 +77,8 @@ public class PlayMedia{
 
         telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (Build.VERSION.SDK_INT < 31){
-            Log.i(TAG, "mediaPlayRingtone: android version is < 31");
+
+            Log.i(TAG, "mediaPlayRingtone: android version is "+ Build.VERSION.SDK_INT);
             PhoneStateListener phoneStateListener = new PhoneStateListener(){
                 @Override
                 public void onCallStateChanged(int state, String phoneNumber) {
@@ -114,16 +114,7 @@ public class PlayMedia{
                                         @Override
                                         public void run() {
                                             stopRingtone();
-                                            alarm.cancelAlarm(context.getApplicationContext() , alarm);
-
-                                            if (alarm.isSnooze_active()) {
-                                                alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
-                                            }
-
-                                            if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                                                update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
-                                            }
+                                            manageAlarmState(context , alarm);
                                             ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
                                             intentSender(context);
@@ -131,7 +122,7 @@ public class PlayMedia{
                                         }
                                     };
                                     ringTimer = new Timer();
-                                    ringTimer.schedule(ringtoneTimerTask, 30000);
+                                    ringTimer.schedule(ringtoneTimerTask, 120000);
                                     isRingTimerActive = true;
                                 }
                             }
@@ -145,81 +136,7 @@ public class PlayMedia{
             };
             if(telephonyManager!=null)
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-        else {
-            /**
-             * for android 12
-             */
-        TelephonyCallback.CallStateListener callback = new TelephonyCallback.CallStateListener() {
 
-
-            @Override
-            public void onCallStateChanged(int state) {
-                switch (state) {
-                    case TelephonyManager.CALL_STATE_RINGING:
-                        Log.i(TAG, "onCallStateChanged: call ringing");
-                        try {
-                            sendSnoozeIntent(context , alarm);
-                            intentSender(context);
-                            removeNotification(context);
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case TelephonyManager.CALL_STATE_OFFHOOK:
-                        Log.i(TAG, "onCallStateChanged: on call");
-                        try{
-                            sendSnoozeIntent(context, alarm);
-                            intentSender(context);
-                            removeNotification(context);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    case TelephonyManager.CALL_STATE_IDLE:
-                        Log.i(TAG, "onCallStateChanged: no call");
-                        try {
-                            if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-                                ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
-                                ringtonePlay.setLooping(true);
-                                ringtonePlay.prepare();
-                                ringtonePlay.start();
-                                TimerTask ringtoneTimerTask = new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        stopRingtone();
-                                        alarm.cancelAlarm(context.getApplicationContext() , alarm);
-
-                                        if (alarm.isSnooze_active()) {
-                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
-                                        }
-
-                                        if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                                            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
-                                        }
-                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-
-                                        intentSender(context);
-                                        removeNotification(context);
-                                    }
-                                };
-                                ringTimer = new Timer();
-                                ringTimer.schedule(ringtoneTimerTask, 30000);
-                                isRingTimerActive = true;
-                            }
-                        }
-                        catch (IllegalStateException | IOException e) {
-
-                        }
-                        break;
-                }
-               }
-           };
-
-            if(telephonyManager!=null)
-                telephonyManager.registerTelephonyCallback(context.getMainExecutor() ,
-                        (TelephonyCallback) callback);
-        }
 
     } /** end of MedeaPlayRingtone **/
 
@@ -236,6 +153,19 @@ public class PlayMedia{
         context.getApplicationContext().sendBroadcast(dataChangeIntent);
         Intent cancelAlarmActivityIntent = new Intent("com.example.smartalarm.cancelAlarm");
         context.getApplicationContext().sendBroadcast(cancelAlarmActivityIntent);
+    }
+
+    private void manageAlarmState(Context context , AlarmConstraints alarm){
+        alarm.cancelAlarm(context.getApplicationContext() , alarm);
+
+        if (alarm.isSnooze_active()) {
+            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
+
+        }
+
+        if (!alarm.isSnooze_active() && !alarm.isRepeating()){
+            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+        }
     }
 
 
@@ -291,7 +221,7 @@ public class PlayMedia{
             });
             telephonyManager = (TelephonyManager)
                     context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (Build.VERSION.SDK_INT < 31){
+
             Log.i(TAG, "mediaPlayTts: "+Build.VERSION.SDK_INT);
                 PhoneStateListener phoneStateListener = new PhoneStateListener(){
                     @Override
@@ -321,14 +251,7 @@ public class PlayMedia{
                                     @Override
                                     public void run() {
                                         stop_tts();
-                                        alarm.cancelAlarm(context.getApplicationContext(), alarm);
-
-                                        if (alarm.isSnooze_active())
-                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
-                                        if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
-                                            update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
-                                        }
+                                        manageAlarmState(context , alarm);
                                         ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
                                         intentSender(context);
@@ -336,7 +259,7 @@ public class PlayMedia{
                                     }
                                 };
                                 ttsTimer = new Timer();
-                                ttsTimer.schedule(ttsTimerTask, 30000);
+                                ttsTimer.schedule(ttsTimerTask, 120000);
                                 isTtsTimerActive = true;
                                 final Handler handler = new Handler();
                                 Runnable runnable = new Runnable() {
@@ -348,17 +271,23 @@ public class PlayMedia{
 
                                             @Override
                                             public void onStart(String s) {
-
+                                                try {
+                                                    Thread.sleep(2000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
 
                                             @Override
                                             public void onDone(String s) {
+
+                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+
                                                 try {
-                                                    Thread.sleep(3000);
+                                                    Thread.sleep(2000);
                                                 } catch (InterruptedException e) {
                                                     e.printStackTrace();
                                                 }
-                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
                                             }
 
                                             @Override
@@ -382,7 +311,7 @@ public class PlayMedia{
 
                 if(telephonyManager!=null)
                     telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-            }
+
 
         }catch (Exception e){
             e.printStackTrace();
@@ -423,7 +352,8 @@ public class PlayMedia{
 
         telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (Build.VERSION.SDK_INT < 31) {
+
+            Log.i(TAG, "mediaPlayRingtone: android version is "+ Build.VERSION.SDK_INT);
             PhoneStateListener phoneStateListener = new PhoneStateListener() {
                 @Override
                 public void onCallStateChanged(int state, String phoneNumber) {
@@ -464,14 +394,7 @@ public class PlayMedia{
                                     stopRingtone();
                                     stop_tts();
 
-                                    alarm.cancelAlarm(context.getApplicationContext(), alarm);
-
-                                    if (alarm.isSnooze_active())
-                                        alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
-                                    if (!alarm.isSnooze_active() && !alarm.isRepeating()) {
-                                        update_db(alarm.getPKeyDB(), 0, context.getApplicationContext());
-                                    }
+                                    manageAlarmState(context , alarm);
                                     ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
                                     intentSender(context);
@@ -479,7 +402,7 @@ public class PlayMedia{
                                 }
                             };
                             ttsRingTimer = new Timer();
-                            ttsRingTimer.schedule(ttsRingTimerTask, 30000);
+                            ttsRingTimer.schedule(ttsRingTimerTask, 120000);
                             isTtsRingTimerActive = true;
 
                             final Handler handl = new Handler();
@@ -533,7 +456,7 @@ public class PlayMedia{
 
             if(telephonyManager!=null)
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
+
 
        }catch (Exception e){
             e.printStackTrace();
@@ -568,7 +491,8 @@ public class PlayMedia{
 
         telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+
+        Log.i(TAG, "mediaPlayRingtone: android version is "+ Build.VERSION.SDK_INT);
             PhoneStateListener phoneStateListener = new PhoneStateListener() {
                 @Override
                 public void onCallStateChanged(int state, String phoneNumber) {
@@ -616,15 +540,7 @@ public class PlayMedia{
                                 public void run() {
                                     stopVibrate();
                                     if (alarm.getToggleOnOff()) {
-                                        alarm.cancelAlarm(context.getApplicationContext() , alarm);
-
-                                        if (alarm.isSnooze_active()) {
-                                            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-                                        }
-
-                                        else if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-                                            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
-                                        }
+                                        manageAlarmState(context , alarm);
                                         ScheduleService.updateAlarmSchedule(context.getApplicationContext());
                                         intentSender(context);
                                         removeNotification(context);
@@ -633,7 +549,7 @@ public class PlayMedia{
                             };
 
                             vibrateTimer = new Timer();
-                            vibrateTimer.schedule(vibrateTimerTask, 30000);
+                            vibrateTimer.schedule(vibrateTimerTask, 120000);
                             isVibrateTimerActive = true;
 
 
@@ -644,9 +560,6 @@ public class PlayMedia{
             };
             if(telephonyManager!=null)
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-        }
-
-
 
 
     }

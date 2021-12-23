@@ -33,12 +33,10 @@
             android:exported="false" />
         <activity
             android:name=".WorldClock"
-            android:exported="false"
-            android:parentActivityName=".AlarmActivity" />
+            android:exported="false" />
         <activity
             android:name=".Stopwatch"
-            android:exported="false"
-            android:parentActivityName=".AlarmActivity" />
+            android:exported="false" />
         <activity
             android:name=".AlarmActivity">
             <intent-filter>
