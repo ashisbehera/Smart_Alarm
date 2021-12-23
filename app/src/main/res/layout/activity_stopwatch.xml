@@ -12,7 +12,6 @@
         android:id="@+id/animationView"
         android:layout_width="match_parent"
         android:layout_height="450dp"
-        android:layout_marginBottom="24dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         app:lottie_autoPlay="true"
