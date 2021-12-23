@@ -3,7 +3,8 @@
     <string name="default_alarm_name">Alarm</string>
     <string name="Stop_alarm_notification">     Stop</string>
     <string name="Snooze_alarm_notification">    snooze</string>
-
+    <string name="dev1"><u>Ashis Behra</u></string>
+    <string name="dev2"><u>Ankan Mondal</u></string>
     <string-array name="days_of_week">
         <item>Sunday</item>
         <item>Monday</item>
@@ -29,5 +30,7 @@
     <string name="_00">00</string>
     <string name="repeat">Repeat</string>
     <string name="days_of_week">days_of_week</string>
+    <string name="made_by"><![CDATA[Made by A&A.]]></string>
+    <string name="devs">Devs</string>
 
 </resources>
