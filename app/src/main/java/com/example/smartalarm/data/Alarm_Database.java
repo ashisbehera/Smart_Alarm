@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.media.RingtoneManager;
@@ -77,36 +78,37 @@ public class Alarm_Database extends SQLiteOpenHelper {
         /**
          * check if database exist or not
          */
-        if(checkifDBExists()) {
-            return;
+        if (!checkIfDBExists()){
+            myDatabase=getWritableDatabase();
+            Log.e(TAG, "Alarm_Database: new database created" );
+            /** save the ringtone in the ringtone table **/
+            save_ringtoneToDatabase();
+        }else{
+            openDataBase();
+            Log.e(TAG, "Alarm_Database: database exist and assigned" );
         }
-
-        myDatabase=getWritableDatabase();
-        /** save the ringtone in the ringtone table **/
-        save_ringtoneToDatabase();
-
     }
 
     /**
      * check if data exist or not
      * @return
      */
-    private boolean checkifDBExists()
+
+    private boolean checkIfDBExists ()
     {
         File file=context.getDatabasePath(DATABASE_NAME);
-        if(myDatabase==null) {
-            try {
-                myDatabase = SQLiteDatabase.openDatabase
-                        (file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
-                Log.i("Confirmed", "DB exists");
-                return true;
-            } catch (Exception database) {
-                Log.e("SQLException", "No database");
-                return false;
-            }
-        }
-        return true;
+        return file.exists();
     }
+
+    public SQLiteDatabase openDataBase() throws SQLException {
+        File file=context.getDatabasePath(DATABASE_NAME);
+        if (myDatabase == null) {
+            myDatabase = SQLiteDatabase.openDatabase(file.getAbsolutePath(), null,
+                    SQLiteDatabase.OPEN_READWRITE);
+        }
+        return this.getWritableDatabase();
+    }
+
 
 
     @Override
@@ -259,28 +261,33 @@ public class Alarm_Database extends SQLiteOpenHelper {
 
 
     private void save_ringtoneToDatabase(){
-        RingtoneManager ringtoneMgr = new RingtoneManager(context);
-        ringtoneMgr.setType(RingtoneManager.TYPE_RINGTONE | RingtoneManager.TYPE_ALARM);
 
-        Cursor ringtoneCursor = ringtoneMgr.getCursor();
-        ContentValues values=new ContentValues();
-        int alarmsCount = ringtoneCursor.getCount();
-        if (alarmsCount == 0 && !ringtoneCursor.moveToFirst()) {
-            ringtoneCursor.close();
-            return;
-        }
+                Log.e(TAG, "save_ringtoneToDatabase: ringtone added");
+                RingtoneManager ringtoneMgr = new RingtoneManager(context);
+                ringtoneMgr.setType(RingtoneManager.TYPE_RINGTONE | RingtoneManager.TYPE_ALARM);
 
-        while (!ringtoneCursor.isAfterLast() && ringtoneCursor.moveToNext()) {
-            values.put(AlarmEntry.RINGTONE_NAME, ringtoneMgr.getRingtone
-                    (ringtoneCursor.getPosition()).getTitle(context));
-            values.put(AlarmEntry.RINGTONE_URI, ringtoneMgr.getRingtoneUri
-                    (ringtoneCursor.getPosition()).toString());
-            myDatabase.insert(AlarmEntry.RINGTONE_TABLE,null,values);
-        }
+                Cursor ringtoneCursor = ringtoneMgr.getCursor();
+                ContentValues values = new ContentValues();
+                int alarmsCount = ringtoneCursor.getCount();
+                if (alarmsCount == 0 && !ringtoneCursor.moveToFirst()) {
+                    ringtoneCursor.close();
+                    return;
+                }
+
+                while (!ringtoneCursor.isAfterLast() && ringtoneCursor.moveToNext()) {
+                    values.put(AlarmEntry.RINGTONE_NAME, ringtoneMgr.getRingtone
+                            (ringtoneCursor.getPosition()).getTitle(context));
+                    values.put(AlarmEntry.RINGTONE_URI, ringtoneMgr.getRingtoneUri
+                            (ringtoneCursor.getPosition()).toString());
+                    myDatabase.insert(AlarmEntry.RINGTONE_TABLE, null, values);
+                }
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
+        Log.i(TAG, "onUpgrade: called");
+        Log.e(TAG, "onUpgrade: called");
     }
 }

@@ -47,6 +47,7 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ringtone);
+        setTitle("Ringtone");
         Intent in = getIntent();
         prevUri = in.getData();
         /** will collect the the repeat day list **/

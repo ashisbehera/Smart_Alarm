@@ -14,6 +14,7 @@ public class About extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        setTitle("About");
         dev1 = findViewById(R.id.dev1);
         dev2 = findViewById(R.id.dev2);
         dev1.setOnClickListener(view -> {

@@ -30,7 +30,8 @@
         android:theme="@style/Theme.AppCompat">
         <activity
             android:name=".About"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".AlarmActivity"/>
         <activity
             android:name=".WorldClock"
             android:exported="false" />

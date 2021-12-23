@@ -3,7 +3,7 @@
     <string name="default_alarm_name">Alarm</string>
     <string name="Stop_alarm_notification">     Stop</string>
     <string name="Snooze_alarm_notification">    snooze</string>
-    <string name="dev1"><u>Ashis Behra</u></string>
+    <string name="dev1"><u>Ashis Behera</u></string>
     <string name="dev2"><u>Ankan Mondal</u></string>
     <string-array name="days_of_week">
         <item>Sunday</item>
