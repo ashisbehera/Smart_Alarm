@@ -11,6 +11,7 @@
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:paddingStart="20dp"
         android:text="@string/app_name"
         android:textSize="25sp"
@@ -21,52 +22,86 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/app_name"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:paddingStart="20dp"
         android:text="@string/made_by"
         android:textSize="18sp" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animationView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
         android:layout_below="@id/madeBy"
-        android:layout_marginBottom="24dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="about.json"
-        app:lottie_loop="true" />
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/logo"
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/brief"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:layout_marginTop="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/brief"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/devs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/animationView"
+        android:layout_below="@id/brief"
+        android:layout_marginTop="10dp"
         android:paddingStart="20dp"
         android:text="@string/devs"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/dev1"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/developers"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/devs"
-        android:layout_marginTop="15dp"
-        android:paddingStart="20dp"
-        android:text="@string/dev1"
-        android:textColor="#ADD8E6"
-        android:textSize="18sp" />
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/dev1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="20dp"
+            android:text="@string/dev1"
+            android:textColor="#ADD8E6"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/dev2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:text="@string/dev2"
+            android:textColor="#ADD8E6"
+            android:textSize="18sp" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/dev2"
+        android:id="@+id/coffee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/dev1"
-        android:layout_marginTop="0dp"
+        android:layout_below="@id/developers"
+        android:layout_marginTop="10dp"
         android:paddingStart="20dp"
-        android:text="@string/dev2"
-        android:textColor="#ADD8E6"
-        android:textSize="18sp" />
+        android:text="@string/coffeeDescription"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/qr"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/coffee"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/qr"
+        app:srcCompat="@drawable/qr" />
 </RelativeLayout>

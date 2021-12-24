@@ -30,9 +30,13 @@
     <string name="_00">00</string>
     <string name="repeat">Repeat</string>
     <string name="days_of_week">days_of_week</string>
-    <string name="made_by"><![CDATA[Made by A&A.]]></string>
+    <string name="made_by"><![CDATA[Made by A&A]]></string>
     <string name="devs">Devs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="logo">logo</string>
+    <string name="brief">A simple and elegant alarm clock designed to add, edit or remove alarms most efficiently. You can use it to set morning alarms or set up reminders for multiple tasks. You can also use the stopwatch to track your records or use the world clock to check time zones of other areas.</string>
+    <string name="coffeeDescription">Help us buy a coffee</string>
+    <string name="qr">qr</string>
 
 </resources>
