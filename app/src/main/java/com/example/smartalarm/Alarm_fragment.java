@@ -38,7 +38,6 @@ public class Alarm_fragment extends Fragment {
     LinkedList<AlarmConstraints> alarms;
     Alarm_Database alarmDatabase;
     BroadcastReceiver broadcastReceiver;
-    BottomNavigationView bottomNavigationView;
     FloatingActionButton add_alarm_fab;
     @Override
     public void onCreate(Bundle savedInstanceState) {

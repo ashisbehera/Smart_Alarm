@@ -44,7 +44,6 @@ import java.util.concurrent.Executor;
 public class PlayMedia{
     private static final String TAG = "PlayMedia";
     private static PlayMedia Instance;
-    private long timeToPlay = 30000;
     Vibrator vibrator;
     TextToSpeech tts;
     MediaPlayer ringtonePlay;
