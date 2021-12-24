@@ -1,89 +1,156 @@
 package com.example.smartalarm;
 
 
+import android.annotation.SuppressLint;
 import android.app.LoaderManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+import com.example.smartalarm.data.AlarmDataProvider;
 import com.example.smartalarm.data.Alarm_Database;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
+import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 
-public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import java.util.ArrayList;
+import java.util.LinkedList;
 
+public class AlarmActivity extends AppCompatActivity{
+
+    private final static String TAG = "AlarmActivity";
     private static final int ALARM_LOADER = 0;
-
     AlarmAdapter aAdapter;
-
+    Parcelable state;
+    RecyclerView alarmRecycleView;
+    LinkedList<AlarmConstraints> alarms;
+    Alarm_Database alarmDatabase;
+    BroadcastReceiver broadcastReceiver;
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_activity);
         setTitle("Alarms");
+//        finish();
+//        overridePendingTransition(0, 0);
+//        startActivity(getIntent());
+//        overridePendingTransition(0, 0);
+
+        createNotificationChannel();
+
+        bottomNavigationView= findViewById(R.id.bottom_nv);
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.stopWatch_nv_bt:
+                        Intent intent1 = new Intent(AlarmActivity.this, Stopwatch.class);
+                        startActivity(intent1);
+                        finish();
+                        return true;
+                    case R.id.clock_nv_bt:
+                        Intent intent2 = new Intent(AlarmActivity.this, WorldClock.class);
+                        startActivity(intent2);
+                        finish();
+                        return true;
+                }
+                return true;
+            }
+        });
 
 
 
-        //floating button for @AddAlarm_Activity
+
+        /**floating button for @AddAlarm_Activity **/
         FloatingActionButton add_alarm_fab = findViewById(R.id.add_alarm_fb);
 
-//        cancelbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//            cancelAlarm.cancelAlarm(getApplicationContext());
-//            }
-//        });
         add_alarm_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent alarm_intent = new Intent
                         (AlarmActivity.this,AddAlarm_Activity.class );
+                alarm_intent.setAction("from alarmActivity new");
                 startActivity(alarm_intent);
             }
         });
 
-        ListView alarmListView = (ListView) findViewById(R.id.list);
+        alarmDatabase= Alarm_Database.getInstance(getApplicationContext());
+        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+        alarmRecycleView = (RecyclerView) findViewById(R.id.list);
 
-        aAdapter = new AlarmAdapter(this, null);
+        aAdapter = new AlarmAdapter(alarms , getApplicationContext());
 
-        alarmListView.setAdapter(aAdapter);
+        alarmRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
-        alarmListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        alarmRecycleView.setAdapter(aAdapter);
+        aAdapter.notifyDataSetChanged();
+        /**
+         * receiver for recycleView when stopped notification
+         */
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.i("onclick listner","clicked");
-                Intent intent = new Intent(AlarmActivity.this , AddAlarm_Activity.class);
-
-                /** send the uri with it id of the alarm database **/
-                Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, id);
-                /**  set the uri in the intent **/
-                intent.setData(editUri);
-                startActivity(intent);
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction() == "com.example.smartalarm.dataChangeListener"){
+                    aAdapter.notifyDataSetChanged();
+                }
             }
-        });
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
-
+        };
     }
+
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+            CharSequence name = "Testing Alarm";
+            String description = "Alarm";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("notification_alarm", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     /** will inflate menu in the activity **/
     @Override
@@ -100,60 +167,63 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             case R.id.delete_all_alarms:
                 deleteAllPets();
                 return true;
+            case R.id.about_menu:
+                Intent about_intent = new Intent(AlarmActivity.this, About.class);
+                startActivity(about_intent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void deleteAllPets() {
+        for (AlarmConstraints alarm:alarms){
+            if (alarm.getToggleOnOff()){
+                alarm.cancelAlarm(getApplicationContext() , alarm);
+            }
+        }
         int rowsDeleted = getContentResolver().delete
                 (AlarmEntry.CONTENT_URI, null, null);
         Log.v("AlarmActivity", rowsDeleted + " all alarms are deleted ");
-         ScheduleService.updateAlarmSchedule(getApplicationContext());
+
+        ScheduleService.updateAlarmSchedule(getApplicationContext());
+        alarmRecycleView.removeAllViewsInLayout();
+        alarms.clear();
+        aAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+        IntentFilter intentFilter = new IntentFilter("com.example.smartalarm.dataChangeListener");
+        registerReceiver(broadcastReceiver , intentFilter);
+        aAdapter.notifyDataSetChanged();
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
+        aAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(ALARM_LOADER, null, this);
-    }
-
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        String[] projection = {
-                AlarmEntry._ID,
-                AlarmEntry.ALARM_NAME,
-                AlarmEntry.ALARM_TIME,
-                AlarmEntry.ALARM_ACTIVE};
-
-
-        return new CursorLoader(this,
-                AlarmEntry.CONTENT_URI,
-                projection,
-                null,
-                null,
-                null);
+        aAdapter.notifyDataSetChanged();
+        bottomNavigationView.setSelectedItemId(R.id.alarm_nv_bt);
+        bottomNavigationView.setSelected(true);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor d) {
-          aAdapter.swapCursor(d);
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        aAdapter.swapCursor(null);
+    public void onBackPressed() {
+        moveTaskToBack(true);
+
     }
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class ScheduleService extends Service {
-
+   private final static String TAG = "scheduleService";
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -34,6 +34,7 @@ public class ScheduleService extends Service {
      */
     public static void updateAlarmSchedule(Context context)
     {
+        Log.i(TAG, "updateAlarmSchedule: inside schedule service");
         Intent intent=new Intent(context,ScheduleService.class);
         context.startService(intent);
     }
@@ -42,22 +43,31 @@ public class ScheduleService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
-        Log.i("service received" , "now");
+        boolean isEmpty = true;
+        Log.i(TAG + " service received" , "now");
         try {
-            /**
-             * getting alarm from database
-             */
-            AlarmConstraints alarm = getAlarm();
-            /**
-             * if no alarm then nothing to do else schedule the alarm
-             */
-            if (alarm != null) {
-                Log.i("the pkey in scheduleservice",String.valueOf(alarm.getPKeyDB()));
 
-                alarm.scheduleAlarm(getApplicationContext() , alarm.getAlarmTime());
-                  Log.i("scheduleAlarm","alarm schedule in time");
+            Alarm_Database alarmDatabase = Alarm_Database.getInstance(getApplicationContext());
+
+            List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
+            for (AlarmConstraints alarm : alarms) {
+                if (alarm.isAlarmOn()) {
+                    isEmpty = false;
+                    alarm.scheduleAlarm(getApplicationContext(),
+                            alarm.getAlarmTime(), alarm.isRepeating(),
+                            alarm.getRepeatDayMap());
+                    Log.i(TAG, "onStartCommand: alarm set for pkeyid" + alarm.getPKeyDB());
+
+                }
+
             }
+
+            if (isEmpty) {
+                Toast.makeText(getApplicationContext(), "no active alarms", Toast.LENGTH_LONG).show();
+            } else{
+                Log.e(TAG, "onStartCommand: scheduled for all");
+                Log.w(TAG, "onStartCommand: scheduled for all");
+           }
         }
         catch (Exception e)
         {
@@ -70,79 +80,5 @@ public class ScheduleService extends Service {
          * then the service will be stopped instead of restarted.
          */
         return START_NOT_STICKY;
-    }
-
-
-
-    @SuppressLint("LongLogTag")
-    public AlarmConstraints getAlarm()
-    {
-        /**
-         * getting database instance
-         */
-        Alarm_Database alarmDatabase= Alarm_Database.getInstance(getApplicationContext());
-         Log.i("database instance received","received");
-
-        /**
-         * this set will arrange the alarms by the time difference
-         */
-        Set<AlarmConstraints> qu_as_theTime_diff = new TreeSet<>(new Comparator<AlarmConstraints>() {
-            @Override
-            public int compare(AlarmConstraints lhs, AlarmConstraints rhs) {
-                int result = 0;
-                long diff = lhs.getMillisecondTime(lhs.getAlarmTime()) - rhs.getMillisecondTime(rhs.getAlarmTime());
-
-                if(diff > 0){
-                    return 1;
-                }else if (diff < 0) {
-                    return -1;
-                }
-                return result;
-            }
-        });
-       /**
-       * will get the list of alarms from the database
-       */
-        List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
-        /**if all the alarm are deleted but previously there is an alarm in alarm manager
-         * then we have to cancel that
-         */
-        if (alarms.isEmpty()){
-            AlarmConstraints alarm = new AlarmConstraints();
-            Log.i("active on/off", "alarms list is empty");
-            alarm.cancelAlarm(getApplicationContext());
-        }
-
-
-        /**
-         * then we add the alarms to the set if the alarm is on
-         */
-        for(AlarmConstraints alarm : alarms)
-        {
-            if(alarm.isAlarmOn())
-            {
-                qu_as_theTime_diff.add(alarm);
-            }
-        }
-
-        /**
-         * then iterate one by one and return that
-         */
-        if(qu_as_theTime_diff.iterator().hasNext())
-        {
-            return qu_as_theTime_diff.iterator().next();
-        }
-        else
-        {
-            /**if we are toggling off the last alarm then we have to cancel that form alarm manager
-             * otherwise it won't turn off
-             */
-            AlarmConstraints alarm = new AlarmConstraints();
-            Log.i("active on/off", "no active alarm");
-            Toast.makeText(getApplicationContext(),"no active alarms",Toast.LENGTH_LONG).show();
-            alarm.cancelAlarm(getApplicationContext());
-            return null;
-        }
-
     }
 }

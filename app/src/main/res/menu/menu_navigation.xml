@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/alarm_nv_bt"
+        android:title="Alarm"
+        android:icon="@drawable/baseline_access_alarms_24">
+    </item>
+    <item
+        android:id="@+id/stopWatch_nv_bt"
+        android:icon="@drawable/baseline_timer_24"
+        android:title="Stopwatch"></item>
+
+    <item
+        android:id="@+id/clock_nv_bt"
+        android:title="World Clock"
+        android:icon="@drawable/baseline_watch_later_24">
+    </item>
+</menu>

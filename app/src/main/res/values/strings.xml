@@ -1,7 +1,36 @@
 <resources>
     <string name="app_name">Smart Alarm</string>
     <string name="default_alarm_name">Alarm</string>
-    <string name="Stop_alarm_notification">Stop</string>
-    <string name="Snooze_alarm_notification">snooze</string>
+    <string name="Stop_alarm_notification">     Stop</string>
+    <string name="Snooze_alarm_notification">    snooze</string>
+    <string name="dev1"><u>Ashis Behera</u></string>
+    <string name="dev2"><u>Ankan Mondal</u></string>
+    <string-array name="days_of_week">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    <string name="title_activity_repeat_day">RepeatDayActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="add_alarm_button">add_alarm_button</string>
+    <string name="cancel_alarm">cancel_alarm</string>
+    <string name="start_pause">start_pause</string>
+    <string name="reset">reset</string>
+    <string name="_00">00</string>
+    <string name="repeat">Repeat</string>
+    <string name="days_of_week">days_of_week</string>
+    <string name="made_by"><![CDATA[Made by A&A.]]></string>
+    <string name="devs">Devs</string>
 
 </resources>

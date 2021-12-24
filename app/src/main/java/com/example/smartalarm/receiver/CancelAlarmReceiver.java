@@ -1,5 +1,6 @@
 package com.example.smartalarm.receiver;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,15 @@ public class CancelAlarmReceiver extends BroadcastReceiver {
         AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
                 (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
         ControlAlarm controlAlarm = new ControlAlarm();
+        alarm.setSnooze_active(false);
+        /**
+         * will stop the alarm from cancel alarm activity
+         */
         controlAlarm.stopAlarm((AlarmConstraints)alarm , context);
+        /**
+         * then cancel the notification
+         */
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) notificationManager.cancelAll();
     }
 }

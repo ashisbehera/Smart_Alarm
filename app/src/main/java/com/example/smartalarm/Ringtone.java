@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,30 +25,55 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.DexterBuilder;
+
 import java.util.ArrayList;
 
 
 public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     MediaPlayer mediaPlayer;
     private static final int RINGTONE_LOADER = 0;
-    ArrayList<Uri> local_ringtone;
-    android.media.Ringtone ringtone;
-    RingtoneListAdapter rAdapter;
-    Uri prevUri;
+    private ArrayList<String> arrayListInRing;
+    private android.media.Ringtone ringtone;
+    private RingtoneListAdapter rAdapter;
+    private Uri prevUri;
+    private AlarmConstraints ringtoneAlarm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ringtone);
+        setTitle("Ringtone");
         Intent in = getIntent();
         prevUri = in.getData();
+        /** will collect the the repeat day list **/
+        arrayListInRing = in.getStringArrayListExtra("arrayList");
         ListView listView = findViewById(R.id.listView);
         rAdapter = new RingtoneListAdapter(this , null);
         listView.setAdapter(rAdapter);
 
         getLoaderManager().initLoader(RINGTONE_LOADER, null, this);
 
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
 
@@ -114,7 +140,10 @@ public class Ringtone extends AppCompatActivity implements LoaderManager.LoaderC
                     Intent intent = new Intent(Ringtone.this, AddAlarm_Activity.class);
                     intent.putExtra("ringtoneName",ringtoneName);
                     intent.putExtra("ringtoneUri",ringtoneUri);
+                    /** will return the repeat day list **/
+                    intent.putStringArrayListExtra("arrayList" ,arrayListInRing);
                     intent.setData(prevUri);
+                    intent.setAction("from ringtoneActivity");
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     finish();
                     startActivity(intent);

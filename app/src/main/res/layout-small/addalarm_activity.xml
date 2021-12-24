@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#171717"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.635"
+        app:layout_constraintVertical_weight="1">
+
+        <TimePicker
+            android:id="@+id/timePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:timePickerMode="spinner" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
+        app:layout_constraintVertical_weight="1">
+
+        <LinearLayout
+            android:id="@+id/repeatLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/repeat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="Repeat"
+                android:textColor="@color/white"
+                android:textSize="20sp">
+
+            </TextView>
+
+            <ImageView
+                android:id="@+id/repeatClickImg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:paddingLeft="100dp"
+                app:srcCompat="@drawable/arrow_right">
+
+            </ImageView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lable_llout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="Label"
+                android:textColor="@color/white"
+                android:textSize="20sp">
+
+            </TextView>
+
+            <EditText
+                android:id="@+id/label_edt_txt"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="26dp"
+                android:layout_weight="2"
+                android:background="@drawable/recycleview_bg"
+                android:foreground="@drawable/ripple_effect"
+                android:hint="Alarm name"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:paddingLeft="10sp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C3C3C3"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tts_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tts_txt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="TTS"
+                android:textColor="@color/white"
+                android:textSize="20sp">
+
+            </TextView>
+
+            <EditText
+                android:id="@+id/tts_edt_txt"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="2"
+                android:background="@drawable/recycleview_bg"
+                android:foreground="@drawable/ripple_effect"
+                android:hint="Text-to-speech"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:paddingLeft="10sp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#C3C3C3"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/tts_ch_bt"
+                android:layout_width="26dp"
+                android:layout_height="30dp"
+                android:text="@null" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ringtoneLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif"
+                android:text="Ringtone"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:ignore="RtlCompat">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/setRingtone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center|right"
+                android:paddingRight="10dp"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/ringtone_ch_bt"
+                android:layout_width="26dp"
+                android:layout_height="30dp"
+                android:text="@null" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/vibrate_llout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="6"
+                android:fontFamily="sans-serif"
+                android:gravity="center|left"
+                android:text="Vibrate"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:ignore="RtlCompat">
+
+            </TextView>
+
+            <Switch
+                android:id="@+id/vibrate_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:minWidth="70dp"
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/toggle_widget_background" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/snooze_llout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/vibrate_llout">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="6"
+                android:fontFamily="sans-serif"
+                android:text="Snooze"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <Switch
+                android:id="@+id/snooze_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:minWidth="70dp"
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/toggle_widget_background" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+        android:id="@+id/set_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="done"
+        android:foregroundGravity="right|bottom"
+        app:srcCompat="@drawable/outline_check_24"
+        app:fabSize="auto"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+
+        android:id="@+id/delete_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="done"
+        android:foregroundGravity="left|bottom"
+        app:srcCompat="@drawable/baseline_delete_24"
+        app:fabSize="auto"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -55,11 +55,11 @@ public class AlarmContract {
         /*** TIME of the alarm.
          */
         public final static String ALARM_TIME = "time";
-
+        /** vibrating on or not **/
         public final static String ALARM_VIBRATE = "vibrate";
-
+        /** alarm active or not **/
         public final static String ALARM_ACTIVE="alarm_active";
-
+        /** alarm snooze active or not **/
         public final static String ALARM_SNOOZE="alarm_snooze";
         /** tts string for data base **/
         public final static String TTS_STRING="tts_string";
@@ -67,30 +67,19 @@ public class AlarmContract {
         public final static String RINGTONE_STRING="alarm_ringtone_uri";
         /** this RINGTONE NAME will save in the alarm table **/
         public final static String ALARM_RINGTONE_NAME="alarm_ringtone_name";
-
+        /** repeat_days will save in the alarm table **/
+        public final static String ALARM_REPEAT_DAYS="alarm_repeat_days";
+        /** check if repeating is active or not **/
+        public final static String IS_REPEATING="is_repeating";
+        /** check if tts is active or not **/
         public final static String TTS_ACTIVE="tts_active";
-
-        public final static String ALARM_SNOOZE_ACTIVE="alarm_snooze_active";
         /** for ringtone table **/
         public final static String RINGTONE_ID= BaseColumns._ID;
         /** for ringtone table **/
         public final static String RINGTONE_NAME="ringtone_name";
         /** for ringtone table **/
         public final static String RINGTONE_URI="ringtone_uri";
-
+        /** check if ringtone is active or not **/
         public final static String RINGTONE_ACTIVE="ringtone_active";
-
-        public static  final int ALARM_ACTIVE_OFF = 0;
-
-        public static  final int ALARM_ACTIVE_ON = 1;
-
-        public  static  final int ALARM_VIBRATE_OFF = 0;
-
-        public  static  final int ALARM_VIBRATE_ON = 1;
-
-        public  static  final int ALARM_SNOOZE_OFF = 0;
-
-        public  static  final int ALARM_SNOOZE_ON = 1;
-
     }
 }

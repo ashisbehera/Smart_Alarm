@@ -59,6 +59,7 @@ public class ControlAlarm extends AppCompatActivity implements
         Log.i("stop vibration and ringtone" , "successfully stopped");
         removingAlarm(alarm , context);
         Log.i(" alarm removed " , "successfully alarm removed");
+
         ScheduleService.updateAlarmSchedule(context.getApplicationContext());
 
         if(alarm.getTts_active() && alarm.getRingtone_active()){
@@ -83,13 +84,14 @@ public class ControlAlarm extends AppCompatActivity implements
      * @param alarm
      * play the alarm and ringtone
      */
-    @RequiresApi(api = Build.VERSION_CODES.P)
     public void playAlarm(final AlarmConstraints alarm , Context context) throws IOException {
         if(alarm == null) {
             return;
         }
         Log.i("pkey", "pkey - "+alarm.getPKeyDB());
-          vibrateV(context);
+        if (alarm.isVibrate_active()) {
+            vibrateV(context.getApplicationContext() , alarm);
+        }
         if(alarm.getTts_active() && alarm.getRingtone_active()){
            playMedia.playRingtoneTts(alarm , context);
         }
@@ -118,14 +120,13 @@ public class ControlAlarm extends AppCompatActivity implements
 
             Log.i("playringtone", "inside playringtone");
             ring = Uri.parse(alarm.getRingtoneUri());
-            playMedia.mediaPlayRingtone(context , ring);
+            playMedia.mediaPlayRingtone(context , ring , alarm);
 
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void vibrateV(Context context){
-        playMedia.vibrate(context.getApplicationContext());
+    public void vibrateV(Context context, AlarmConstraints alarm){
+        playMedia.vibrate(context.getApplicationContext() , alarm);
     }
 
     public void stopVibrateV(){
@@ -147,9 +148,12 @@ public class ControlAlarm extends AppCompatActivity implements
         /**
          * set the toggle alarm (not to repeat the alarm)
          */
+
+        /** if snooze is active then don't turn off the toggle **/
+        if (!alarm.isSnooze_active() && !alarm.isRepeating())
         setToggleOnOfAfterAlarm(alarm , 0 , context);
         Log.i("toggled off","toggle" );
-        alarm.cancelAlarm(context.getApplicationContext());
+        alarm.cancelAlarm(context.getApplicationContext() , alarm);
         Log.i("this alarm has canceled","alarm");
 
 

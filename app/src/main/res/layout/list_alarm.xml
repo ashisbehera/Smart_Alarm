@@ -2,48 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginBottom="6dp"
+    android:background="@drawable/recycleview_bg"
+    android:foreground="@drawable/ripple_effect"
+    android:clickable="true"
     android:orientation="horizontal"
-    android:padding="15dp">
+    android:padding="22dp"
+>
+
+
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/alarm_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
             android:focusable="false"
-            android:fontFamily="sans-serif-black"
+            android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/white"  />
+            android:textColor="@color/gray_white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/alarm_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
             android:focusable="false"
+            android:fontFamily="sans-serif"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="#AEB6BD"  />
+            android:textColor="@color/gray_white" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true">
+        android:layout_alignParentRight="true"
+        android:paddingRight="10dp">
 
         <Switch
             android:id="@+id/alarm_active_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:track="@drawable/toggle_widget_background"
-            android:thumb="@drawable/thumb"
             android:focusable="false"
-            android:textSize="15sp"
-            />
+            android:minWidth="70dp"
+            android:thumb="@drawable/thumb"
+            android:track="@drawable/toggle_widget_background" />
     </LinearLayout>
 
 </RelativeLayout>

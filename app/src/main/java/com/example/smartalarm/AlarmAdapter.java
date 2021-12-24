@@ -5,8 +5,10 @@ import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,90 +21,126 @@ import android.widget.CursorAdapter;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
-public class AlarmAdapter extends CursorAdapter{
+import java.util.LinkedList;
 
-    LayoutInflater layoutInflater;
-    Context context;
-
-    public AlarmAdapter(Context context, Cursor c) {
-        super(context, c,0);
+public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
+   LinkedList<AlarmConstraints> alarmList;
+   Context context;
+    public AlarmAdapter(LinkedList<AlarmConstraints> alarms , Context context) {
+        alarmList = alarms;
+        this.context = context;
     }
 
+    @NonNull
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
-         return LayoutInflater.from(context).
-                 inflate(R.layout.list_alarm, viewGroup, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.list_alarm ,parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        AlarmConstraints alarm = new AlarmConstraints();
-        TextView nameTextView = (TextView) view.findViewById(R.id.alarm_name);
-        TextView timeTextView = (TextView) view.findViewById(R.id.alarm_time);
-        Switch alarmSwitch = view.findViewById(R.id.alarm_active_switch);
-
-        @SuppressLint("Range")
-        int rowId = cursor.getInt(cursor.getColumnIndex(AlarmEntry._ID));
-        int nameColumnIndex = cursor.getColumnIndex(AlarmEntry.ALARM_NAME);
-        int timeColumnIndex = cursor.getColumnIndex(AlarmEntry.ALARM_TIME);
-        int switchColumnIndex = cursor.getColumnIndex(AlarmEntry.ALARM_ACTIVE);
-
-        String alarmName = cursor.getString(nameColumnIndex);
-        String alarmTime = cursor.getString(timeColumnIndex);
-        /**
-         * convert the alarm time to standard time
-         */
-        alarm.setStandardTime(alarmTime);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        AlarmConstraints alarm = alarmList.get(position);
+        alarm.setStandardTime(alarm.getAlarmTime());
         StringBuilder standardTime = alarm.getStandardTime();
+       holder.timeTextView.setText(standardTime);
+       holder.nameTextView.setText(alarm.getLabel());
+       boolean switchStage  = alarm.getToggleOnOff();
+       if (switchStage) {
+           holder.alarmSwitch.setChecked(true);
+           holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
+           holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
+       }
+       else {
+           holder.alarmSwitch.setChecked(false);
+           holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+           holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+       }
 
-        int switchStage = cursor.getInt(switchColumnIndex);
+       holder.itemView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
+                intent.setAction("from alarmActivity");
+                /** send the uri with it id of the alarm database **/
+                Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, alarm.getPKeyDB());
+                /**  set the uri in the intent **/
+                intent.setData(editUri);
+                view.getContext().startActivity(intent);
+           }
+       });
 
-        if (TextUtils.isEmpty(alarmName)) {
-            alarmName = context.getString(R.string.default_alarm_name);
-        }
-
-        if(switchStage==0){
-            alarmSwitch.setChecked(false);
-        }else
-            alarmSwitch.setChecked(true);
-
-        nameTextView.setText(alarmName);
-        timeTextView.setText(standardTime);
-
-        /**this will on/off alarm thorough toggle button **/
-        alarmSwitch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+        holder.alarmSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                Log.i("in alarmadapter", "toggle clicked");
-                boolean on = alarmSwitch.isChecked();
-                /**if the toggle button is turned on then update the data base with the specified rowid
-                 * with value 1 which is on.
-                 */
-                if(on){
+            public void onClick(View view) {
+                boolean on = holder.alarmSwitch.isChecked();
+                if (on){
+                    holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
+                    holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
+
+                    long milisec = alarm.convertTimeInMS(alarm.getAlarmTime(),
+                            alarm.isRepeating() , alarm.getRepeatDayMap());
+
+                    Toast.makeText(context, "alarm will ring in : "+
+                                    String.valueOf(alarm.getDurationBreakdown(milisec)),
+                            Toast.LENGTH_SHORT).show();
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 1);
-                    Log.i("in alarmadapter", "database updated with rowid :"+rowId);
-                    Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,rowId);
+                    Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());
                     context.getContentResolver().update(currentPetUri , values, null, null);
                     ScheduleService.updateAlarmSchedule(context);
-                }else{
-                    /**if the toggle button is turned off then update the data base with the specified rowid
-                     * with value 0 which is off.
-                     */
+
+                }else {
+                    holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+                    holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
                     ContentValues values = new ContentValues();
                     values.put(AlarmEntry.ALARM_ACTIVE, 0);
-                    Log.i("in alarmadapter", "database updated with rowid :"+rowId);
-                    Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,rowId);
+                    Log.i("in alarmadapter", "database updated with rowid :"+alarm.getPKeyDB());
+                    Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());
                     context.getContentResolver().update(currentPetUri , values, null, null);
-                    ScheduleService.updateAlarmSchedule(context);
+                    /**
+                     * this will stop if there is any pending snooze
+                     */
+                    alarm.cancelAlarm(context.getApplicationContext() , alarm);
+                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
                 }
             }
         });
 
+
+
     }
 
+    @Override
+    public int getItemCount() {
+        return alarmList.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder  {
+
+        TextView nameTextView;
+        TextView timeTextView;
+        Switch alarmSwitch;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+             nameTextView = (TextView) itemView.findViewById(R.id.alarm_name);
+             timeTextView = (TextView) itemView.findViewById(R.id.alarm_time);
+             alarmSwitch = itemView.findViewById(R.id.alarm_active_switch);
+
+        }
+
+
+    }
 }
