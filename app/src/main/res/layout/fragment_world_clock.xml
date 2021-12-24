@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/world_clock_digital"
         android:gravity="center|left"
-        android:paddingLeft="30dp"
+        android:paddingLeft="25dp"
         android:textSize="20sp" />
 
     <LinearLayout
@@ -81,15 +81,4 @@
             android:paddingTop="10dp"
             android:textSize="25sp" />
     </LinearLayout>
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/buttom_nv_view_bg"
-        android:saveEnabled="false"
-        app:itemRippleColor="@color/white"
-        app:itemTextColor="@color/buttom_navigation_color"
-        app:itemIconTint="@color/buttom_navigation_color"
-        app:menu="@menu/menu_navigation" />
 </RelativeLayout>

@@ -3,18 +3,14 @@ package com.example.smartalarm.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.smartalarm.AlarmActivity;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 public class AlarmDataProvider extends ContentProvider {
 
