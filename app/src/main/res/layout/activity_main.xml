@@ -7,23 +7,25 @@
     android:background="#171717"
     tools:context=".MainActivity">
 
-    <com.tomerrosenfeld.customanalogclockview.CustomAnalogClock
-        android:id="@+id/analog_clock"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
-        app:default_watchface="true" />
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_nv">
+
+    </FrameLayout>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/recycleview_bg"
+        android:background="@drawable/buttom_nv_view_bg"
         android:saveEnabled="false"
         app:itemRippleColor="@color/white"
-        app:itemTextColor="@color/white"
+        app:itemTextColor="@color/buttom_navigation_color"
+        app:itemIconTint="@color/buttom_navigation_color"
         app:menu="@menu/menu_navigation" />
 
 </RelativeLayout>

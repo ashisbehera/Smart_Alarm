@@ -1,25 +1,24 @@
 package com.example.smartalarm;
 
-import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.os.Handler;
 import android.os.SystemClock;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Locale;
 
-public class Stopwatch extends AppCompatActivity {
+
+public class StopWatch_Fragment extends Fragment {
     private boolean running;
     private long tMilliSec, tStart, tBuff, tUpdate = 0L;
     private int secs, mins, milliSecs;
@@ -28,50 +27,41 @@ public class Stopwatch extends AppCompatActivity {
     private LottieAnimationView lottieAnimationView;
     private Handler handler;
     private Chronometer chronometer;
-    BottomNavigationView bottomNavigationView;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stopwatch);
-        bottomNavigationView= findViewById(R.id.bottom_nv);
-        bottomNavigationView.setSelectedItemId(R.id.stopWatch_nv_bt);
-        bottomNavigationView.setSelected(true);
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.alarm_nv_bt:
-                        Intent intent1 = new Intent(Stopwatch.this, AlarmActivity.class);
-                        startActivity(intent1);
-                        finish();
-                        return true;
-                    case R.id.clock_nv_bt:
-                        Intent intent2 = new Intent(Stopwatch.this, WorldClock.class);
-                        startActivity(intent2);
-                        finish();
-                        return true;
-                }
-                return true;
-            }
-        });
-        setTitle("Stop Watch");
-        lottieAnimationView = findViewById(R.id.animationView);
-        chronometer = findViewById(R.id.chronometer);
-        startPause = findViewById(R.id.startPause);
-        seconds = findViewById(R.id.seconds);
-        millis = findViewById(R.id.millis);
-        ImageView reset = findViewById(R.id.reset);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_stop_watch, container, false);
+        getActivity().setTitle("Stop Watch");
+        lottieAnimationView = view.findViewById(R.id.animationView);
+        chronometer = view.findViewById(R.id.chronometer);
+        startPause = view.findViewById(R.id.startPause);
+        seconds = view.findViewById(R.id.seconds);
+        millis = view.findViewById(R.id.millis);
+        ImageView reset = view.findViewById(R.id.reset);
         handler = new Handler();
         lottieAnimationView.pauseAnimation();
-        startPause.setOnClickListener(this::startPauseStopwatch);
-        reset.setOnClickListener(this::resetStopwatch);
+        startPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startPauseStopwatch(view);
+            }
+        });
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetStopwatch(view);
+            }
+        });
+       return view;
     }
 
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
-
-    }
 
     // thread to calculate the stopwatch mins, secs and milliseconds
     Runnable runnable = new Runnable() {

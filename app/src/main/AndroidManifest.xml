@@ -31,15 +31,9 @@
         <activity
             android:name=".About"
             android:exported="false"
-            android:parentActivityName=".AlarmActivity"/>
+            android:parentActivityName=".MainActivity"/>
         <activity
-            android:name=".WorldClock"
-            android:exported="false" />
-        <activity
-            android:name=".Stopwatch"
-            android:exported="false" />
-        <activity
-            android:name=".AlarmActivity">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,7 +50,7 @@
 <!--        </activity>-->
         <activity
             android:name=".AddAlarm_Activity"
-            android:parentActivityName=".AlarmActivity">
+            android:parentActivityName=".MainActivity">
             <intent-filter>
                 <action android:name="from alarmActivity" />
                 <action android:name="from ringtoneActivity" />
@@ -82,7 +76,7 @@
             android:parentActivityName=".AddAlarm_Activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AlarmActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".RepeatDayActivity"
@@ -90,7 +84,7 @@
             android:parentActivityName=".AddAlarm_Activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AlarmActivity" />
+                android:value=".MainActivity" />
         </activity>
 
         <service android:name=".ScheduleService" />
