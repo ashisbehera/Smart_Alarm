@@ -106,7 +106,12 @@ public class PlayMedia{
                             Log.i(TAG, "onCallStateChanged: no call");
                             try {
                                 if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-                                    ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
+                                    ringtonePlay.setAudioAttributes(
+                                            new AudioAttributes
+                                                    .Builder()
+                                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                                    .setUsage(AudioAttributes.USAGE_ALARM)
+                                                    .build());
                                     ringtonePlay.setLooping(true);
                                     ringtonePlay.prepare();
                                     ringtonePlay.start();
@@ -475,7 +480,12 @@ public class PlayMedia{
         audioManager = (AudioManager)
                 context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-            ringtonePlay.setAudioStreamType(AudioManager.STREAM_ALARM);
+            ringtonePlay.setAudioAttributes(
+                    new AudioAttributes
+                            .Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .build());
             ringtonePlay.setLooping(true);
             ringtonePlay.prepare();
             ringtonePlay.start();
