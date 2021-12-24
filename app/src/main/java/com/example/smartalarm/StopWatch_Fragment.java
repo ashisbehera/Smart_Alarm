@@ -9,12 +9,18 @@ import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -22,11 +28,18 @@ public class StopWatch_Fragment extends Fragment {
     private boolean running;
     private long tMilliSec, tStart, tBuff, tUpdate = 0L;
     private int secs, mins, milliSecs;
-    private ImageView startPause;
+    private ImageView startPause , reset;
     private TextView millis, seconds;
+    private Button lapButton;
     private LottieAnimationView lottieAnimationView;
     private Handler handler;
     private Chronometer chronometer;
+
+    private ListView listView ;
+
+    private List<String> lapArrayList ;
+
+    private ArrayAdapter<String> adapter ;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +57,15 @@ public class StopWatch_Fragment extends Fragment {
         startPause = view.findViewById(R.id.startPause);
         seconds = view.findViewById(R.id.seconds);
         millis = view.findViewById(R.id.millis);
-        ImageView reset = view.findViewById(R.id.reset);
+        reset = view.findViewById(R.id.reset);
+        lapButton = view.findViewById(R.id.lap);
+        listView = view.findViewById(R.id.lap_list);
+        lapArrayList = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_list_item_1,
+                lapArrayList);
+
+        listView.setAdapter(adapter);
         handler = new Handler();
         lottieAnimationView.pauseAnimation();
         startPause.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +78,19 @@ public class StopWatch_Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 resetStopwatch(view);
+                lapArrayList.clear();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        lapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lapArrayList.add(lapArrayList.size()+"            "+
+                        chronometer.getText().toString()+":"+
+                        seconds.getText().toString()+":"+millis.getText().toString());
+
+                adapter.notifyDataSetChanged();
             }
         });
        return view;

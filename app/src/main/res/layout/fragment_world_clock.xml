@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#171717"
-    android:orientation="vertical"
-    tools:context=".WorldClock">
+    android:orientation="vertical">
 
     <DigitalClock
         android:id="@+id/world_clock_digital"
@@ -24,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/world_clock_digital"
         android:gravity="center|left"
-        android:paddingLeft="25dp"
+        android:paddingLeft="23dp"
         android:textSize="20sp" />
 
     <LinearLayout
