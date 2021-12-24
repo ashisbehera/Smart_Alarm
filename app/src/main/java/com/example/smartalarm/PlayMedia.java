@@ -54,6 +54,7 @@ public class PlayMedia{
     Timer ringTimer,ttsTimer,ttsRingTimer, vibrateTimer;
     boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateTimerActive;
     TelephonyManager telephonyManager;
+    Bundle paramsBundle;
     static PlayMedia getMediaPlayerInstance() {
         if (Instance == null) {
             return Instance = new PlayMedia();
@@ -285,8 +286,12 @@ public class PlayMedia{
 
                                             @Override
                                             public void onDone(String s) {
-
-                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                tts.stop();
+                                                if (Build.VERSION.SDK_INT >= 21) {
+                                                    tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                                } else {
+                                                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                }
 
                                                 try {
                                                     Thread.sleep(2000);
@@ -301,8 +306,14 @@ public class PlayMedia{
                                             }
                                         });
                                         params = new HashMap<>();
+                                        paramsBundle = new Bundle();
+                                        paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
                                         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                        if (Build.VERSION.SDK_INT >= 21) {
+                                            tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                        } else {
+                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                        }
                                         Log.i(TAG, "run: tts string is " + alarm.getTtsString());
                                     }
                                 };
@@ -424,6 +435,7 @@ public class PlayMedia{
 
                                         @Override
                                         public void onDone(String s) {
+                                            tts.stop();
                                             try {
                                                 Thread.sleep(1000);
                                             } catch (InterruptedException e) {
@@ -435,7 +447,11 @@ public class PlayMedia{
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                             }
-                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                            if (Build.VERSION.SDK_INT >= 21) {
+                                                tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                            } else {
+                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                            }
 
                                         }
 
@@ -445,8 +461,15 @@ public class PlayMedia{
                                         }
                                     });
                                     params = new HashMap<>();
+                                    paramsBundle = new Bundle();
+                                    paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
                                     params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                    if (Build.VERSION.SDK_INT >= 21) {
+                                        Log.e(TAG, "run: sdk version is " + Build.VERSION.SDK_INT );
+                                        tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                    } else {
+                                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                    }
                                 }
                             };
 
