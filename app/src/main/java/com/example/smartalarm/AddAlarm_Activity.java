@@ -386,6 +386,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             values.put(AlarmEntry.ALARM_REPEAT_DAYS , daysString.toString());
             values.put(AlarmEntry.IS_REPEATING, 1 );
         }else{
+            values.put(AlarmEntry.ALARM_REPEAT_DAYS , daysString.toString());
             /**if arrayList is empty then No repeating so set  IS_REPEATING 0 **/
             values.put(AlarmEntry.IS_REPEATING, 0);
         }
@@ -486,7 +487,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                ringtoneUri = cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING));
                String RepeatDaysString = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
                Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
-               if (RepeatDaysString!=null) {
+               if (!RepeatDaysString.isEmpty()) {
                    String[] array = RepeatDaysString.split(",");
                    for (int i = 0; i < array.length; i++) {
                        dayArrayList.add(array[i]);

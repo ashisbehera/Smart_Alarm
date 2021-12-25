@@ -15,5 +15,6 @@
     <color name="orange">#FF3F03</color>
     <color name="activity_back">#171717</color>
     <color name="light_teal">#BE02C3C1</color>
+    <color name="deep_teal">#02C3C1</color>
 
 </resources>

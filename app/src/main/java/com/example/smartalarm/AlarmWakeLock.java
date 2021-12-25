@@ -17,11 +17,14 @@ public class AlarmWakeLock {
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         sCpuWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "smart_alarm:AlarmWakeLock");
+        Log.e(TAG, "acquireCpu: going to acquire" );
         sCpuWakeLock.acquire();
+        Log.e(TAG, "acquireCpu:  acquired" );
     }
 
     public static void acquireScreenCpu(Context context) {
         if (sCpuWakeLock != null) {
+            Log.e(TAG, "acquireCpu: already acquire" );
             return;
         }
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -29,7 +32,9 @@ public class AlarmWakeLock {
                                              | PowerManager.ACQUIRE_CAUSES_WAKEUP
                                              | PowerManager.ON_AFTER_RELEASE,
                                          "smart_alarm:AlarmWakeLock");
+        Log.e(TAG, "acquireCpu: going to acquire" );
         sCpuWakeLock.acquire();
+        Log.e(TAG, "acquireCpu:  acquired" );
     }
 
     public static void releaseCpu() {
