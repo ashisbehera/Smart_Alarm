@@ -36,7 +36,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="logo">logo</string>
     <string name="brief">A simple and elegant alarm clock designed to add, edit or remove alarms most efficiently. Make sure you have already installed google text-to-speech service to use TTS alarm.</string>
-    <string name="coffeeDescription">If you want to support our work</string>
+    <string name="coffeeDescription">Help us buy a coffee</string>
     <string name="qr">qr</string>
+    <string name="lap">lap</string>
 
 </resources>

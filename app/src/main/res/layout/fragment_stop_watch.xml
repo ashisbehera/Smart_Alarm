@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#171717"
@@ -22,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/animationView"
-        android:layout_marginTop="-65dp"
+        android:layout_marginTop="-105dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:paddingLeft="50dp"
@@ -59,25 +58,29 @@
             android:text="@string/_00"
             android:textSize="40sp" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/stopwatch_seconds_layout"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/lap_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
             android:orientation="horizontal">
+
             <ListView
                 android:id="@+id/lap_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </ListView>
+                android:layout_height="wrap_content"
+                android:divider="@null" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/play_pause_lap"
             android:layout_width="match_parent"
@@ -89,11 +92,11 @@
                 android:id="@+id/startPause"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:foreground="@drawable/ripple_for_button"
                 android:background="@drawable/button_background"
                 android:contentDescription="@string/start_pause"
+                android:foreground="@drawable/ripple_for_button"
                 android:minHeight="40dp"
                 app:srcCompat="@drawable/outline_play_circle_filled_24" />
 
@@ -101,30 +104,25 @@
                 android:id="@+id/reset"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="10dp"
                 android:background="@drawable/button_background"
-                android:foreground="@drawable/ripple_for_button"
                 android:contentDescription="@string/reset"
+                android:foreground="@drawable/ripple_for_button"
                 android:minHeight="40dp"
                 app:srcCompat="@drawable/reset" />
+
             <Button
                 android:id="@+id/lap"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="lap"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:minHeight="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_background"
                 android:foreground="@drawable/ripple_for_button"
-                android:background="@drawable/button_background">
-
-            </Button>
-
+                android:minHeight="40dp"
+                android:text="@string/lap" />
         </LinearLayout>
-
     </LinearLayout>
-
-
 </RelativeLayout>

@@ -154,7 +154,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
                     "smart_alarm:AlarmReceiver");
             wakeLock.acquire(10000);
-
+            Log.e("wakelock", "wakelock enabled");
             builder.setFullScreenIntent(pendingIntent , true);
             builder.setPriority(NotificationCompat.PRIORITY_HIGH);
             builder.setCategory(NotificationCompat.CATEGORY_ALARM);

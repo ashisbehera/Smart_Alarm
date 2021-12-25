@@ -51,7 +51,7 @@ public class StopWatch_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_stop_watch, container, false);
-        getActivity().setTitle("Stop Watch");
+        getActivity().setTitle("Stopwatch");
         lottieAnimationView = view.findViewById(R.id.animationView);
         chronometer = view.findViewById(R.id.chronometer);
         startPause = view.findViewById(R.id.startPause);
@@ -86,7 +86,7 @@ public class StopWatch_Fragment extends Fragment {
         lapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lapArrayList.add(lapArrayList.size()+"            "+
+                lapArrayList.add((lapArrayList.size() + 1) +"            "+
                         chronometer.getText().toString()+":"+
                         seconds.getText().toString()+":"+millis.getText().toString());
 
