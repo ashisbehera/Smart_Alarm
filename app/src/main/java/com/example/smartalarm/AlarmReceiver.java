@@ -41,10 +41,17 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = "AlarmReceiver";
     private RemoteViews largeRemoteViews , smallRemoteView;
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
+    private PowerManager powerManager;
     @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
+        try {
+            AlarmWakeLock.acquireCpu(context);
+            Log.e(TAG, "onReceive: wakelock acquired");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         Log.i("AlarmReceiver", "Intent received");
         /**
          * getting bundle from intent
@@ -137,6 +144,9 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setLocalOnly(true)
 //                .addAction(SnoozeAction)
 //                .addAction(StopAction)
                 .setCustomContentView(smallRemoteView)
@@ -146,18 +156,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         /** if screen is on then only show notification otherwise open activity **/
 
-        PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = powerManager.isInteractive();
         if (!isScreenOn) {
-            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(
-                    PowerManager.PARTIAL_WAKE_LOCK
-                            | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
-                    "smart_alarm:AlarmReceiver");
-            wakeLock.acquire(10000);
-
             builder.setFullScreenIntent(pendingIntent , true);
             builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-            builder.setCategory(NotificationCompat.CATEGORY_ALARM);
         }
 
             if (notificationManagerCompat!=null)
@@ -168,6 +171,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        try {
+            AlarmWakeLock.releaseCpu();
+            Log.e(TAG, "onReceive: wakelock released" );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

@@ -13,6 +13,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:focusable="false"
-        android:src="@drawable/baseline_add_24" />
+        android:focusable="false"/>
 </RelativeLayout>

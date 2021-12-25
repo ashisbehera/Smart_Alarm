@@ -44,17 +44,25 @@ public class CancelAlarm extends AppCompatActivity {
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            AlarmWakeLock.acquireScreenCpu(getApplicationContext());
+            Log.e(TAG, "onCreate: wakelock acquired" );
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "onCreate: error while wakelock acquire" );
+        }
 
+        Log.e(TAG, "onCreate: inside cancel alarm" );
         getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         );
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= 26) {
             KeyguardManager keyguardManager = (KeyguardManager) this.getSystemService(KEYGUARD_SERVICE);
             keyguardManager.requestDismissKeyguard(this, new KeyguardManager.KeyguardDismissCallback() {});
 
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        if (Build.VERSION.SDK_INT >= 27) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
 
@@ -140,6 +148,13 @@ public class CancelAlarm extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.i("on cancelb", "successfully canceled alarm");
+        try {
+            AlarmWakeLock.releaseCpu();
+            Log.e(TAG, "sendSnoozeIntent: wakeLock released" );
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "onCreate: error while wakelock release" );
+        }
         finish();
     }
 
@@ -156,6 +171,13 @@ public class CancelAlarm extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.i(TAG, "onClick: successfully snoozed");
+        try {
+            AlarmWakeLock.releaseCpu();
+            Log.e(TAG, "sendSnoozeIntent: wakeLock released" );
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "onCreate: error while wakelock release" );
+        }
         finish();
     }
 
