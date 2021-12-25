@@ -30,6 +30,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
    LinkedList<AlarmConstraints> alarmList;
@@ -53,9 +55,22 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AlarmConstraints alarm = alarmList.get(position);
         alarm.setStandardTime(alarm.getAlarmTime());
+        StringBuilder repeatDaysSb = new StringBuilder();
+        TreeMap<Integer, String> repeatDays = alarm.getRepeatDayMap();
+        if (!alarm.isRepeating()){
+            holder.nameTextView.setText(alarm.getLabel());
+        }
+        else if (repeatDays.size() == 7){
+            holder.nameTextView.setText(alarm.getLabel() + " (Every day)");
+        }else if(alarm.isRepeating()){
+            for (Map.Entry<Integer, String> entry : repeatDays.entrySet()){
+                repeatDaysSb.append(entry.getValue()+" ");
+            }
+            holder.nameTextView.setText(alarm.getLabel()+ " ( "+repeatDaysSb.toString()+")");
+        }
         StringBuilder standardTime = alarm.getStandardTime();
-       holder.timeTextView.setText(standardTime);
-       holder.nameTextView.setText(alarm.getLabel());
+        holder.timeTextView.setText(standardTime);
+
        boolean switchStage  = alarm.getToggleOnOff();
        if (switchStage) {
            holder.alarmSwitch.setChecked(true);

@@ -201,19 +201,19 @@ public class Alarm_Database extends SQLiteOpenHelper {
                     }
 
                     if (dayArrayList.contains("Sunday"))
-                        treeMap.put(0, "sunday");
+                        treeMap.put(0, "sun");
                     if (dayArrayList.contains("Monday"))
-                        treeMap.put(1, "monday");
+                        treeMap.put(1, "mon");
                     if (dayArrayList.contains("Tuesday"))
-                        treeMap.put(2, "tuesday");
+                        treeMap.put(2, "tue");
                     if (dayArrayList.contains("Wednesday"))
-                        treeMap.put(3, "wednesday");
+                        treeMap.put(3, "wed");
                     if (dayArrayList.contains("Thursday"))
-                        treeMap.put(4, "thursday");
+                        treeMap.put(4, "thu");
                     if (dayArrayList.contains("Friday"))
-                        treeMap.put(5, "friday");
+                        treeMap.put(5, "fri");
                     if (dayArrayList.contains("Saturday"))
-                        treeMap.put(6, "saturday");
+                        treeMap.put(6, "sat");
                     alarms[i].setRepeatDayMap(treeMap);
                 }else{
                     alarms[i].setRepeatDayMap(treeMap);
