@@ -107,15 +107,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context, 0,
                 snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-//
-//        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
-//                        (null,
-//                        context.getString(R.string.Stop_alarm_notification),
-//                        stopPendingIntent).build();
-//        NotificationCompat.Action SnoozeAction = new NotificationCompat.Action.Builder
-//                        (null,
-//                        context.getString(R.string.Snooze_alarm_notification),
-//                        snoozePendingIntent).build();
+
+        NotificationCompat.Action StopAction = new NotificationCompat.Action.Builder
+                        (null,
+                        context.getString(R.string.Stop_alarm_notification),
+                        stopPendingIntent).build();
+        NotificationCompat.Action SnoozeAction = new NotificationCompat.Action.Builder
+                        (null,
+                        context.getString(R.string.Snooze_alarm_notification),
+                        snoozePendingIntent).build();
 
         largeRemoteViews = new RemoteViews("com.example.smartalarm" ,
                                           R.layout.notification_layout);
@@ -135,28 +135,50 @@ public class AlarmReceiver extends BroadcastReceiver {
             smallRemoteView.setOnClickPendingIntent(R.id.small_noti_snooze_button , snoozePendingIntent);
             smallRemoteView.setOnClickPendingIntent(R.id.small_noti_stop_button , stopPendingIntent);
 
-
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context, "notification_alarm")
-                .setSmallIcon(R.drawable.baseline_access_alarms_24)
+        if(android.os.Build.VERSION.SDK_INT >26){
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context, "notification_alarm")
+                            .setSmallIcon(R.drawable.baseline_access_alarms_24)
 //                .setContentTitle("Smart Alarm Manager")
 //                .setContentText("Notification")
-                .setAutoCancel(true)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_CALL)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setLocalOnly(true)
+                            .setAutoCancel(true)
+                            .setDefaults(NotificationCompat.DEFAULT_ALL)
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setCategory(NotificationCompat.CATEGORY_CALL)
+                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                            .setLocalOnly(true)
 //                .addAction(SnoozeAction)
 //                .addAction(StopAction)
-                .setCustomContentView(smallRemoteView)
-                .setCustomBigContentView(largeRemoteViews)
-                .setFullScreenIntent(pendingIntent , true)
-                .setContentIntent(pendingIntent);
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+                            .setCustomContentView(largeRemoteViews)
+                            .setCustomBigContentView(largeRemoteViews)
+                            .setFullScreenIntent(pendingIntent , true)
+                            .setContentIntent(pendingIntent);
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
-        if (notificationManagerCompat!=null)
-              notificationManagerCompat.notify(1, builder.build());
+            if (notificationManagerCompat!=null)
+                notificationManagerCompat.notify(1, builder.build());
+        }else {
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context, "notification_alarm")
+                            .setSmallIcon(R.drawable.baseline_access_alarms_24)
+                            .setContentTitle(standardTime)
+                            .setContentText(alarm.getLabel())
+                            .setAutoCancel(true)
+                            .setDefaults(NotificationCompat.DEFAULT_ALL)
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setCategory(NotificationCompat.CATEGORY_CALL)
+                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                            .setLocalOnly(true)
+                            .addAction(SnoozeAction)
+                            .addAction(StopAction)
+                            .setFullScreenIntent(pendingIntent , true)
+                            .setContentIntent(pendingIntent);
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
+
+            if (notificationManagerCompat!=null)
+                notificationManagerCompat.notify(1, builder.build());
+        }
+
 
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());
