@@ -168,8 +168,8 @@ public class ControlAlarm extends AppCompatActivity implements
     public void setToggleOnOfAfterAlarm(AlarmConstraints alarm, int zero, Context context) {
 
         Log.i("the pkey in cancel alrm",String.valueOf(alarm.getPKeyDB()));
-        Toast.makeText(context.getApplicationContext(), "pkey -  :"+alarm.getPKeyDB(),
-                Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context.getApplicationContext(), "pkey -  :"+alarm.getPKeyDB(),
+//                Toast.LENGTH_SHORT).show();
         update_database(alarm.getPKeyDB(),zero , context);
         Log.i("database updated","for toggle off/on" );
     }

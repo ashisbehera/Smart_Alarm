@@ -7,77 +7,108 @@
     android:background="#171717"
     android:orientation="vertical">
 
-    <DigitalClock
-        android:id="@+id/world_clock_digital"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center|left"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:textSize="40dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/world_clock_current_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/world_clock_digital"
-        android:gravity="center|left"
-        android:paddingLeft="23dp"
-        android:textSize="20sp" />
-
-    <LinearLayout
-        android:id="@+id/spinner_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="10dp"
-        android:layout_below="@id/world_clock_current_date">
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_gravity="right"
-            android:scaleX="1.7"
-            android:scaleY="1.7" />
-    </LinearLayout>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/world_clock_lottie"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_below="@id/spinner_layout"
-        android:scaleX="1.4"
-        android:scaleY="1.4"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="world_clock_lottie.json"
-        app:lottie_loop="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/world_clock_lottie"
-        android:orientation="vertical"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/timeZone"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingLeft="20dp"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/top_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical">
+                <DigitalClock
+                    android:id="@+id/world_clock_digital"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom|left"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:textSize="40dp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textTimeZone"
+                <TextView
+                    android:id="@+id/world_clock_current_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:paddingLeft="23dp"
+                    android:textSize="20sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/spinner_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="20dp">
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="right"
+                    android:scaleX="1.7"
+                    android:scaleY="1.7" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:textSize="25sp" />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/animation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/world_clock_lottie"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleX="1.4"
+                    android:scaleY="1.4"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="world_clock_lottie.json"
+                    app:lottie_loop="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/timeZone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textTimeZone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="25sp" />
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
+
+
 </RelativeLayout>

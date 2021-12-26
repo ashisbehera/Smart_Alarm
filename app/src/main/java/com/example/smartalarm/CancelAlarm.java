@@ -20,9 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.smartalarm.databinding.CancelAlarmBinding;
 import com.example.smartalarm.receiver.CancelAlarmReceiver;
 import com.example.smartalarm.receiver.SnoozeReceiver;
 

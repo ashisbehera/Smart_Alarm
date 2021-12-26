@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT > 26) {
             CharSequence name = "Testing Alarm";
             String description = "Alarm";
             int importance = NotificationManager.IMPORTANCE_HIGH;

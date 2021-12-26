@@ -3,65 +3,74 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@color/black"
+    android:background="@color/buttom_nav"
     android:paddingTop="15sp"
     android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/small_noti_alarm_time"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/small_noti_alarm_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="25dp">
+            </TextView>
+            <TextView
+                android:id="@+id/small_noti_alarm_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="15dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:textSize="20dp">
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingTop="10dp"
-            android:textColor="@color/white"
-            android:textSize="20sp">
-        </TextView>
-        <TextView
-            android:id="@+id/small_noti_alarm_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingTop="5dp"
-            android:textColor="@color/white"
-            android:textSize="15sp">
-        </TextView>
+            android:layout_weight="1"
+            android:paddingTop="9dp"
+            android:paddingRight="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/small_noti_snooze_button"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:text="snooze"
+                android:layout_marginRight="20dp"
+                android:textColor="@color/white"
+                android:background="@drawable/noti_button_bg"
+                android:foreground="@drawable/ripple_for_button">
+
+            </Button>
+
+            <Button
+                android:id="@+id/small_noti_stop_button"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:text="stop"
+                android:textColor="@color/white"
+                android:background="@drawable/noti_button_bg"
+                android:foreground="@drawable/ripple_for_button">
+
+            </Button>
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="9dp"
-        android:layout_alignParentRight="true"
-        android:paddingRight="10dp">
-
-        <Button
-            android:id="@+id/small_noti_snooze_button"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:text="snooze"
-            android:layout_marginRight="20dp"
-            android:textColor="@color/white"
-            android:background="@color/gra">
-
-        </Button>
-
-        <Button
-            android:id="@+id/small_noti_stop_button"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:text="stop"
-            android:textColor="@color/white"
-            android:background="@color/gra">
-
-        </Button>
-    </LinearLayout>
 
 </RelativeLayout>

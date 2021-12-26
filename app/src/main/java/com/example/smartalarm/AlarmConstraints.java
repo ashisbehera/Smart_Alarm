@@ -424,9 +424,12 @@ public class AlarmConstraints implements Parcelable  {
 //                    alarmTimeInMS , pi);
 //        } else
 
-        if (android.os.Build.VERSION.SDK_INT >= 19) {
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(alarmTimeInMS , pi) , pi);
+        }
+        else if (android.os.Build.VERSION.SDK_INT>= 19){
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
-        } else {
+        }else{
             alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeInMS , pi);
         }
 

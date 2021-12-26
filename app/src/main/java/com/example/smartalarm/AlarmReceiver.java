@@ -144,27 +144,19 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setLocalOnly(true)
 //                .addAction(SnoozeAction)
 //                .addAction(StopAction)
                 .setCustomContentView(smallRemoteView)
                 .setCustomBigContentView(largeRemoteViews)
+                .setFullScreenIntent(pendingIntent , true)
                 .setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
-        /** if screen is on then only show notification otherwise open activity **/
-
-        powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        boolean isScreenOn = powerManager.isInteractive();
-        if (!isScreenOn) {
-            builder.setFullScreenIntent(pendingIntent , true);
-            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
-        }
-
-            if (notificationManagerCompat!=null)
-                notificationManagerCompat.notify(1, builder.build());
+        if (notificationManagerCompat!=null)
+              notificationManagerCompat.notify(1, builder.build());
 
         try {
             controlAlarm.playAlarm(alarm , context.getApplicationContext());
