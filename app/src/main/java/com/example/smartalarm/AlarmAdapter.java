@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,8 +17,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -25,20 +28,29 @@ import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartalarm.data.AlarmContract;
 import com.example.smartalarm.data.AlarmContract.AlarmEntry;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
-   LinkedList<AlarmConstraints> alarmList;
-   Context context;
-    public AlarmAdapter(LinkedList<AlarmConstraints> alarms , Context context) {
+    private LinkedList<AlarmConstraints> alarmList;
+    private Context context;
+    private Alarm_fragment alarm_fragment;
+    private ClickListener clickListener;
+    HashMap<Integer , AlarmConstraints> selectedMap = new HashMap<>();
+    public AlarmAdapter(LinkedList<AlarmConstraints> alarms,
+                        Context context, Alarm_fragment alarm_fragment , ClickListener clickListener) {
         alarmList = alarms;
         this.context = context;
+        this.alarm_fragment = alarm_fragment;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -71,31 +83,63 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
         StringBuilder standardTime = alarm.getStandardTime();
         holder.timeTextView.setText(standardTime);
 
-       boolean switchStage  = alarm.getToggleOnOff();
-       if (switchStage) {
-           holder.alarmSwitch.setChecked(true);
-           holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
-           holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
-       }
-       else {
-           holder.alarmSwitch.setChecked(false);
-           holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
-           holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
-       }
+        boolean switchStage  = alarm.getToggleOnOff();
+        if (switchStage) {
+            holder.alarmSwitch.setChecked(true);
+            holder.timeTextView.setTextColor(Color.parseColor("#FFFFFF"));
+            holder.nameTextView.setTextColor(Color.parseColor("#FFFFFF"));
+        }
+        else {
+            holder.alarmSwitch.setChecked(false);
+            holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+            holder.nameTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
+        }
 
-       holder.itemView.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
-                intent.setAction("from alarmActivity");
-                /** send the uri with it id of the alarm database **/
-                Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, alarm.getPKeyDB());
-                /**  set the uri in the intent **/
-                intent.setData(editUri);
-                view.getContext().startActivity(intent);
-           }
-       });
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!alarm_fragment.isSelectEnable){
+                    Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
+                    intent.setAction("from alarmActivity");
+                    /** send the uri with it id of the alarm database **/
+                    Uri editUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, alarm.getPKeyDB());
+                    /**  set the uri in the intent **/
+                    intent.setData(editUri);
+                    view.getContext().startActivity(intent);
+                }else {
+                    if (holder.selectCheck.getVisibility() == View.VISIBLE){
+                        holder.alarmSwitch.setVisibility(View.VISIBLE);
+                        holder.selectCheck.setVisibility(View.GONE);
+                        selectedMap.remove(position);
+//                        alarmList.add(position , alarm);
+//                        alarm_fragment.modifyData(position , 0 );
+                    }else{
+                        holder.alarmSwitch.setVisibility(View.GONE);
+                        holder.selectCheck.setVisibility(View.VISIBLE);
+                        selectedMap.put(position , alarm);
+//                        alarmList.remove(position);
+//                        alarm_fragment.modifyData(position , 1 );
+                    }
+
+                }
+
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (!alarm_fragment.isSelectEnable){
+                    clickListener.onLongClick(holder , position);
+                    selectedMap.put(position , alarm);
+                    Log.e("TAG", "onLongClick: "+position );
+//                    alarm_fragment.modifyData(position , 1);
+                }
+
+                return true;
+            }
+        });
         holder.alarmSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,6 +178,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
         });
 
 
+        if (alarm_fragment.isSelectAll){
+            holder.alarmSwitch.setVisibility(View.GONE);
+            holder.selectCheck.setVisibility(View.VISIBLE);
+        }else {
+            holder.selectCheck.setVisibility(View.GONE);
+            holder.alarmSwitch.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -142,18 +193,46 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
         return alarmList.size();
     }
 
+    public void deleteAndCancel(){
+        for (Map.Entry<Integer,AlarmConstraints> entry : selectedMap.entrySet()) {
+            AlarmConstraints offAlarm = entry.getValue();
+            offAlarm.cancelAlarm(context, offAlarm);
+            Uri deleteUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI, offAlarm.getPKeyDB());
+            context.getContentResolver().delete(deleteUri, null, null);
+            alarmList.remove(entry.getKey());
+        }
+
+        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+    }
+
+    public void selectAll(){
+
+    }
+
+    public void selectAllToDelete(){
+        selectedMap.clear();
+        for (AlarmConstraints alarms:alarmList){
+            alarms.cancelAlarm(context , alarms);
+            int rowsDeleted = context.getContentResolver().delete
+                    (AlarmContract.AlarmEntry.CONTENT_URI, null, null);
+        }
+
+        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder  {
 
         TextView nameTextView;
         TextView timeTextView;
         Switch alarmSwitch;
+        ImageView selectCheck;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-             nameTextView = (TextView) itemView.findViewById(R.id.alarm_name);
-             timeTextView = (TextView) itemView.findViewById(R.id.alarm_time);
-             alarmSwitch = itemView.findViewById(R.id.alarm_active_switch);
-
+            nameTextView = (TextView) itemView.findViewById(R.id.alarm_name);
+            timeTextView = (TextView) itemView.findViewById(R.id.alarm_time);
+            alarmSwitch = itemView.findViewById(R.id.alarm_active_switch);
+            selectCheck = itemView.findViewById(R.id.recycle_checkImg);
         }
 
 

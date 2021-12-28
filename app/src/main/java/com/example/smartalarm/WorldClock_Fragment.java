@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -40,7 +41,8 @@ public class WorldClock_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_world_clock, container, false);
-        getActivity().setTitle("World Clock");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("World clock");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         spinner = view.findViewById(R.id.spinner);
         timeZone = view.findViewById(R.id.timeZone);
         textTimeZoneTime = view.findViewById(R.id.textTimeZone);

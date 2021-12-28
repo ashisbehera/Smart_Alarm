@@ -2,6 +2,7 @@ package com.example.smartalarm;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -51,7 +52,8 @@ public class StopWatch_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_stop_watch, container, false);
-        getActivity().setTitle("Stopwatch");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Stop watch");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         lottieAnimationView = view.findViewById(R.id.animationView);
         chronometer = view.findViewById(R.id.chronometer);
         startPause = view.findViewById(R.id.startPause);

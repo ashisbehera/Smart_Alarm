@@ -265,17 +265,17 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         delete_alarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    long id = ContentUris.parseId(editUri);
-                    newAlarm.setPKeyDB((int) id);
-                    Log.i(TAG, "delete_onClick: id to be delete " + id);
-                    newAlarm.cancelAlarm(getApplicationContext() ,newAlarm );
-                    getContentResolver().delete(editUri, null, null);
-                    ScheduleService.updateAlarmSchedule(getApplicationContext());
-                    finish();
+                long id = ContentUris.parseId(editUri);
+                newAlarm.setPKeyDB((int) id);
+                Log.i(TAG, "delete_onClick: id to be delete " + id);
+                newAlarm.cancelAlarm(getApplicationContext() ,newAlarm );
+                getContentResolver().delete(editUri, null, null);
+                ScheduleService.updateAlarmSchedule(getApplicationContext());
+                finish();
 
             }
         });
-       /**select ringtone if clicked on ringtone **/
+        /**select ringtone if clicked on ringtone **/
         ringtoneLayout.setOnClickListener(view -> {
             /** save the data before moving onto the ringtone activity **/
             saveData();
@@ -340,7 +340,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -467,47 +467,47 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         if (cursor == null || cursor.getCount() < 1) {
             return;
         }
-       if(i.getAction() != "from ringtoneActivity" && i.getAction() != "from repeatDayActivity"){ /** if coming from alarm_activity for editing **/
-           if (cursor.moveToFirst()) {
+        if(i.getAction() != "from ringtoneActivity" && i.getAction() != "from repeatDayActivity"){ /** if coming from alarm_activity for editing **/
+            if (cursor.moveToFirst()) {
 
-               vibrateSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE)) == 1 ? true : false);
-               snoozeSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE)) == 1 ? true : false);
-               tts_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE)) == 1 ? true : false);
-               ringtone_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE)) == 1 ? true : false);
-               // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
+                vibrateSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_VIBRATE)) == 1 ? true : false);
+                snoozeSwitch.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.ALARM_SNOOZE)) == 1 ? true : false);
+                tts_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.TTS_ACTIVE)) == 1 ? true : false);
+                ringtone_check_bx.setChecked(cursor.getInt(cursor.getColumnIndex(AlarmEntry.RINGTONE_ACTIVE)) == 1 ? true : false);
+                // int ringtoneStringCIn = cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING);
 
-               String alarmName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_NAME));
-               String ttsString = cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING));
-               String alarmTime = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME));
-               /**
-                * get RepeatDays from the database and save them to arrayList.
-                */
-               String alarmRiName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME));
-               ringtoneName = alarmRiName;
-               ringtoneUri = cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING));
-               String RepeatDaysString = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
-               Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
-               if (!RepeatDaysString.isEmpty()) {
-                   String[] array = RepeatDaysString.split(",");
-                   for (int i = 0; i < array.length; i++) {
-                       dayArrayList.add(array[i]);
-                   }
-                   repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
-               }
-
-
-               alarmNameEditText.setText(alarmName);
-               ttsEditText.setText(ttsString);
-               /** if we are not coming from ringtone activity then setText as database **/
-               if (i.getExtras() == null)
-                   setRingtone.setText(alarmRiName);
-               String timeArr[] = alarmTime.split(":");
-               timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
-               timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));
+                String alarmName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_NAME));
+                String ttsString = cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING));
+                String alarmTime = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME));
+                /**
+                 * get RepeatDays from the database and save them to arrayList.
+                 */
+                String alarmRiName = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_RINGTONE_NAME));
+                ringtoneName = alarmRiName;
+                ringtoneUri = cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING));
+                String RepeatDaysString = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
+                Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
+                if (!RepeatDaysString.isEmpty()) {
+                    String[] array = RepeatDaysString.split(",");
+                    for (int i = 0; i < array.length; i++) {
+                        dayArrayList.add(array[i]);
+                    }
+                    repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
+                }
 
 
-           }
-       }
+                alarmNameEditText.setText(alarmName);
+                ttsEditText.setText(ttsString);
+                /** if we are not coming from ringtone activity then setText as database **/
+                if (i.getExtras() == null)
+                    setRingtone.setText(alarmRiName);
+                String timeArr[] = alarmTime.split(":");
+                timePicker.setCurrentHour(Integer.parseInt(timeArr[0]));
+                timePicker.setCurrentMinute(Integer.parseInt(timeArr[1]));
+
+
+            }
+        }
 
     }
 
