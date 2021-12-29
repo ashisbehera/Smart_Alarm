@@ -26,7 +26,7 @@ Animated stopwatch
 
 Animated world clock
 
-<img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/alarm.jpg width="100" height="100">
+<img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/alarm.jpg width="500" height="1000">
 
 ## Note
 
