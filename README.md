@@ -8,7 +8,7 @@ Smart Alarm, a simple and elegant ad-free alarm clock application designed to ad
 
 ![Google Play](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/google%20play.png)
 
-## Features
+## ```Features```
 
 Text-to-speech: Remind yourself what the alarm was for absolutely hands-free
 
@@ -34,7 +34,7 @@ Animated world clock
 
 <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/alarm.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/add%20alarm.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/stopwatch.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/world%20clock.jpg width="190" height="400">
 
-## Note
+## ```Note```
 
 Smart Alarm uses alarm volume for alarms
 
@@ -46,7 +46,7 @@ We hope that you enjoyed using our app. We'll work our best to enhance your expe
 
 Designed and developed by CoffeeCoders, a team of two.
 
-## Open Source
+## ```Open Source```
 
 Additional feature requests are appreciated! You can submit bug reports and feature requests by sending an email to developers!
 
