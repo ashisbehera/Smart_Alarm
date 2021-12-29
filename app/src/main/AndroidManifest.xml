@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.smartalarm">
+    package="com.coffeecoders.smartalarm">
 
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -29,12 +29,12 @@
         android:supportsRtl="true"
         android:theme="@style/Custom.Theme.SmartAlarm">
         <activity
-            android:name=".About"
+            android:name="com.coffeecoders.smartalarm.About"
             android:exported="false"
             android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName="com.coffeecoders.smartalarm.MainActivity"/>
         <activity
-            android:name=".MainActivity">
+            android:name="com.coffeecoders.smartalarm.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,8 +43,8 @@
         </activity>
 
         <activity
-            android:name=".AddAlarm_Activity"
-            android:parentActivityName=".MainActivity"
+            android:name="com.coffeecoders.smartalarm.AddAlarm_Activity"
+            android:parentActivityName="com.coffeecoders.smartalarm.MainActivity"
             android:theme="@style/Custom.Theme.SmartAlarm.1">
             <intent-filter>
                 <action android:name="from alarmActivity" />
@@ -55,10 +55,10 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.coffeecoders.smartalarm.MainActivity" />
         </activity>
         <activity
-            android:name=".CancelAlarm"
+            android:name="com.coffeecoders.smartalarm.CancelAlarm"
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
@@ -66,49 +66,48 @@
 
         </activity>
         <activity
-            android:name=".Ringtone"
+            android:name="com.coffeecoders.smartalarm.Ringtone"
             android:exported="true"
             android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".AddAlarm_Activity">
+            android:parentActivityName="com.coffeecoders.smartalarm.AddAlarm_Activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.coffeecoders.smartalarm.MainActivity" />
         </activity>
         <activity
-            android:name=".RepeatDayActivity"
+            android:name="com.coffeecoders.smartalarm.RepeatDayActivity"
             android:exported="true"
             android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".AddAlarm_Activity">
+            android:parentActivityName="com.coffeecoders.smartalarm.AddAlarm_Activity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.coffeecoders.smartalarm.MainActivity" />
         </activity>
 
-        <service android:name=".ScheduleService" />
+        <service android:name="com.coffeecoders.smartalarm.ScheduleService" />
 
         <receiver
-            android:name=".AlarmReceiver"
+            android:name="com.coffeecoders.smartalarm.AlarmReceiver"
             android:enabled="true"
             android:exported="true"
-            android:permission="@string/app_name"
             android:process=":remote"
             android:showOnLockScreen="true" />
         <receiver
-            android:name=".receiver.StopReceiver"
+            android:name="com.coffeecoders.smartalarm.receiver.StopReceiver"
             android:process=":remote">
             <intent-filter>
                 <action android:name="stop alarm" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.SnoozeReceiver"
+            android:name="com.coffeecoders.smartalarm.receiver.SnoozeReceiver"
             android:process=":remote">
             <intent-filter>
                 <action android:name="snooze Alarm" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.CancelAlarmReceiver"
+            android:name="com.coffeecoders.smartalarm.receiver.CancelAlarmReceiver"
             android:process=":remote">
             <intent-filter>
                 <action android:name="cancel alarm" />
@@ -116,7 +115,7 @@
         </receiver>
 
         <receiver
-            android:name=".receiver.BootUpReceiver">
+            android:name="com.coffeecoders.smartalarm.receiver.BootUpReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -124,8 +123,8 @@
         </receiver>
 
         <provider
-            android:name=".data.AlarmDataProvider"
-            android:authorities="com.example.smartalarm"
+            android:name="com.coffeecoders.smartalarm.data.AlarmDataProvider"
+            android:authorities="com.coffeecoders.smartalarm"
             android:exported="false" />
     </application>
 

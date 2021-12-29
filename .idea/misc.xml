@@ -20,6 +20,7 @@
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout-sw411dp/activity_world_clock.xml" value="0.26666666666666666" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout-sw420dp/activity_world_clock.xml" value="0.276953125" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout-v21/addalarm_activity.xml" value="0.3692708333333333" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout-xhdpi/addalarm_activity.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/activity_about.xml" value="0.2712962962962963" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/activity_main.xml" value="0.3101851851851852" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/activity_repeat_day.xml" value="0.3692708333333333" />
@@ -28,13 +29,19 @@
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/activity_world_clock.xml" value="0.2712962962962963" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/addalarm_activity.xml" value="0.27314814814814814" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/alarm_activity.xml" value="0.3692708333333333" />
-        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/cancel_alarm.xml" value="0.3692708333333333" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/cancel_alarm.xml" value="0.26296296296296295" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/custom_toolbar.xml" value="0.30299145299145297" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/fragment_alarm.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/fragment_stop_watch.xml" value="0.30299145299145297" />
-        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/list_alarm.xml" value="0.3692708333333333" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/fragment_world_clock.xml" value="0.30299145299145297" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/list_alarm.xml" value="0.2574074074074074" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/notification_layout.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/layout/ringtone_custom_list.xml" value="0.3692708333333333" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/drawer_layout.xml" value="0.3692708333333333" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/menu_alarmlist.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/menu_main_activity.xml" value="0.3692708333333333" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/menu_navigation.xml" value="0.3692708333333333" />
+        <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/multidelete_menu.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3638888888888889" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.31223628691983124" />
       </map>

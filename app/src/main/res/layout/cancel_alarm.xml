@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mate_black"
+    android:background="#171717"
     android:orientation="vertical"
     tools:context=".CancelAlarm">
 
@@ -13,26 +13,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center">
+
         <TextView
             android:id="@+id/time_txt_cancel_ac"
             android:layout_width="match_parent"
+            android:textStyle="bold"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:textSize="40dp"></TextView>
+            android:textSize="40sp" />
+
         <TextView
             android:id="@+id/label_txt_cancel_ac"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20dp"></TextView>
+            android:textSize="20sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="click to stop"
+            android:text="Click to stop"
             android:textSize="20dp"
-            android:gravity="center"></TextView>
+            android:gravity="center" />
     </LinearLayout>
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animationView"
