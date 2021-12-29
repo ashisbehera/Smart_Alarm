@@ -41,15 +41,15 @@ Smart Alarm uses alarm volume for alarms
 Text-to-speech uses media volume
 
 To use text-to-speech you must have installed Google speech service on your device
-<br/><br/>
-<br/><br/>
-<br/><br/>
-We hope that you enjoyed using our app. We'll work our best to enhance your experiences and bring new features in upcoming updates.
-
-Designed and developed by **CoffeeCoders**, a team of two.
 
 ## ```Open Source```
 
 Additional feature requests are appreciated! You can submit bug reports and feature requests by sending an email to developers!
 
 Developer mail | [ashisankan@gmail.com](mailto:ashisankan@gmail.com)
+<br/><br/>
+<br/><br/>
+<br/><br/>
+We hope that you enjoyed using our app. We'll work our best to enhance your experiences and bring new features in upcoming updates.
+
+Designed and developed by **CoffeeCoders**, a team of two.
