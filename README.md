@@ -3,6 +3,7 @@
 Smart Alarm, a simple and elegant ad-free alarm clock application designed to add, edit or remove alarms most efficiently. You can use it to set morning alarms or set up reminders for multiple tasks. You can also use the stopwatch to track your records or use the world clock to check time zones of other areas.
 
 
+
 ![Feature Graphics](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/Feature%20Graphics.jpg)
 
 ![Google Play](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/google%20play.png)
@@ -28,6 +29,7 @@ Navigation is plain sailing
 Animated stopwatch
 
 Animated world clock
+
 
 
 <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/alarm.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/add%20alarm.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/stopwatch.jpg width="190" height="400"> | <img src=https://github.com/ashisbehera/Smart_Alarm/blob/master/images/world%20clock.jpg width="190" height="400">
