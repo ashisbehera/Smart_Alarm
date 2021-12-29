@@ -26,6 +26,8 @@ Animated stopwatch
 
 Animated world clock
 
+![Alarm](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/alarm.jpg) | ![Add Alarm](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/add%20alarm.jpg) | ![Stopwatch](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/stopwatch.jpg) | ![World Clock](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/world%20clock.jpg)
+
 ## Note
 
 Smart Alarm uses alarm volume for alarms
