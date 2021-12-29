@@ -6,7 +6,7 @@ Smart Alarm, a simple and elegant ad-free alarm clock application designed to ad
 
 ![Google Play](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/google%20play.png)
 
-## Features
+## Featuress
 
 Text-to-speech: Remind yourself what the alarm was for absolutely hands-free
 
