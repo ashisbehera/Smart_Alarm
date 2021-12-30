@@ -171,6 +171,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
     private void replaceToolbar(){
         isSelectEnable = false;
         isSelectAll = false;
+        aAdapter.selectedMap.clear();
         toolbar.getMenu().clear();
         toolbar.inflateMenu(R.menu.menu_alarmlist);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
