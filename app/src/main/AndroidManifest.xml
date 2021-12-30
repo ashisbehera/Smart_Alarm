@@ -87,7 +87,7 @@
         <service android:name="com.coffeecoders.smartalarm.ScheduleService" />
 
         <receiver
-            android:name="com.coffeecoders.smartalarm.AlarmReceiver"
+            android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true"
             android:process=":remote"

@@ -98,7 +98,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         context.getString(R.string.Snooze_alarm_notification),
                         snoozePendingIntent).build();
 
-        largeRemoteViews = new RemoteViews("com.example.smartalarm" ,
+        largeRemoteViews = new RemoteViews("com.coffeecoders.smartalarm" ,
                                           R.layout.notification_layout);
 
 
@@ -109,7 +109,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             largeRemoteViews.setOnClickPendingIntent(R.id.noti_snooze_button , snoozePendingIntent);
             largeRemoteViews.setOnClickPendingIntent(R.id.noti_stop_button , stopPendingIntent);
 
-            smallRemoteView = new RemoteViews("com.example.smartalarm" ,
+            smallRemoteView = new RemoteViews("com.coffeecoders.smartalarm" ,
                     R.layout.small_notification_layout);
             smallRemoteView.setTextViewText(R.id.small_noti_alarm_name , alarm.getLabel());
             smallRemoteView.setTextViewText(R.id.small_noti_alarm_time , standardTime);
