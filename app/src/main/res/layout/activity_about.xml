@@ -93,7 +93,7 @@
         android:layout_marginTop="10dp"
         android:paddingStart="20dp"
         android:text="@string/coffeeDescription"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <ImageView
