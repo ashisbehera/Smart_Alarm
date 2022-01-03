@@ -4,7 +4,7 @@ Smart Alarm, a simple and elegant ad-free alarm clock application designed to ad
 <br/><br/>
 ![Feature Graphics](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/Feature%20Graphics.jpg)
 
-![[Google Play](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/google%20play.png)](https://play.google.com/store/apps/details?id=com.coffeecoders.smartalarm/)
+[![Google Play](https://github.com/ashisbehera/Smart_Alarm/blob/master/images/google%20play.png)](https://play.google.com/store/apps/details?id=com.coffeecoders.smartalarm)
 
 ## ```Features```
 
