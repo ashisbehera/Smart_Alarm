@@ -22,19 +22,6 @@ public class ScheduleService extends Service {
         return null;
     }
 
-    /**
-     *
-     * @param context
-     *this method will be called when ever we need to update the service
-     * for example: when one alarm will be fired then next alarm will come to server
-     * for that we need to update the service
-     */
-    public static void updateAlarmSchedule(Context context)
-    {
-        Log.i(TAG, "updateAlarmSchedule: inside schedule service");
-        Intent intent=new Intent(context,ScheduleService.class);
-        context.startService(intent);
-    }
 
     @SuppressLint("LongLogTag")
     @Override
@@ -56,7 +43,6 @@ public class ScheduleService extends Service {
                     Log.i(TAG, "onStartCommand: alarm set for pkeyid" + alarm.getPKeyDB());
 
                 }
-
             }
 
             if (isEmpty) {

@@ -24,7 +24,7 @@ public class SnoozeReceiver extends BroadcastReceiver {
          * active the snooze before cancelling the main alarm so that we won't turn off the
          * switch button
          */
-        alarm.setSnooze_active(true);
+        alarm.setTemp_snooze_active(true);
         /**
          * then stop the main alarm
          */

@@ -17,7 +17,7 @@ public class StopReceiver extends BroadcastReceiver {
         /**
          * ir previously snooze activated then stop it because it is final cancel
          */
-        alarm.setSnooze_active(false);
+        alarm.setTemp_snooze_active(false);
         controlAlarm.stopAlarm((AlarmConstraints)alarm , context);
         /**
          * sending broadcast for recycleView

@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 
 import com.coffeecoders.smartalarm.data.AlarmContract;
+import com.coffeecoders.smartalarm.receiver.BootUpReceiver;
+import com.coffeecoders.smartalarm.receiver.CancelAlarmReceiver;
 import com.coffeecoders.smartalarm.receiver.SnoozeReceiver;
 
 import java.io.IOException;
@@ -45,7 +47,10 @@ public class PlayMedia{
     Uri ringM;
     HashMap<String, String> params;
     Timer ringTimer,ttsTimer,ttsRingTimer, vibrateTimer;
-    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateTimerActive;
+    Handler ttsHandler , ringTtsHandler;
+    Runnable ttsRunnable , ringTtsRunnable;
+    boolean isRingTimerActive , isTtsTimerActive , isTtsRingTimerActive , isVibrateTimerActive
+              , isTtsHandlerActive , isRingTtsHandlerActive;
     TelephonyManager telephonyManager;
     Bundle paramsBundle;
     static PlayMedia getMediaPlayerInstance() {
@@ -80,7 +85,10 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_RINGING:
                             Log.i(TAG, "onCallStateChanged: call ringing");
                             try {
-                                sendSnoozeIntent(context , alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stopRingtone();
                                 intentSender(context);
                                 removeNotification(context);
                             } catch (IllegalStateException e) {
@@ -90,43 +98,43 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_OFFHOOK:
                             Log.i(TAG, "onCallStateChanged: on call");
                             try{
-                                sendSnoozeIntent(context, alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stopRingtone();
                                 intentSender(context);
                                 removeNotification(context);
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
+                            break;
                         case TelephonyManager.CALL_STATE_IDLE:
                             Log.i(TAG, "onCallStateChanged: no call");
                             try {
-                                if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-                                    ringtonePlay.setAudioAttributes(
-                                            new AudioAttributes
-                                                    .Builder()
-                                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                                    .setUsage(AudioAttributes.USAGE_ALARM)
-                                                    .build());
-                                    ringtonePlay.setLooping(true);
-                                    ringtonePlay.prepare();
-                                    ringtonePlay.start();
-                                    TimerTask ringtoneTimerTask = new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            stopRingtone();
-                                            manageAlarmState(context , alarm);
-                                            ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                                if (!alarm.isPlayed){
+                                    alarm.isPlayed = true;
+                                    if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+                                        playRing();
+                                        TimerTask ringtoneTimerTask = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                stopRingtone();
+                                                manageAlarmState(context , alarm);
+                                                intentSender(context);
+                                                refreshAlarm(context);
+                                                removeNotification(context);
+                                            }
+                                        };
+                                        ringTimer = new Timer();
+                                        ringTimer.schedule(ringtoneTimerTask, 60000);
+                                        isRingTimerActive = true;
+                                    }
+                                }else
+                                    Log.e(TAG, "onCallStateChanged: already played" );
 
-                                            intentSender(context);
-                                            removeNotification(context);
-                                        }
-                                    };
-                                    ringTimer = new Timer();
-                                    ringTimer.schedule(ringtoneTimerTask, 120000);
-                                    isRingTimerActive = true;
-                                }
                             }
-                            catch (IllegalStateException | IOException e) {
-
+                            catch (Exception e) {
+                                e.printStackTrace();
                             }
                             break;
                     }
@@ -147,23 +155,41 @@ public class PlayMedia{
         context.getContentResolver().update(currentPetUri , values, null, null);
     }
 
-    private void intentSender(Context context){
+    private void refreshAlarm(Context context){
+        Intent refreshAlarmIntent = new Intent(context , BootUpReceiver.class);
+        refreshAlarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        refreshAlarmIntent.setAction("smart alarm refresh alarm");
+        PendingIntent refreshAlarmPendingIntent = PendingIntent.getBroadcast(context , 0,
+                refreshAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        try {
+            refreshAlarmPendingIntent.send();
+            Log.e(TAG, "intentSender: sent" );
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "intentSender: failed");
+        }
+    }
+    private void intentSender(Context context) {
         Intent dataChangeIntent = new Intent("com.example.smartalarm.dataChangeListener");
-        context.getApplicationContext().sendBroadcast(dataChangeIntent);
+        context.sendBroadcast(dataChangeIntent);
+        Log.e(TAG, "intentSender: intent sent" );
         Intent cancelAlarmActivityIntent = new Intent("com.example.smartalarm.cancelAlarm");
-        context.getApplicationContext().sendBroadcast(cancelAlarmActivityIntent);
+        context.sendBroadcast(cancelAlarmActivityIntent);
+        Log.e(TAG, "intentSender: intent sent" );
     }
 
     private void manageAlarmState(Context context , AlarmConstraints alarm){
-        alarm.cancelAlarm(context.getApplicationContext() , alarm);
+
+        alarm.cancelAlarm(context, alarm);
 
         if (alarm.isSnooze_active()) {
-            alarm.scheduleSnoozeAlarm(context.getApplicationContext(), alarm);
-
+            alarm.scheduleSnoozeAlarm(context, alarm);
+            Log.e(TAG, "manageAlarmState: alarm snoozed" );
         }
 
         if (!alarm.isSnooze_active() && !alarm.isRepeating()){
-            update_db(alarm.getPKeyDB(),0 , context.getApplicationContext());
+            update_db(alarm.getPKeyDB(),0 , context);
+            Log.e(TAG, "manageAlarmState: database changed" );
         }
     }
 
@@ -174,23 +200,6 @@ public class PlayMedia{
         if (notificationManager != null) notificationManager.cancelAll();
     }
 
-
-    private void sendSnoozeIntent(Context context , AlarmConstraints alarm){
-        Intent snoozeIntent = new Intent(context.getApplicationContext(), SnoozeReceiver.class);
-        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        Bundle bundle=new Bundle();
-        bundle.putParcelable(alarm.ALARM_KEY,alarm);
-        snoozeIntent.putExtra(AlarmConstraints.ALARM_KEY, bundle);
-        snoozeIntent.setAction("snooze Alarm");
-        PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), 0,
-                snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        try {
-            snoozePendingIntent.send();
-        } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
-        }
-        Log.i(TAG, "onClick: successfully snoozed");
-    }
 
     /**
      * will play only tts
@@ -229,7 +238,10 @@ public class PlayMedia{
                             case TelephonyManager.CALL_STATE_RINGING:
                                 Log.i(TAG, "onCallStateChanged: call ringing");
                                 try {
-                                    sendSnoozeIntent(context, alarm);
+                                    alarm.setTemp_snooze_active(true);
+                                    alarm.cancelAlarm(context , alarm);
+                                    alarm.scheduleSnoozeAlarm(context , alarm);
+                                    stop_tts();
                                     intentSender(context);
                                     removeNotification(context);
                                 } catch (IllegalStateException e) {
@@ -239,79 +251,99 @@ public class PlayMedia{
                             case TelephonyManager.CALL_STATE_OFFHOOK:
                                 Log.i(TAG, "onCallStateChanged: on call");
                                 try {
-                                    sendSnoozeIntent(context, alarm);
+                                    alarm.setTemp_snooze_active(true);
+                                    alarm.cancelAlarm(context , alarm);
+                                    alarm.scheduleSnoozeAlarm(context , alarm);
+                                    stop_tts();
                                     intentSender(context);
                                     removeNotification(context);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                                break;
                             case TelephonyManager.CALL_STATE_IDLE:
-                                TimerTask ttsTimerTask = new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        stop_tts();
-                                        manageAlarmState(context , alarm);
-                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                                Log.e(TAG, "onCallStateChanged: no call");
+                                try {
+                                    if (!alarm.isPlayed){
+                                        alarm.isPlayed = true;
+                                        Log.e(TAG, "onCallStateChanged: inside playtts" );
 
-                                        intentSender(context);
-                                        removeNotification(context);
-                                    }
-                                };
-                                ttsTimer = new Timer();
-                                ttsTimer.schedule(ttsTimerTask, 120000);
-                                isTtsTimerActive = true;
-                                final Handler handler = new Handler();
-                                Runnable runnable = new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-
+                                        ttsHandler = new Handler();
+                                        ttsRunnable = new Runnable() {
                                             @Override
-                                            public void onStart(String s) {
-                                                try {
-                                                    Thread.sleep(2000);
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
+                                            public void run() {
 
-                                            @Override
-                                            public void onDone(String s) {
-                                                tts.stop();
+                                                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                                                    @Override
+                                                    public void onStart(String s) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onDone(String s) {
+                                                        tts.stop();
+                                                        try {
+                                                            Thread.sleep(2000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        if (Build.VERSION.SDK_INT >= 21) {
+                                                            tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                                        } else {
+                                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String s) {
+
+                                                    }
+                                                });
+                                                params = new HashMap<>();
+                                                paramsBundle = new Bundle();
+                                                Log.e(TAG, "onCallStateChanged: bundle set" );
+                                                paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
+                                                params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
                                                 if (Build.VERSION.SDK_INT >= 21) {
                                                     tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                                    Log.e(TAG, "onCallStateChanged: played tts" );
                                                 } else {
                                                     tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                    Log.e(TAG, "onCallStateChanged: played tts" );
                                                 }
-
-                                                try {
-                                                    Thread.sleep(2000);
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                Log.i(TAG, "run: tts string is " + alarm.getTtsString());
                                             }
+                                        };
 
+                                        ttsHandler.postDelayed(ttsRunnable, 1000);
+                                        isTtsHandlerActive = true;
+                                        TimerTask ttsTimerTask = new TimerTask() {
                                             @Override
-                                            public void onError(String s) {
+                                            public void run() {
+                                                Log.e(TAG, "ttsTimerTask:  inside ttsTimerTask" );
+                                                ttsHandler.removeCallbacks(ttsRunnable);
+                                                stop_tts();
+                                                manageAlarmState(context , alarm);
+                                                intentSender(context);
+                                                refreshAlarm(context);
+                                                removeNotification(context);
 
                                             }
-                                        });
-                                        params = new HashMap<>();
-                                        paramsBundle = new Bundle();
-                                        paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
-                                        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                                        if (Build.VERSION.SDK_INT >= 21) {
-                                            tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
-                                        } else {
-                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                                        }
-                                        Log.i(TAG, "run: tts string is " + alarm.getTtsString());
-                                    }
-                                };
+                                        };
+                                        ttsTimer = new Timer();
+                                        ttsTimer.schedule(ttsTimerTask, 60000);
+                                        isTtsTimerActive = true;
+                                    }else
+                                        Log.e(TAG, "onCallStateChanged: already played" );
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
 
-                                handler.postDelayed(runnable, 1000);
+
+                                break;
                         }
 
                         super.onCallStateChanged(state, phoneNumber);
@@ -358,7 +390,10 @@ public class PlayMedia{
         });
 
         ringM = Uri.parse(alarm.getRingtoneUri());
-
+            ringtonePlay = new MediaPlayer();
+            ringtonePlay.setDataSource(context.getApplicationContext(), ringM);
+            audioManager = (AudioManager)
+                    context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         telephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
 
@@ -370,7 +405,11 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_RINGING:
                             Log.i(TAG, "onCallStateChanged: call ringing");
                             try {
-                                sendSnoozeIntent(context, alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stop_tts();
+                                stopRingtone();
                                 intentSender(context);
                                 removeNotification(context);
                             } catch (IllegalStateException e) {
@@ -380,94 +419,106 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_OFFHOOK:
                             Log.i(TAG, "onCallStateChanged: on call");
                             try {
-                                sendSnoozeIntent(context, alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stop_tts();
+                                stopRingtone();
                                 intentSender(context);
                                 removeNotification(context);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            break;
                         case TelephonyManager.CALL_STATE_IDLE:
                             Log.i(TAG, "onCallStateChanged: ringTts playing");
                             /**
                              * call ringtone player
                              */
                             try {
-                                playRingWithTts(context, ringM);
-                            } catch (IOException e) {
+                                if (!alarm.isPlayed){
+                                    alarm.isPlayed = true;
+                                    if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0){
+                                        playRing();
+
+                                        ringTtsHandler= new Handler();
+                                        ringTtsRunnable = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+
+
+                                                    @Override
+                                                    public void onStart(String s) {
+                                                        ringtonePlay.pause();
+                                                    }
+
+                                                    @Override
+                                                    public void onDone(String s) {
+                                                        tts.stop();
+                                                        try {
+                                                            Thread.sleep(1000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        ringtonePlay.start();
+                                                        try {
+                                                            Thread.sleep(8000);
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                        if (Build.VERSION.SDK_INT >= 21) {
+                                                            tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                                        } else {
+                                                            tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onError(String s) {
+
+                                                    }
+                                                });
+                                                params = new HashMap<>();
+                                                paramsBundle = new Bundle();
+                                                paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
+                                                params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
+                                                if (Build.VERSION.SDK_INT >= 21) {
+                                                    Log.e(TAG, "run: sdk version is " + Build.VERSION.SDK_INT );
+                                                    tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
+                                                } else {
+                                                    tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
+                                                }
+                                            }
+                                        };
+
+                                        ringTtsHandler.postDelayed(ringTtsRunnable, 1000);
+                                        isRingTtsHandlerActive = true;
+                                        TimerTask ttsRingTimerTask = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                ringTtsHandler.removeCallbacks(ringTtsRunnable);
+                                                stopRingtone();
+                                                stop_tts();
+                                                manageAlarmState(context , alarm);
+                                                intentSender(context);
+                                                refreshAlarm(context);
+                                                removeNotification(context);
+                                            }
+                                        };
+                                        ttsRingTimer = new Timer();
+                                        ttsRingTimer.schedule(ttsRingTimerTask, 60000);
+                                        isTtsRingTimerActive = true;
+                                    }
+
+                                }else
+                                    Log.e(TAG, "onCallStateChanged: already played");
+
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-
-                            TimerTask ttsRingTimerTask = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    stopRingtone();
-                                    stop_tts();
-
-                                    manageAlarmState(context , alarm);
-                                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-
-                                    intentSender(context);
-                                    removeNotification(context);
-                                }
-                            };
-                            ttsRingTimer = new Timer();
-                            ttsRingTimer.schedule(ttsRingTimerTask, 120000);
-                            isTtsRingTimerActive = true;
-
-                            final Handler handl = new Handler();
-                            Runnable runnabl = new Runnable() {
-                                @Override
-                                public void run() {
-                                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-
-
-                                        @Override
-                                        public void onStart(String s) {
-                                            ringtonePlay.pause();
-                                        }
-
-                                        @Override
-                                        public void onDone(String s) {
-                                            tts.stop();
-                                            try {
-                                                Thread.sleep(1000);
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
-                                            ringtonePlay.start();
-                                            try {
-                                                Thread.sleep(8000);
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
-                                            }
-                                            if (Build.VERSION.SDK_INT >= 21) {
-                                                tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
-                                            } else {
-                                                tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                                            }
-
-                                        }
-
-                                        @Override
-                                        public void onError(String s) {
-
-                                        }
-                                    });
-                                    params = new HashMap<>();
-                                    paramsBundle = new Bundle();
-                                    paramsBundle.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID , "stringId");
-                                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "stringId");
-                                    if (Build.VERSION.SDK_INT >= 21) {
-                                        Log.e(TAG, "run: sdk version is " + Build.VERSION.SDK_INT );
-                                        tts.speak(alarm.getTtsString(),TextToSpeech.QUEUE_FLUSH,paramsBundle,"TtsId");
-                                    } else {
-                                        tts.speak(alarm.getTtsString(), TextToSpeech.QUEUE_FLUSH, params);
-                                    }
-                                }
-                            };
-
-                            handl.postDelayed(runnabl, 1000);
-
+                            break;
                     }
 
 
@@ -486,16 +537,10 @@ public class PlayMedia{
 
     /**
      * this will play ringtone for ringtoneTts
-     * @param context
-     * @param ring
      * @throws IOException
      */
-    public void playRingWithTts(Context context, Uri ring) throws IOException {
-        ringtonePlay = new MediaPlayer();
-        ringtonePlay.setDataSource(context.getApplicationContext(), ring);
-        audioManager = (AudioManager)
-                context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+    public void playRing() {
+        try {
             ringtonePlay.setAudioAttributes(
                     new AudioAttributes
                             .Builder()
@@ -505,7 +550,10 @@ public class PlayMedia{
             ringtonePlay.setLooping(true);
             ringtonePlay.prepare();
             ringtonePlay.start();
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 
 
@@ -526,7 +574,10 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_RINGING:
                             Log.i(TAG, "onCallStateChanged: call ringing");
                             try {
-                                sendSnoozeIntent(context, alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stopVibrate();
                                 intentSender(context);
                                 removeNotification(context);
                             } catch (IllegalStateException e) {
@@ -536,49 +587,62 @@ public class PlayMedia{
                         case TelephonyManager.CALL_STATE_OFFHOOK:
                             Log.i(TAG, "onCallStateChanged: on call");
                             try {
-                                sendSnoozeIntent(context, alarm);
+                                alarm.setTemp_snooze_active(true);
+                                alarm.cancelAlarm(context , alarm);
+                                alarm.scheduleSnoozeAlarm(context , alarm);
+                                stopVibrate();
                                 intentSender(context);
                                 removeNotification(context);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            break;
                         case TelephonyManager.CALL_STATE_IDLE:
 
                             long[] pattern = {0, 20000, 1000, 20000, 2000};
                             try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0),
-                                            new AudioAttributes.Builder()
-                                                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                                    .setUsage(AudioAttributes.USAGE_ALARM)
-                                                    .build());
-                                    Log.i(TAG, "vibrate: success");
-                                } else {
-                                    vibrator.vibrate(pattern, 0);
-                                    Log.i(TAG, "vibrate: success");
-                                }
+                                if (!alarm.isVibrated){
+                                        alarm.isVibrated = true;
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0),
+                                                    new AudioAttributes.Builder()
+                                                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                                            .setUsage(AudioAttributes.USAGE_ALARM)
+                                                            .build());
+                                            Log.i(TAG, "vibrate: success");
+                                        } else {
+                                            vibrator.vibrate(pattern, 0);
+                                            Log.i(TAG, "vibrate: success");
+                                        }
+
+                                        TimerTask vibrateTimerTask = new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                stopVibrate();
+                                                manageAlarmState(context , alarm);
+                                                intentSender(context);
+                                                refreshAlarm(context);
+                                                removeNotification(context);
+
+                                            }
+                                        };
+
+                                        vibrateTimer = new Timer();
+                                        vibrateTimer.schedule(vibrateTimerTask, 60000);
+                                        isVibrateTimerActive = true;
+
+
+                                }else
+                                    Log.e(TAG, "onCallStateChanged: already played");
+
                             }catch (Exception e){
                                 e.printStackTrace();
                                 Log.i(TAG, "vibrate: failed");
                             }
-                            TimerTask vibrateTimerTask = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    stopVibrate();
-                                    if (alarm.getToggleOnOff()) {
-                                        manageAlarmState(context , alarm);
-                                        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
-                                        intentSender(context);
-                                        removeNotification(context);
-                                    }
-                                }
-                            };
-
-                            vibrateTimer = new Timer();
-                            vibrateTimer.schedule(vibrateTimerTask, 120000);
-                            isVibrateTimerActive = true;
 
 
+                            break;
                     }
 
                     super.onCallStateChanged(state, phoneNumber);
@@ -608,6 +672,11 @@ public class PlayMedia{
                 Log.i(TAG, "stopRingtone: ringtimer canceled");
             }
 
+            if (isRingTtsHandlerActive){
+                ringTtsHandler.removeCallbacks(ringTtsRunnable);
+                isRingTtsHandlerActive = false;
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -620,11 +689,22 @@ public class PlayMedia{
             if (tts.isSpeaking())
                 tts.stop();
             tts.shutdown();
+        }catch (Exception e) {
+        }
+        try {
             if (isTtsTimerActive)
                 ttsTimer.cancel();
             if (isTtsRingTimerActive)
                 ttsRingTimer.cancel();
             Log.i(TAG, "stop_tts: success");
+            if (isTtsHandlerActive){
+                ttsHandler.removeCallbacks(ttsRunnable);
+                isTtsHandlerActive = false;
+            }
+            if (isRingTtsHandlerActive){
+                ringTtsHandler.removeCallbacks(ringTtsRunnable);
+                isRingTtsHandlerActive = false;
+            }
         }catch (Exception e){
             e.printStackTrace();
             Log.i(TAG, "stop_tts: failed");

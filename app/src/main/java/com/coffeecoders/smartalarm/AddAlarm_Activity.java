@@ -204,7 +204,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 /**
                  * updating the service
                  */
-                ScheduleService.updateAlarmSchedule(getBaseContext());
+                getBaseContext().startService(new Intent(getBaseContext(), ScheduleService.class));
+
                 SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.clear();
@@ -267,7 +268,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 Log.i(TAG, "delete_onClick: id to be delete " + id);
                 newAlarm.cancelAlarm(getApplicationContext() ,newAlarm );
                 getContentResolver().delete(editUri, null, null);
-                ScheduleService.updateAlarmSchedule(getApplicationContext());
+
+                getBaseContext().startService(new Intent(getBaseContext(), ScheduleService.class));
                 finish();
 
             }

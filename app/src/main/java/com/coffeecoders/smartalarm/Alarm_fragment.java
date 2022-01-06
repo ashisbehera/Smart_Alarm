@@ -89,6 +89,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction() == "com.example.smartalarm.dataChangeListener"){
+                    Log.e(TAG, "onReceive: broadcast received");
                     aAdapter.notifyDataSetChanged();
                 }
             }
@@ -134,9 +135,11 @@ public class Alarm_fragment extends Fragment implements ClickListener {
             case R.id.select_all:
                 if (!isSelectAll) {
                     isSelectAll = true;
+                    aAdapter.selectAll();
                     aAdapter.notifyDataSetChanged();
                 }else {
                     isSelectAll = false;
+                    aAdapter.deSelectedAll();
                     aAdapter.notifyDataSetChanged();
                 }
 
@@ -161,8 +164,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         int rowsDeleted = getContext().getContentResolver().delete
                 (AlarmContract.AlarmEntry.CONTENT_URI, null, null);
         Log.v("AlarmActivity", rowsDeleted + " all alarms are deleted ");
-
-        ScheduleService.updateAlarmSchedule(getContext().getApplicationContext());
+        getContext().startService(new Intent(getContext().getApplicationContext(), ScheduleService.class));
         alarmRecycleView.removeAllViewsInLayout();
         alarms.clear();
         aAdapter.notifyDataSetChanged();
@@ -185,13 +187,13 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         super.onStart();
         IntentFilter intentFilter = new IntentFilter("com.example.smartalarm.dataChangeListener");
         getContext().registerReceiver(broadcastReceiver , intentFilter);
+        Log.e(TAG, "onResume: receiver registered" );
         aAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        aAdapter.notifyDataSetChanged();
         replaceToolbar();
     }
 
@@ -199,6 +201,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
     public void onStop() {
         super.onStop();
         getContext().unregisterReceiver(broadcastReceiver);
+        Log.e(TAG, "onResume: receiver unregistered" );
     }
 
     @Override
@@ -209,6 +212,9 @@ public class Alarm_fragment extends Fragment implements ClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        IntentFilter intentFilter = new IntentFilter("com.example.smartalarm.dataChangeListener");
+        getContext().registerReceiver(broadcastReceiver , intentFilter);
+        Log.e(TAG, "onResume: receiver registered" );
         aAdapter.notifyDataSetChanged();
         replaceToolbar();
     }

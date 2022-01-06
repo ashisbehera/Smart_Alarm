@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.coffeecoders.smartalarm.AlarmConstraints;
@@ -20,12 +21,22 @@ public class BootUpReceiver extends BroadcastReceiver {
     @SuppressLint("LongLogTag")
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){
-            Toast.makeText(context, "broadcast received",
-                    Toast.LENGTH_SHORT).show();
 
-            boolean isEmpty = true;
-            try {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) ||
+                intent.getAction() == "android.intent.action.QUICKBOOT_POWERON"){
+            refreshAlarm(context);
+        }
+
+        if (intent.getAction() == "smart alarm refresh alarm"){
+            refreshAlarm(context);
+        }
+
+
+    }
+
+    private void refreshAlarm(Context context){
+        boolean isEmpty = true;
+        try {
             Alarm_Database alarmDatabase= Alarm_Database.getInstance(context.getApplicationContext());
             List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
             for(AlarmConstraints alarm : alarms)
@@ -39,17 +50,13 @@ public class BootUpReceiver extends BroadcastReceiver {
 
                 }
             }
-                Toast.makeText(context, "alarm scheduled",
-                        Toast.LENGTH_SHORT).show();
+
             if (isEmpty) {
                 Toast.makeText(context, "no active alarms", Toast.LENGTH_LONG).show();
             }
         }
         catch (Exception e)
         {
-            Toast.makeText(context, "error scheduling alarm", Toast.LENGTH_LONG).show();
         }
-        }
-
     }
 }

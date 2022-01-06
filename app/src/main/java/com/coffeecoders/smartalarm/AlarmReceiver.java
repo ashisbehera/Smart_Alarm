@@ -37,9 +37,13 @@ public class AlarmReceiver extends BroadcastReceiver {
         /**
          * getting bundle from intent
          */
-        Bundle bundle = intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
+//        Bundle bundle = intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
         AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
                 (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
+        alarm.isPlayed = false;
+        alarm.isVibrated = false;
+        Bundle bundle=new Bundle();
+        bundle.putParcelable(alarm.ALARM_KEY,alarm);
 
 
         Log.i("bundle ", "bundle received from receiver");
@@ -128,6 +132,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             .setCategory(NotificationCompat.CATEGORY_CALL)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setLocalOnly(true)
+                            .setOngoing(true)
 //                .addAction(SnoozeAction)
 //                .addAction(StopAction)
                             .setCustomContentView(largeRemoteViews)
@@ -150,6 +155,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             .setCategory(NotificationCompat.CATEGORY_CALL)
                             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .setLocalOnly(true)
+                            .setOngoing(true)
                             .addAction(SnoozeAction)
                             .addAction(StopAction)
                             .setFullScreenIntent(pendingIntent , true)

@@ -97,6 +97,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                     intent.setData(editUri);
                     view.getContext().startActivity(intent);
                 }else {
+                    alarm_fragment.isSelectAll = false;
                     if (holder.selectCheck.getVisibility() == View.VISIBLE){
                         holder.alarmSwitch.setVisibility(View.VISIBLE);
                         holder.selectCheck.setVisibility(View.GONE);
@@ -147,7 +148,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                     values.put(AlarmEntry.ALARM_ACTIVE, 1);
                     Uri currentPetUri = ContentUris.withAppendedId(AlarmEntry.CONTENT_URI ,alarm.getPKeyDB());
                     context.getContentResolver().update(currentPetUri , values, null, null);
-                    ScheduleService.updateAlarmSchedule(context);
+                    context.startService(new Intent(context, ScheduleService.class));
+
 
                 }else {
                     holder.timeTextView.setTextColor(Color.parseColor("#6BFFFFFF"));
@@ -161,7 +163,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                      * this will stop if there is any pending snooze
                      */
                     alarm.cancelAlarm(context.getApplicationContext() , alarm);
-                    ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+                    context.startService(new Intent(context, ScheduleService.class));
                 }
             }
         });
@@ -191,11 +193,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
             alarmList.remove(entry.getKey());
         }
 
-        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+        context.startService(new Intent(context, ScheduleService.class));
+
     }
 
     public void selectAll(){
+        int i=0;
+        selectedMap.clear();
+        for (AlarmConstraints selectAlarm:alarmList){
+            selectedMap.put( i++ , selectAlarm );
+        }
+    }
 
+    public void deSelectedAll(){
+        selectedMap.clear();
     }
 
     public void selectAllToDelete(){
@@ -206,7 +217,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder>{
                     (AlarmContract.AlarmEntry.CONTENT_URI, null, null);
         }
 
-        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+        context.startService(new Intent(context, ScheduleService.class));
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder  {

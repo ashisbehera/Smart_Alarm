@@ -32,6 +32,8 @@ public class CancelAlarm extends AppCompatActivity {
     private LottieAnimationView cancelAnimation;
     private TextView alarmTimeTxt , alarmLblTxt , snoozeTxt;
     private BroadcastReceiver broadcastReceiver;
+    private AlarmConstraints alarm;
+    private boolean destroyed = false;
 
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class CancelAlarm extends AppCompatActivity {
          * getting bundle from from the intent
          */
         bundle = intent.getBundleExtra(AlarmConstraints.ALARM_KEY);
-        AlarmConstraints alarm=(AlarmConstraints)intent.getBundleExtra
+        alarm=(AlarmConstraints)intent.getBundleExtra
                 (AlarmConstraints.ALARM_KEY).getParcelable(AlarmConstraints.ALARM_KEY);
         alarm.setStandardTime(alarm.getAlarmTime());
         StringBuilder standardTime = alarm.getStandardTime();
@@ -104,6 +106,8 @@ public class CancelAlarm extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendCancelIntent();
+                destroyed = true;
+                finish();
             }
         });
 
@@ -111,7 +115,10 @@ public class CancelAlarm extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendSnoozeIntent();
+                destroyed = true;
+                finish();
             }
+
         });
 
 
@@ -147,7 +154,7 @@ public class CancelAlarm extends AppCompatActivity {
             e.printStackTrace();
             Log.e(TAG, "onCreate: error while wakelock release" );
         }
-        finish();
+
     }
 
     private void sendSnoozeIntent(){
@@ -170,7 +177,7 @@ public class CancelAlarm extends AppCompatActivity {
             e.printStackTrace();
             Log.e(TAG, "onCreate: error while wakelock release" );
         }
-        finish();
+
     }
 
 
@@ -232,6 +239,13 @@ public class CancelAlarm extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
+        if (!destroyed){
+            if (alarm.isSnooze_active()){
+                sendSnoozeIntent();
+            }else {
+                sendCancelIntent();
+            }
+        }
     }
 
     @Override

@@ -90,6 +90,16 @@ public class AlarmConstraints implements Parcelable  {
     /** snooze active or not **/
     private boolean snooze_active = false;
 
+    private boolean temp_snooze_active = false;
+
+    public boolean isTemp_snooze_active() {
+        return temp_snooze_active;
+    }
+
+    public void setTemp_snooze_active(boolean temp_snooze_active) {
+        this.temp_snooze_active = temp_snooze_active;
+    }
+
     private boolean vibrate_active = false;
 
     public boolean isVibrate_active() {
@@ -120,6 +130,10 @@ public class AlarmConstraints implements Parcelable  {
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
     }
+
+    public boolean isPlayed = false;
+
+    public boolean isVibrated = false;
 
     /**
      *calender to get the time
@@ -529,6 +543,9 @@ public class AlarmConstraints implements Parcelable  {
         parcel.writeInt(vibrate_active ? 1 : 0);
         parcel.writeInt(repeating ? 1 : 0);
         parcel.writeString(label);
+        parcel.writeInt(temp_snooze_active ? 1 : 0);
+        parcel.writeInt(isPlayed ? 1 : 0);
+        parcel.writeInt(isVibrated ? 1 : 0);
 
     }
 
@@ -547,6 +564,9 @@ public class AlarmConstraints implements Parcelable  {
         vibrate_active = in.readInt() == 1;
         repeating = in.readInt() == 1;
         label = in.readString();
+        temp_snooze_active = in.readInt() == 1;
+        isPlayed = in.readInt() == 1;
+        isVibrated = in.readInt() == 1;
     }
 
     public static final Parcelable.Creator<AlarmConstraints> CREATOR = new ClassLoaderCreator<AlarmConstraints>() {

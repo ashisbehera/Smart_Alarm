@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -43,7 +44,8 @@ public class ControlAlarm extends AppCompatActivity implements
         removingAlarm(alarm , context);
         Log.i(" alarm removed " , "successfully alarm removed");
 
-        ScheduleService.updateAlarmSchedule(context.getApplicationContext());
+        context.startService(new Intent(context, ScheduleService.class));
+
 
         if(alarm.getTts_active() && alarm.getRingtone_active()){
             stopRingtoneR();
@@ -133,7 +135,7 @@ public class ControlAlarm extends AppCompatActivity implements
          */
 
         /** if snooze is active then don't turn off the toggle **/
-        if (!alarm.isSnooze_active() && !alarm.isRepeating())
+        if (!alarm.isRepeating() && !alarm.isTemp_snooze_active())
         setToggleOnOfAfterAlarm(alarm , 0 , context);
         Log.i("toggled off","toggle" );
         alarm.cancelAlarm(context.getApplicationContext() , alarm);
