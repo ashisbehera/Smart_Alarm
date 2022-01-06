@@ -601,6 +601,7 @@ public class PlayMedia{
 
                             long[] pattern = {0, 20000, 1000, 20000, 2000};
                             try {
+
                                 if (!alarm.isVibrated){
                                         alarm.isVibrated = true;
 
