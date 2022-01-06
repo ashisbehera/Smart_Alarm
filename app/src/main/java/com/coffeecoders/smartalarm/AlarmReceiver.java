@@ -120,7 +120,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             smallRemoteView.setOnClickPendingIntent(R.id.small_noti_snooze_button , snoozePendingIntent);
             smallRemoteView.setOnClickPendingIntent(R.id.small_noti_stop_button , stopPendingIntent);
 
-        if(android.os.Build.VERSION.SDK_INT >27){
+        if(android.os.Build.VERSION.SDK_INT >29){
             NotificationCompat.Builder builder =
                     new NotificationCompat.Builder(context, "notification_alarm")
                             .setSmallIcon(R.drawable.baseline_access_alarms_24)
