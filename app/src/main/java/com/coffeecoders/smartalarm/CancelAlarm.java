@@ -33,7 +33,7 @@ public class CancelAlarm extends AppCompatActivity {
     private TextView alarmTimeTxt , alarmLblTxt , snoozeTxt;
     private BroadcastReceiver broadcastReceiver;
     private AlarmConstraints alarm;
-    private boolean destroyed = false;
+//    private boolean destroyed = false;
 
     @SuppressLint({"LongLogTag", "ServiceCast"})
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public class CancelAlarm extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendCancelIntent();
-                destroyed = true;
+//                destroyed = true;
                 finish();
             }
         });
@@ -115,7 +115,7 @@ public class CancelAlarm extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendSnoozeIntent();
-                destroyed = true;
+//                destroyed = true;
                 finish();
             }
 
@@ -239,13 +239,13 @@ public class CancelAlarm extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
-        if (!destroyed){
-            if (alarm.isSnooze_active()){
-                sendSnoozeIntent();
-            }else {
-                sendCancelIntent();
-            }
-        }
+//        if (!destroyed){
+//            if (alarm.isSnooze_active()){
+//                sendSnoozeIntent();
+//            }else {
+//                sendCancelIntent();
+//            }
+//        }
     }
 
     @Override
