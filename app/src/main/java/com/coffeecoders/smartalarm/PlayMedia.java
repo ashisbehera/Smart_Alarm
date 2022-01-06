@@ -126,7 +126,7 @@ public class PlayMedia{
                                             }
                                         };
                                         ringTimer = new Timer();
-                                        ringTimer.schedule(ringtoneTimerTask, 60000);
+                                        ringTimer.schedule(ringtoneTimerTask, 120000);
                                         isRingTimerActive = true;
                                     }
                                 }else
@@ -334,7 +334,7 @@ public class PlayMedia{
                                             }
                                         };
                                         ttsTimer = new Timer();
-                                        ttsTimer.schedule(ttsTimerTask, 60000);
+                                        ttsTimer.schedule(ttsTimerTask, 120000);
                                         isTtsTimerActive = true;
                                     }else
                                         Log.e(TAG, "onCallStateChanged: already played" );
@@ -508,7 +508,7 @@ public class PlayMedia{
                                             }
                                         };
                                         ttsRingTimer = new Timer();
-                                        ttsRingTimer.schedule(ttsRingTimerTask, 60000);
+                                        ttsRingTimer.schedule(ttsRingTimerTask, 120000);
                                         isTtsRingTimerActive = true;
                                     }
 
@@ -630,7 +630,7 @@ public class PlayMedia{
                                         };
 
                                         vibrateTimer = new Timer();
-                                        vibrateTimer.schedule(vibrateTimerTask, 60000);
+                                        vibrateTimer.schedule(vibrateTimerTask, 120000);
                                         isVibrateTimerActive = true;
 
 

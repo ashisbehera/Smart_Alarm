@@ -455,7 +455,7 @@ public class AlarmConstraints implements Parcelable  {
 
         Calendar calendar = Calendar.getInstance();
         /** add the snooze time in current mills**/
-        calendar.add(Calendar.MILLISECOND, 60000);
+        calendar.add(Calendar.MILLISECOND, 180000);
         long snoozeTimeInMs = calendar.getTimeInMillis();
 
         Intent snoozeIntent = new Intent(context, AlarmReceiver.class);
