@@ -40,5 +40,6 @@
     <string name="coffeeDescription">Help us buy a coffee</string>
     <string name="qr">qr</string>
     <string name="lap">lap</string>
+    <string name="title_activity_maps_view">MapsViewActivity</string>
 
 </resources>

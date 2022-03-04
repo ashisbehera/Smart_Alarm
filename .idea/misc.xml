@@ -44,10 +44,13 @@
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/menu/multidelete_menu.xml" value="0.30299145299145297" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3638888888888889" />
         <entry key="..\:/Users/ankan/Documents/AndroidStudioProjects/Smart_Alarm/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.31223628691983124" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout-normal/addalarm_activity.xml" value="0.17798913043478262" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/activity_maps_view.xml" value="0.17798913043478262" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/addalarm_activity.xml" value="0.2" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

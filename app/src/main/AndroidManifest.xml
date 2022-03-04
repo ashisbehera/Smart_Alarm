@@ -11,9 +11,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <supports-screens
         android:largeScreens="true"
@@ -28,24 +28,44 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Custom.Theme.SmartAlarm">
+
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY" />
+
+        <activity
+            android:name=".MapsViewActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps_view" />
         <activity
             android:name=".About"
             android:exported="false"
-            android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".MainActivity"/>
-        <activity
-            android:name=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Custom.Theme.SmartAlarm.1" />
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".AddAlarm_Activity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Custom.Theme.SmartAlarm.1">
+            android:theme="@style/Custom.Theme.SmartAlarm.1"
+            android:exported="false">
             <intent-filter>
                 <action android:name="from alarmActivity" />
                 <action android:name="from ringtoneActivity" />
@@ -62,14 +82,12 @@
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true">
-
-        </activity>
+            android:turnScreenOn="true"></activity>
         <activity
             android:name=".Ringtone"
             android:exported="true"
-            android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".AddAlarm_Activity">
+            android:parentActivityName=".AddAlarm_Activity"
+            android:theme="@style/Custom.Theme.SmartAlarm.1">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -77,15 +95,16 @@
         <activity
             android:name=".RepeatDayActivity"
             android:exported="true"
-            android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:parentActivityName=".AddAlarm_Activity">
+            android:parentActivityName=".AddAlarm_Activity"
+            android:theme="@style/Custom.Theme.SmartAlarm.1">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
-        <service android:name=".ScheduleService"
-                 android:exported="false"/>
+        <service
+            android:name=".ScheduleService"
+            android:exported="false" />
 
         <receiver
             android:name=".AlarmReceiver"
@@ -95,33 +114,38 @@
             android:showOnLockScreen="true" />
         <receiver
             android:name=".receiver.StopReceiver"
-            android:process=":remote">
+            android:process=":remote"
+            android:exported="true">
             <intent-filter>
                 <action android:name="stop alarm" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receiver.SnoozeReceiver"
-            android:process=":remote">
+            android:process=":remote"
+            android:exported="true">
             <intent-filter>
                 <action android:name="snooze Alarm" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receiver.CancelAlarmReceiver"
-            android:process=":remote">
+            android:process=":remote"
+            android:exported="true">
             <intent-filter>
                 <action android:name="cancel alarm" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".receiver.BootUpReceiver"
             android:enabled="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
                 <action android:name="smart alarm refresh alarm" />
             </intent-filter>
