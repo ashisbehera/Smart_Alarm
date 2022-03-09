@@ -1,6 +1,7 @@
 package com.coffeecoders.smartalarm;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.coffeecoders.smartalarm.data.AlarmContract.AlarmEntry;
 
@@ -59,6 +62,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
     TextView setRingtone;
     private ImageView repeatAlarmImg;
     private Switch vibrateSwitch,snoozeSwitch;
+    private Button customBtn;
     private CheckBox tts_check_bx , ringtone_check_bx;
     private AlarmConstraints newAlarm;
     private LinearLayout ringtoneLayout;
@@ -97,7 +101,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         setRingtone = findViewById(R.id.setRingtone);
-
+        customBtn = findViewById(R.id.customizeBtn);
 
 
 
@@ -187,6 +191,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
         }
 
+        customBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent MapIntent = new Intent(AddAlarm_Activity.this, MapsViewActivity.class);
+                startActivity(MapIntent);
+            }
+        });
         /**
          *initialing the alarmcontraints button
          */
