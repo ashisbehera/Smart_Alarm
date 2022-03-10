@@ -50,9 +50,9 @@ public class MapsViewActivity extends FragmentActivity implements OnMapReadyCall
 
         binding = ActivityMapsViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        toolbar = findViewById(R.id.mapToolbar);
-//        toolbar.setTitle("Google Map");
-//        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar = findViewById(R.id.mapToolbar);
+        toolbar.setTitle("Google Map");
+        toolbar.setTitleTextColor(Color.WHITE);
 
         if (!Places.isInitialized()){
             Places.initialize(getApplicationContext() , BuildConfig.MAPS_API_KEY);//get the api key
