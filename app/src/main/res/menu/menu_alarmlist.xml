@@ -18,4 +18,9 @@
         android:title="Delete all Alarms"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/calender_events"
+        android:title="Calender Events"
+        app:showAsAction="never" />
+
 </menu>

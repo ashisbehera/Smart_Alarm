@@ -117,6 +117,12 @@ public class Alarm_fragment extends Fragment implements ClickListener {
                 Intent about_intent = new Intent(getContext(), About.class);
                 startActivity(about_intent);
                 return true;
+
+            case R.id.calender_events:
+                Intent Calender_intent = new Intent(getContext(), Calender_activity.class);
+                startActivity(Calender_intent);
+                return true;
+
             case R.id.delete:
                 if (!isSelectAll){
                     aAdapter.deleteAndCancel();
