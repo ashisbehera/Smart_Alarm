@@ -3,9 +3,12 @@ package com.coffeecoders.smartalarm;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     BottomNavigationView bottomNavigationView;
     private Toolbar toolbar;
+    Button eventID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.fragment_container , new Alarm_fragment()).commit();
         bottomNavigationView= findViewById(R.id.bottom_nv);
+        eventID = findViewById(R.id.eventID);
+        eventID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, Weather.class);
+                startActivity(intent);
+            }
+        });
 //        bottomNavigationView.setSelectedItemId(R.id.home_nv_bt);
         bottomNavigationView.setSelected(true);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -51,12 +63,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         selectedFragment = new WorldClock_Fragment();
                         break;
                     case R.id.alarm_nv_bt:
-                       selectedFragment = new Alarm_fragment();
-                       break;
+                        selectedFragment = new Alarm_fragment();
+                        break;
                 }
                 getSupportFragmentManager().beginTransaction().
                         replace(R.id.fragment_container , selectedFragment).commit();
-               return true;
+                return true;
             }
         });
 

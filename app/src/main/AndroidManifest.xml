@@ -93,6 +93,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".Weather"
+            android:exported="false"/>
         <activity
             android:name=".CancelAlarm"
             android:excludeFromRecents="true"

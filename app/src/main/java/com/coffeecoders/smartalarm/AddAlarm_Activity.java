@@ -101,7 +101,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
         set_alarm = findViewById(R.id.set_alarm);
         ringtoneLayout = findViewById(R.id.ringtoneLayout);
         setRingtone = findViewById(R.id.setRingtone);
-        customBtn = findViewById(R.id.customizeBtn);
+        // customBtn = findViewById(R.id.customizeBtn);
 
 
 
