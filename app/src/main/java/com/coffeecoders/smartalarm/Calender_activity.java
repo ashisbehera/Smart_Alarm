@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 public class Calender_activity extends AppCompatActivity {
-    ListView listView;
+    GridView listView;
     private Button button1 , button2 , button3;
 
 
@@ -146,7 +147,7 @@ public class Calender_activity extends AppCompatActivity {
             calendarInfos.add(calendarInfo);
         }
         Log.e("list size :" , " "+ calendarInfos.size());
-        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, calendarInfos);
+        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this, android.R.layout.activity_list_item , android.R.id.text1, calendarInfos);
         listView.setAdapter(stringArrayAdapter);
     }
 

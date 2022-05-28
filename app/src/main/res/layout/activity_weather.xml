@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,8 +14,9 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:text="Weather"
-        android:textSize="60dp"
-        android:textStyle="bold" />
+        android:textSize="60sp"
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/et"
@@ -31,6 +31,7 @@
         android:layout_marginLeft="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="40dp"
+        android:backgroundTint="#525266"
         android:onClick="get"
         android:text="Get Weather"
         tools:ignore="HardcodedText,UsingOnClickInXml" />
@@ -41,5 +42,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center_horizontal"
-        android:textSize="30sp" />
+        android:textSize="80sp" />
 </LinearLayout>

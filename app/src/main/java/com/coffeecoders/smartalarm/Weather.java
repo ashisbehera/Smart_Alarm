@@ -33,12 +33,13 @@ public class Weather extends AppCompatActivity {
     public void get(View v) {
         city = et.getText().toString();
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city.toLowerCase() + "&appid=375ef2cd332149cf9cc28fc0464b57af";
+        String url = "https://api.openweathermap.org/data/2.5/weather?q=" + city.toLowerCase() + "&appid=375ef2cd332149cf9cc28fc0464b57af&units=metric";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
                 JSONObject array = (JSONObject) response.get("main");
                 String s = array.getString("temp");
-                tv.setText(s);
+                String str = s + "°C";
+                tv.setText(str);
             } catch (JSONException e) {
                 tv.setText(e.getMessage());
                 e.printStackTrace();
