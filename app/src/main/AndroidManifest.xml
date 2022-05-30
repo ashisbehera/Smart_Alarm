@@ -36,7 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/Custom.Theme.SmartAlarm">
         <activity
-            android:name=".Calender_activity"
+            android:name=".calender.Calender_activity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
