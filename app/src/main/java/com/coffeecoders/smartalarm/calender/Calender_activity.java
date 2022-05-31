@@ -25,11 +25,14 @@ import java.util.Date;
 import java.util.HashSet;
 
 public class Calender_activity extends AppCompatActivity {
+    private static final String TAG = "Calender_activity";
     GridView gridView;
     private Button button1 , button2 , button3;
     private ArrayList<Events> events_list = new ArrayList<>();
     private CalenderAdapter calenderAdapter;
     private RecyclerView cal_recycle_view;
+    private HashSet<Integer> calendarIds = new HashSet<>();
+    private HashSet<String> accountNames = new HashSet<>();
 
 
     @Override
@@ -38,31 +41,35 @@ public class Calender_activity extends AppCompatActivity {
         setContentView(R.layout.activity_calender);
 
         button1 = findViewById(R.id.get_calender);
-        button2 = findViewById(R.id.set_primary_cal);
-        button3 = findViewById(R.id.get_cal);
+//        button2 = findViewById(R.id.set_primary_cal);
+//        button3 = findViewById(R.id.get_cal);
         cal_recycle_view = findViewById(R.id.calender_rec_view);
 
 
+        readCalender_events();
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                getCalendars();;
+                Calender_dialogBox calender_dialogBox =
+                        new Calender_dialogBox(new ArrayList<>(accountNames));
+                calender_dialogBox.show(getSupportFragmentManager() , "cal_dialog");
             }
         });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                getPrimaryCalendar();
-            }
-        });
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                readCalender_events();
-            }
-        });
+//
+//        button2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                getPrimaryCalendar();
+//            }
+//        });
+//
+//        button3.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
     }
 
     /**
@@ -168,9 +175,9 @@ public class Calender_activity extends AppCompatActivity {
         // Fetch a list of all calendars synced with the device, their display names and whether the
 
         Cursor cursor = contentResolver.query(Uri.parse("content://com.android.calendar/calendars"),
-                (new String[] { "_id"}), null, null, null);
+                (new String[] { "_id","account_name"}), null, null, null);
 
-        HashSet<String> calendarIds = new HashSet<String>();
+
 
         try
         {
@@ -181,10 +188,11 @@ public class Calender_activity extends AppCompatActivity {
                 while (cursor.moveToNext()) {
 
                     String _id = cursor.getString(0);
-
-
-
-                    calendarIds.add(_id);
+                    String name = cursor.getString(1);
+                    Log.e(TAG, "readCalender_events: account name :" + name);
+                    Log.e(TAG, "readCalender_events: "+_id);
+                    calendarIds.add(Integer.parseInt(_id));
+                    accountNames.add(name);
                 }
             }
         }
@@ -199,7 +207,8 @@ public class Calender_activity extends AppCompatActivity {
 
         events_list.clear();
         // For each calendar, display all the events from the previous week to the end of next week.
-        for (String id : calendarIds) {
+        for (int id : calendarIds) {
+            Log.e(TAG, "readCalender_events: "+id );
             Uri.Builder builder = Uri.parse("content://com.android.calendar/instances/when").buildUpon();
             //Uri.Builder builder = Uri.parse("content://com.android.calendar/calendars").buildUpon();
             long now = new Date().getTime();
@@ -208,13 +217,14 @@ public class Calender_activity extends AppCompatActivity {
             ContentUris.appendId(builder, now + DateUtils.DAY_IN_MILLIS * 10000);
 
             Cursor eventCursor = contentResolver.query(builder.build(),
-                    new String[]  { "title", "begin", "end", "allDay"}, CalendarContract.Instances.CALENDAR_ID+"="+1,
+                    new String[]  { "title", "begin", "end", "allDay"},
+                    CalendarContract.Instances.CALENDAR_ID+"="+ id,
                     null, "startDay ASC, startMinute ASC");
 
-
+            Log.e(TAG, "readCalender_events: " +id);
             if(eventCursor.getCount()>0)
             {
-
+                Log.e(TAG, "readCalender_events: inside " +id);
                 if(eventCursor.moveToFirst())
                 {
                     do
@@ -237,13 +247,15 @@ public class Calender_activity extends AppCompatActivity {
 
                 }
             }
-            break;
+
         }
-        calenderAdapter = new CalenderAdapter(this , events_list);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager
-                (this , 2 ,GridLayoutManager.VERTICAL , false);
-        cal_recycle_view.setLayoutManager(gridLayoutManager);
-        cal_recycle_view.setAdapter(calenderAdapter);
+
+            calenderAdapter = new CalenderAdapter(this, events_list);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager
+                    (this, 2, GridLayoutManager.VERTICAL, false);
+            cal_recycle_view.setLayoutManager(gridLayoutManager);
+            cal_recycle_view.setAdapter(calenderAdapter);
+
     }
 
 }

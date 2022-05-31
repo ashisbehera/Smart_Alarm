@@ -12,17 +12,17 @@
         android:layout_height="wrap_content"
         android:text="Get Calendars" />
 
-    <Button
-        android:id="@+id/set_primary_cal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Get Primary Calendar" />
+<!--    <Button-->
+<!--        android:id="@+id/set_primary_cal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Get Primary Calendar" />-->
 
-    <Button
-        android:id="@+id/get_cal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Get All Events" />
+<!--    <Button-->
+<!--        android:id="@+id/get_cal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Get All Events" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/calender_rec_view"
