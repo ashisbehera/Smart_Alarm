@@ -3,6 +3,7 @@ package com.coffeecoders.smartalarm.calender;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.ViewHolder>{
 
     ArrayList<String> acc_list = new ArrayList<>();
+    int selectedPosition = -1;
     public Cal_dilg_adapter(ArrayList<String> list){
     acc_list = list;
 
@@ -32,8 +34,28 @@ public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.acc_name.setText(acc_list.get(position));
+        holder.radioButton.setText(acc_list.get(position));
+        holder.radioButton.setChecked(position == selectedPosition);
+        holder.radioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    selectedPosition = holder.getAbsoluteAdapterPosition();
+                    notifyDataSetChanged();
+                }
+            }
+        });
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -42,11 +64,11 @@ public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView acc_name;
+//        TextView acc_name;
         RadioButton radioButton;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            acc_name = itemView.findViewById(R.id.acc_name);
+//            acc_name = itemView.findViewById(R.id.acc_name);
             radioButton = itemView.findViewById(R.id.acc_radio_bt);
         }
     }
