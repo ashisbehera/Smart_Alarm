@@ -1,5 +1,6 @@
 package com.coffeecoders.smartalarm.calender;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,50 +13,56 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toolbar;
 
 import com.coffeecoders.smartalarm.R;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
-public class Calender_activity extends AppCompatActivity {
+public class Calender_activity extends AppCompatActivity implements Calender_dialogBox.Get_Cal_accName {
     private static final String TAG = "Calender_activity";
     GridView gridView;
     private Button button1 , button2 , button3;
     private ArrayList<Events> events_list = new ArrayList<>();
     private CalenderAdapter calenderAdapter;
     private RecyclerView cal_recycle_view;
-    private HashSet<Integer> calendarIds = new HashSet<>();
-    private HashSet<String> accountNames = new HashSet<>();
-
+    private Map<String , Integer> accNames_id_map = new HashMap<>();
+    private String sel_cal_acc_name = "local account";
+    private ContentResolver contentResolver;
+    private androidx.appcompat.widget.Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calender);
 
-        button1 = findViewById(R.id.get_calender);
+        toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.my_toolbar);
+        toolbar.setTitle("Choose Account");
+        setSupportActionBar(toolbar);
+
+        contentResolver = getContentResolver();
 //        button2 = findViewById(R.id.set_primary_cal);
 //        button3 = findViewById(R.id.get_cal);
         cal_recycle_view = findViewById(R.id.calender_rec_view);
 
+        Log.e(TAG, "onCreate: " + "check" );
+        readCalender_accounts();
+        if(accNames_id_map.containsKey(sel_cal_acc_name)){
+            getEvents(accNames_id_map.get(sel_cal_acc_name));
+        }
 
-        readCalender_events();
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                getCalendars();;
-                Calender_dialogBox calender_dialogBox =
-                        new Calender_dialogBox(new ArrayList<>(accountNames));
-                calender_dialogBox.show(getSupportFragmentManager() , "cal_dialog");
-            }
-        });
 //
 //        button2.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -72,7 +79,26 @@ public class Calender_activity extends AppCompatActivity {
 //        });
     }
 
-    /**
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu ) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.choose_account, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.choose_acc:
+                Calender_dialogBox calender_dialogBox =
+                        new Calender_dialogBox(new ArrayList<>(accNames_id_map.keySet()) , sel_cal_acc_name);
+                calender_dialogBox.show(getSupportFragmentManager() , "cal_dialog");
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+/**
      * read all calender
      */
 //    public void getCalendars() {
@@ -166,48 +192,41 @@ public class Calender_activity extends AppCompatActivity {
 
 
     /**
-     * read events
+     * read calender Accounts
      */
-    public void readCalender_events(){
-
-        ContentResolver contentResolver = getContentResolver();
+    public void readCalender_accounts() {
 
         // Fetch a list of all calendars synced with the device, their display names and whether the
 
         Cursor cursor = contentResolver.query(Uri.parse("content://com.android.calendar/calendars"),
-                (new String[] { "_id","account_name"}), null, null, null);
+                (new String[]{"_id", "account_name"}), null, null, null);
 
 
-
-        try
-        {
-            System.out.println("Count="+cursor.getCount());
-            if(cursor.getCount() > 0)
-            {
+        try {
+            System.out.println("Count=" + cursor.getCount());
+            if (cursor.getCount() > 0) {
                 System.out.println("the control is just inside of the cursor.count loop");
                 while (cursor.moveToNext()) {
 
                     String _id = cursor.getString(0);
                     String name = cursor.getString(1);
                     Log.e(TAG, "readCalender_events: account name :" + name);
-                    Log.e(TAG, "readCalender_events: "+_id);
-                    calendarIds.add(Integer.parseInt(_id));
-                    accountNames.add(name);
+                    Log.e(TAG, "readCalender_events: " + _id);
+                    accNames_id_map.put(name , Integer.parseInt(_id));
                 }
             }
-        }
-        catch(AssertionError ex)
-        {
+        } catch (AssertionError ex) {
             ex.printStackTrace();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void getEvents(int id){
         events_list.clear();
         // For each calendar, display all the events from the previous week to the end of next week.
-        for (int id : calendarIds) {
+
             Log.e(TAG, "readCalender_events: "+id );
             Uri.Builder builder = Uri.parse("content://com.android.calendar/instances/when").buildUpon();
             //Uri.Builder builder = Uri.parse("content://com.android.calendar/calendars").buildUpon();
@@ -248,7 +267,7 @@ public class Calender_activity extends AppCompatActivity {
                 }
             }
 
-        }
+
 
             calenderAdapter = new CalenderAdapter(this, events_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager
@@ -258,4 +277,10 @@ public class Calender_activity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void getCalAccName(String st) {
+        sel_cal_acc_name = st;
+        Log.e(TAG, "getCalAccName: "+sel_cal_acc_name);
+        getEvents(accNames_id_map.get(sel_cal_acc_name));
+    }
 }

@@ -19,9 +19,11 @@ public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.View
 
     ArrayList<String> acc_list = new ArrayList<>();
     int selectedPosition = -1;
-    public Cal_dilg_adapter(ArrayList<String> list){
+    Acc_clickListener acc_clickListener;
+    public Cal_dilg_adapter(ArrayList<String> list, Acc_clickListener acc_clickListener, int radioB_position){
     acc_list = list;
-
+    this.acc_clickListener = acc_clickListener;
+    selectedPosition = radioB_position;
     }
     @NonNull
     @Override
@@ -41,6 +43,7 @@ public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.View
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
                     selectedPosition = holder.getAbsoluteAdapterPosition();
+                    acc_clickListener.sendAccountName(holder.radioButton.getText().toString());
                     notifyDataSetChanged();
                 }
             }
@@ -72,4 +75,6 @@ public class Cal_dilg_adapter extends RecyclerView.Adapter<Cal_dilg_adapter.View
             radioButton = itemView.findViewById(R.id.acc_radio_bt);
         }
     }
+
+
 }
