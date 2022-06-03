@@ -112,7 +112,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         switch (item.getItemId()) {
 
             case R.id.delete_all_alarms:
-                deleteAllPets();
+                deleteAllAlarms();
                 return true;
             case R.id.about_menu:
                 Intent about_intent = new Intent(getContext(), About.class);
@@ -162,7 +162,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
     }
 
 
-    private void deleteAllPets() {
+    private void deleteAllAlarms() {
         for (AlarmConstraints alarm:alarms){
             if (alarm.getToggleOnOff()){
                 alarm.cancelAlarm(getContext().getApplicationContext() , alarm);
