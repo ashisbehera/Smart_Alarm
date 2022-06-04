@@ -122,6 +122,24 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
+
+        String SQL_CREATE_CAL_EVENTS_TABLE =  "CREATE TABLE " + AlarmEntry.CAL_EVENTS_TABLE_NAME + " ("
+                + AlarmEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + AlarmEntry.ALARM_NAME + " TEXT, "
+                + AlarmEntry.CAL_ACC_NAME + " TEXT, "
+                /** tts string column **/
+                + AlarmEntry.TTS_STRING + " TEXT, "
+                + AlarmEntry.RINGTONE_STRING + " TEXT, "
+                + AlarmEntry.ALARM_RINGTONE_NAME + " TEXT, "
+                + AlarmEntry.ALARM_REPEAT_DAYS + " TEXT, "
+                + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
+                + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
+
         String SQL_CREATE_RINGTONE_TABLE = "CREATE TABLE " + AlarmEntry.RINGTONE_TABLE + " ("
                 + AlarmEntry.RINGTONE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + AlarmEntry.RINGTONE_NAME + " TEXT NOT NULL, "
@@ -130,6 +148,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
         // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RINGTONE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_CAL_EVENTS_TABLE);
     }
 
     /**

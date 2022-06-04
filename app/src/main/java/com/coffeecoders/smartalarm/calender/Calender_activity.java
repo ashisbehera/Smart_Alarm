@@ -23,6 +23,7 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toolbar;
 
+import com.coffeecoders.smartalarm.AlarmConstraints;
 import com.coffeecoders.smartalarm.R;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
     private String sel_cal_acc_name = "local account";
     private ContentResolver contentResolver;
     private androidx.appcompat.widget.Toolbar toolbar;
+    private AlarmConstraints alarmConstraints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +51,11 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         setContentView(R.layout.activity_calender);
 
         toolbar = (androidx.appcompat.widget.Toolbar) findViewById(R.id.my_toolbar);
-        toolbar.setTitle("Choose Account");
+        toolbar.setTitle("Calender Events");
         setSupportActionBar(toolbar);
 
         contentResolver = getContentResolver();
+        alarmConstraints = new AlarmConstraints();
 //        button2 = findViewById(R.id.set_primary_cal);
 //        button3 = findViewById(R.id.get_cal);
         cal_recycle_view = findViewById(R.id.calender_rec_view);
@@ -257,9 +260,26 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 
                         Events newEvent = new Events();
                         newEvent.setEvent_name(title);
-                        newEvent.setEvent_s_time(String.valueOf(begin));
-                        newEvent.setEvent_e_time(String.valueOf(end));
 
+
+                        String[] s_time_str = String.valueOf(begin).split("\\s+");
+                        String[] e_time_str = String.valueOf(begin).split("\\s+");
+                        String s_day = s_time_str[0];
+                        String s_month = s_time_str[1];
+                        String s_date = s_time_str[2];
+                        String s_time = s_time_str[3];
+                        alarmConstraints.setStandardTime(s_time);
+                        String s_standard_time =alarmConstraints.getStandardTime().toString();
+                        String s_year = s_time_str[5];
+                        newEvent.setEvent_s_time(s_day+" "+s_month+" "+s_date+" , "+s_standard_time+" "+s_year);
+                        String e_day = e_time_str[0];
+                        String e_month = e_time_str[1];
+                        String e_date = e_time_str[2];
+                        String e_time = e_time_str[3];
+                        alarmConstraints.setStandardTime(s_time);
+                        String e_standard_time =alarmConstraints.getStandardTime().toString();
+                        String e_year = e_time_str[5];
+                        newEvent.setEvent_e_time(e_day+" "+e_month+" "+e_date+" , "+e_standard_time+" "+e_year);
                         events_list.add(newEvent);
                     }
                     while(eventCursor.moveToNext());

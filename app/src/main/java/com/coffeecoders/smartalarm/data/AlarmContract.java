@@ -18,11 +18,15 @@ public class AlarmContract {
 
     public static final String PATH_RINGTONE = "table_ringtone";
 
+    public static final String PATH_CAL_EVENTS = "calender_events";
+
     public static final class AlarmEntry implements BaseColumns{
 
         /** The content URI to access the alarm data in the provider
          * */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_ALARM);
+
+        public static final Uri CAL_EVENTS_CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_CAL_EVENTS);
         /** The content URI to access the ringtone data in the provider
          * */
         public static final Uri RINGTONE_CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_RINGTONE);
@@ -40,6 +44,8 @@ public class AlarmContract {
         /** Name of database table for alarms
          * */
         public final static String TABLE_NAME = "alarms";
+
+        public final static String CAL_EVENTS_TABLE_NAME = "cal_events";
         /** Name of database table for ringtone
          * */
         public final static String RINGTONE_TABLE = "table_ringtone";
@@ -81,5 +87,6 @@ public class AlarmContract {
         public final static String RINGTONE_URI="ringtone_uri";
         /** check if ringtone is active or not **/
         public final static String RINGTONE_ACTIVE="ringtone_active";
+        public static final String CAL_ACC_NAME = "cal_acc_name";
     }
 }
