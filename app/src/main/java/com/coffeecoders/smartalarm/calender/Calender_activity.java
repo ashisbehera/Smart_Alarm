@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,11 +26,14 @@ import android.widget.Toolbar;
 
 import com.coffeecoders.smartalarm.AlarmConstraints;
 import com.coffeecoders.smartalarm.R;
+import com.coffeecoders.smartalarm.data.AlarmContract.AlarmEntry;
+import com.coffeecoders.smartalarm.data.Alarm_Database;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public class Calender_activity extends AppCompatActivity implements Calender_dialogBox.Get_Cal_accName {
@@ -66,6 +70,12 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
             getEvents(accNames_id_map.get(sel_cal_acc_name));
         }
 
+        Alarm_Database database = new Alarm_Database(getApplicationContext());
+        List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
+
+        for (AlarmConstraints events_cl:events_list){
+            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
+        }
 //
 //        button2.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -276,11 +286,16 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         String e_month = e_time_str[1];
                         String e_date = e_time_str[2];
                         String e_time = e_time_str[3];
-                        alarmConstraints.setStandardTime(s_time);
+                        alarmConstraints.setStandardTime(e_time);
                         String e_standard_time =alarmConstraints.getStandardTime().toString();
                         String e_year = e_time_str[5];
                         newEvent.setEvent_e_time(e_day+" "+e_month+" "+e_date+" , "+e_standard_time+" "+e_year);
                         events_list.add(newEvent);
+                        alarmConstraints.setLabel(title);
+                        alarmConstraints.setAlarmTime(s_time);
+                        alarmConstraints.setTtsString(title);
+                        saveEventsInDataB(alarmConstraints);
+
                     }
                     while(eventCursor.moveToNext());
 
@@ -294,6 +309,16 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                     (this, 2, GridLayoutManager.VERTICAL, false);
             cal_recycle_view.setLayoutManager(gridLayoutManager);
             cal_recycle_view.setAdapter(calenderAdapter);
+
+    }
+
+    private void saveEventsInDataB(AlarmConstraints cal_alarm){
+        ContentValues values = new ContentValues();
+        values.put(AlarmEntry.ALARM_NAME , cal_alarm.getLabel());
+        values.put(AlarmEntry.ALARM_TIME , cal_alarm.getAlarmTime());
+        values.put(AlarmEntry.TTS_STRING , cal_alarm.getTtsString());
+
+        Uri newUri = getContentResolver().insert(AlarmEntry.CAL_EVENTS_CONTENT_URI, values);
 
     }
 

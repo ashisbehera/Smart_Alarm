@@ -76,7 +76,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         });
 
         alarmDatabase= Alarm_Database.getInstance(getContext().getApplicationContext());
-        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
         alarmRecycleView = (RecyclerView) view.findViewById(R.id.list);
         aAdapter = new AlarmAdapter(alarms , getContext().getApplicationContext() ,
                   this , this);
@@ -131,7 +131,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
                     aAdapter.selectAllToDelete();
                 }
 
-                alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+                alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
                 aAdapter = new AlarmAdapter(alarms , getContext().getApplicationContext() ,
                         this , this);
                 alarmRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));

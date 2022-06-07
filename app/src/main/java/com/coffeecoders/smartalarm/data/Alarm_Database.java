@@ -120,7 +120,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
-                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
+                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0 , " +
+                "UNIQUE(name , time) ON CONFLICT REPLACE);";
 
 
         String SQL_CREATE_CAL_EVENTS_TABLE =  "CREATE TABLE " + AlarmEntry.CAL_EVENTS_TABLE_NAME + " ("
@@ -156,7 +157,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
      * @return
      */
     @SuppressLint("Range")
-    public List<AlarmConstraints> getAlarmsFromDataBase()
+    public List<AlarmConstraints> getAlarmsFromDataBase(String table_name)
     {
         /**
          * which columns cursor will to move
@@ -171,7 +172,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
         /**
          * set the cursor
          */
-        Cursor cursor= myDatabase.query(AlarmEntry.TABLE_NAME,columns,
+        Cursor cursor= myDatabase.query(table_name,columns,
                 null,null,null,null,null);
         Log.i("cursor created" , "cursor");
         AlarmConstraints [] alarms=new AlarmConstraints [cursor.getCount()];

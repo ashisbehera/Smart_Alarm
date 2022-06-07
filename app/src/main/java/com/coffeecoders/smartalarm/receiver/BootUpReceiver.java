@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.coffeecoders.smartalarm.AlarmConstraints;
+import com.coffeecoders.smartalarm.data.AlarmContract;
 import com.coffeecoders.smartalarm.data.Alarm_Database;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class BootUpReceiver extends BroadcastReceiver {
         boolean isEmpty = true;
         try {
             Alarm_Database alarmDatabase= Alarm_Database.getInstance(context.getApplicationContext());
-            List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
+            List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
             for(AlarmConstraints alarm : alarms)
             {
                 if(alarm.isAlarmOn())
