@@ -123,7 +123,9 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0 , " +
                 "UNIQUE(name , time) ON CONFLICT REPLACE);";
 
-
+/**
+ * calender event table
+ */
         String SQL_CREATE_CAL_EVENTS_TABLE =  "CREATE TABLE " + AlarmEntry.CAL_EVENTS_TABLE_NAME + " ("
                 + AlarmEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + AlarmEntry.ALARM_NAME + " TEXT, "
