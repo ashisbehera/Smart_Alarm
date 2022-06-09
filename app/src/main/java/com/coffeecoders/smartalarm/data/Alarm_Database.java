@@ -120,6 +120,25 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0 , " +
+                "UNIQUE(name , time) ON CONFLICT REPLACE);";
+
+
+        String SQL_CREATE_CAL_EVENTS_TABLE =  "CREATE TABLE " + AlarmEntry.CAL_EVENTS_TABLE_NAME + " ("
+                + AlarmEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + AlarmEntry.ALARM_NAME + " TEXT, "
+                + AlarmEntry.CAL_ACC_NAME + " TEXT, "
+                /** tts string column **/
+                + AlarmEntry.TTS_STRING + " TEXT, "
+                + AlarmEntry.RINGTONE_STRING + " TEXT, "
+                + AlarmEntry.ALARM_RINGTONE_NAME + " TEXT, "
+                + AlarmEntry.ALARM_REPEAT_DAYS + " TEXT, "
+                + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
+                + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
+                + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
         String SQL_CREATE_RINGTONE_TABLE = "CREATE TABLE " + AlarmEntry.RINGTONE_TABLE + " ("
@@ -130,6 +149,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
         // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_ALARM_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RINGTONE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_CAL_EVENTS_TABLE);
     }
 
     /**
@@ -137,7 +157,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
      * @return
      */
     @SuppressLint("Range")
-    public List<AlarmConstraints> getAlarmsFromDataBase()
+    public List<AlarmConstraints> getAlarmsFromDataBase(String table_name)
     {
         /**
          * which columns cursor will to move
@@ -152,7 +172,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
         /**
          * set the cursor
          */
-        Cursor cursor= myDatabase.query(AlarmEntry.TABLE_NAME,columns,
+        Cursor cursor= myDatabase.query(table_name,columns,
                 null,null,null,null,null);
         Log.i("cursor created" , "cursor");
         AlarmConstraints [] alarms=new AlarmConstraints [cursor.getCount()];

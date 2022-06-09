@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.coffeecoders.smartalarm">
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -16,6 +17,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <supports-screens
         android:largeScreens="true"
@@ -30,7 +35,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Custom.Theme.SmartAlarm">
-
+        <activity
+            android:name=".calender.Calender_activity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -45,19 +52,24 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+        <meta-data
+            android:name ="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"
+        />
 
         <activity
             android:name=".MapsViewActivity"
-            android:parentActivityName=".AddAlarm_Activity"
             android:exported="false"
-            android:theme="@style/mapTheme"
-            android:label="@string/title_activity_maps_view" />
+            android:label="@string/title_activity_maps_view"
+            android:parentActivityName=".AddAlarm_Activity"
+            android:theme="@style/mapTheme" />
         <activity
             android:name=".About"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Custom.Theme.SmartAlarm.1" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,9 +79,9 @@
         </activity>
         <activity
             android:name=".AddAlarm_Activity"
+            android:exported="false"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Custom.Theme.SmartAlarm.1"
-            android:exported="false">
+            android:theme="@style/Custom.Theme.SmartAlarm.1">
             <intent-filter>
                 <action android:name="from alarmActivity" />
                 <action android:name="from ringtoneActivity" />
@@ -86,7 +98,7 @@
             android:excludeFromRecents="true"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"></activity>
+            android:turnScreenOn="true" />
         <activity
             android:name=".Ringtone"
             android:exported="true"
@@ -105,7 +117,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <service
             android:name=".ScheduleService"
             android:exported="false" />
@@ -118,24 +129,24 @@
             android:showOnLockScreen="true" />
         <receiver
             android:name=".receiver.StopReceiver"
-            android:process=":remote"
-            android:exported="true">
+            android:exported="true"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="stop alarm" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receiver.SnoozeReceiver"
-            android:process=":remote"
-            android:exported="true">
+            android:exported="true"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="snooze Alarm" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".receiver.CancelAlarmReceiver"
-            android:process=":remote"
-            android:exported="true">
+            android:exported="true"
+            android:process=":remote">
             <intent-filter>
                 <action android:name="cancel alarm" />
             </intent-filter>
@@ -143,8 +154,8 @@
         <receiver
             android:name=".receiver.BootUpReceiver"
             android:enabled="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 

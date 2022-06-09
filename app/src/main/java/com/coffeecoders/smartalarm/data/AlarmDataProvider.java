@@ -18,7 +18,9 @@ public class AlarmDataProvider extends ContentProvider {
      * */
     private static final int ALARMS = 50;
 
-    /** URI matcher code for the content URI for the sinle alarm in the alarm table
+    private static final int CAL_EVENTS = 53;
+
+    /** URI matcher code for the content URI for the single alarm in the alarm table
      * */
     private static final int ALARM_ID = 51;
     /** URI matcher code for the content URI for the ringtone table
@@ -33,6 +35,8 @@ public class AlarmDataProvider extends ContentProvider {
          *  This URI is used to provide access to MULTIPLE rows in alarm table
          */
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_ALARM,ALARMS);
+
+        alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_CAL_EVENTS,CAL_EVENTS);
         /**
          *  This URI is used to provide access to MULTIPLE rows in ringtone table
          */
@@ -150,9 +154,34 @@ public class AlarmDataProvider extends ContentProvider {
         switch (match) {
             case ALARMS:
                 return insertAlarms(uri, contentValues);
+            case CAL_EVENTS:
+                return insertCal_Events(uri , contentValues);
             default:
                 throw new IllegalArgumentException("Insertion failed for " + uri);
         }
+    }
+
+    private Uri insertCal_Events(Uri uri, ContentValues contentValues) {
+        SQLiteDatabase database = aDatabase.getWritableDatabase();
+
+        long id = database.insert(AlarmEntry.CAL_EVENTS_TABLE_NAME, null, contentValues);
+
+        if (id == -1) {
+            /**
+             * failed to insert
+             */
+            return null;
+        }
+
+        /**
+         * Notify all listeners that the data has changed for the alarm content URI
+         */
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        /**
+         * Return the new URI with the ID of the newly inserted row appended at the end
+         */
+        return ContentUris.withAppendedId(uri, id);
     }
 
     private Uri insertAlarms(Uri uri, ContentValues contentValues) {

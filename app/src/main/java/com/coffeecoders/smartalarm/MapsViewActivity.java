@@ -47,7 +47,6 @@ public class MapsViewActivity extends FragmentActivity implements OnMapReadyCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMapsViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         toolbar = findViewById(R.id.mapToolbar);

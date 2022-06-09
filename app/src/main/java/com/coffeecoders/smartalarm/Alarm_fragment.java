@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.coffeecoders.smartalarm.calender.Calender_activity;
 import com.coffeecoders.smartalarm.data.AlarmContract;
 import com.coffeecoders.smartalarm.data.Alarm_Database;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -75,7 +76,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         });
 
         alarmDatabase= Alarm_Database.getInstance(getContext().getApplicationContext());
-        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+        alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
         alarmRecycleView = (RecyclerView) view.findViewById(R.id.list);
         aAdapter = new AlarmAdapter(alarms , getContext().getApplicationContext() ,
                   this , this);
@@ -111,12 +112,18 @@ public class Alarm_fragment extends Fragment implements ClickListener {
         switch (item.getItemId()) {
 
             case R.id.delete_all_alarms:
-                deleteAllPets();
+                deleteAllAlarms();
                 return true;
             case R.id.about_menu:
                 Intent about_intent = new Intent(getContext(), About.class);
                 startActivity(about_intent);
                 return true;
+
+            case R.id.calender_events:
+                Intent Calender_intent = new Intent(getContext(), Calender_activity.class);
+                startActivity(Calender_intent);
+                return true;
+
             case R.id.delete:
                 if (!isSelectAll){
                     aAdapter.deleteAndCancel();
@@ -124,7 +131,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
                     aAdapter.selectAllToDelete();
                 }
 
-                alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase();
+                alarms = (LinkedList<AlarmConstraints>) alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
                 aAdapter = new AlarmAdapter(alarms , getContext().getApplicationContext() ,
                         this , this);
                 alarmRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -155,7 +162,7 @@ public class Alarm_fragment extends Fragment implements ClickListener {
     }
 
 
-    private void deleteAllPets() {
+    private void deleteAllAlarms() {
         for (AlarmConstraints alarm:alarms){
             if (alarm.getToggleOnOff()){
                 alarm.cancelAlarm(getContext().getApplicationContext() , alarm);

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+<TextView
+    android:id="@+id/choose_cal_name_view"
+    android:text="Choose Account"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="5dp"
+    android:textSize="30sp"
+    android:minHeight="30dp"
+    android:textStyle="bold"
+    android:background="@color/deep_teal">
+
+</TextView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cal_dialog_recycleV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

@@ -1,5 +1,6 @@
 package com.coffeecoders.smartalarm;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -14,7 +15,11 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     /**
      * abandoned
      */
@@ -27,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         createNotificationChannel();
-
+        request_permission();
         getSupportFragmentManager().beginTransaction().
                 replace(R.id.fragment_container , new Alarm_fragment()).commit();
         bottomNavigationView= findViewById(R.id.bottom_nv);
@@ -94,5 +99,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
+    }
+
+    public void request_permission(){
+        String[] permission = new String[]{
+            Manifest.permission.READ_EXTERNAL_STORAGE , Manifest.permission.READ_CALENDAR
+        };
+
+        if(EasyPermissions.hasPermissions(this , permission)){
+
+        }else{
+            EasyPermissions.requestPermissions(this , "we need permission"
+                    , 144 , permission);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(144 , permissions ,
+                grantResults , this);
     }
 }

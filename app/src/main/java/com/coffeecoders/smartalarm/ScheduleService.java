@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.coffeecoders.smartalarm.data.AlarmContract;
 import com.coffeecoders.smartalarm.data.Alarm_Database;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class ScheduleService extends Service {
 
             Alarm_Database alarmDatabase = Alarm_Database.getInstance(getApplicationContext());
 
-            List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase();
+            List<AlarmConstraints> alarms = alarmDatabase.getAlarmsFromDataBase(AlarmContract.AlarmEntry.TABLE_NAME);
             for (AlarmConstraints alarm : alarms) {
                 if (alarm.isAlarmOn()) {
                     isEmpty = false;
