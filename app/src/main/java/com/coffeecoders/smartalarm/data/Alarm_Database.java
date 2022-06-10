@@ -120,8 +120,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
-                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0 , " +
-                "UNIQUE(name , time) ON CONFLICT REPLACE);";
+                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
 
 /**
  * calender event table
@@ -141,7 +140,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.RINGTONE_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.IS_REPEATING + " INTEGER NOT NULL DEFAULT 0, "
-                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0);";
+                + AlarmEntry.ALARM_SNOOZE+ " INTEGER NOT NULL DEFAULT 0, " +
+                "UNIQUE(name , time) ON CONFLICT REPLACE);";
 
         String SQL_CREATE_RINGTONE_TABLE = "CREATE TABLE " + AlarmEntry.RINGTONE_TABLE + " ("
                 + AlarmEntry.RINGTONE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "

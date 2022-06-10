@@ -1,6 +1,7 @@
 package com.coffeecoders.smartalarm.calender;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.coffeecoders.smartalarm.AddAlarm_Activity;
 import com.coffeecoders.smartalarm.AlarmAdapter;
 import com.coffeecoders.smartalarm.R;
 
@@ -36,6 +38,14 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
         holder.eventNameView.setText(newEvent.getEvent_name());
         holder.eventSTimeView.setText(newEvent.getEvent_s_time());
         holder.eventETimeView.setText(newEvent.getEvent_e_time());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
+                intent.setAction("from calenderActivity");
+            }
+        });
     }
 
     @Override
