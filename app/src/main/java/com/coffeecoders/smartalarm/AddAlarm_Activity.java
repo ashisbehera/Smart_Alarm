@@ -145,6 +145,9 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 /**set ringtone uri from the extra **/
                 ringtoneUri = i.getStringExtra("ringtoneUri");
             }
+            else if(i.getAction() == "from calenderActivity"){
+                dayArrayList = new ArrayList<String>();
+            }
             /** if it is add alarm activity then delete button will invisible **/
             delete_alarm.setVisibility(View.GONE);
         } else {
@@ -191,13 +194,13 @@ public class AddAlarm_Activity extends AppCompatActivity implements
             repeatAlarmImg.setImageResource(R.drawable.baseline_replay_circle_filled_24);
         }
 
-        customBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent MapIntent = new Intent(AddAlarm_Activity.this, MapsViewActivity.class);
-                startActivity(MapIntent);
-            }
-        });
+//        customBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent MapIntent = new Intent(AddAlarm_Activity.this, MapsViewActivity.class);
+//                startActivity(MapIntent);
+//            }
+//        });
         /**
          *initialing the alarmcontraints button
          */

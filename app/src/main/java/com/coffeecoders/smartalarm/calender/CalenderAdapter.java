@@ -44,6 +44,7 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
                 intent.setAction("from calenderActivity");
+                view.getContext().startActivity(intent);
             }
         });
     }
