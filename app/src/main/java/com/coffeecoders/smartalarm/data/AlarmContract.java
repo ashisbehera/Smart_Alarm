@@ -41,6 +41,9 @@ public class AlarmContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_ALARM;
 
+        public static final String CONTENT_ITEM_TYPE_CAL =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CAL_EVENTS;
+
         /** Name of database table for alarms
          * */
         public final static String TABLE_NAME = "alarms";

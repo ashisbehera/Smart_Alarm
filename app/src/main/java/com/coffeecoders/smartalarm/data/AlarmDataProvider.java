@@ -7,13 +7,14 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.coffeecoders.smartalarm.data.AlarmContract.AlarmEntry;
 public class AlarmDataProvider extends ContentProvider {
-
+    private static final String TAG = "AlarmDataProvider";
     /** URI matcher code for the content URI for the alarm table
      * */
     private static final int ALARMS = 50;
@@ -23,11 +24,13 @@ public class AlarmDataProvider extends ContentProvider {
     /** URI matcher code for the content URI for the single alarm in the alarm table
      * */
     private static final int ALARM_ID = 51;
+    private static final int CAL_ID = 54;
     /** URI matcher code for the content URI for the ringtone table
      * */
     private static final int RINGTONE = 52;
 
     private static final UriMatcher alarmUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
 
     static {
 
@@ -37,6 +40,7 @@ public class AlarmDataProvider extends ContentProvider {
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_ALARM,ALARMS);
 
         alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_CAL_EVENTS,CAL_EVENTS);
+        alarmUriMatcher.addURI(AlarmContract.CONTENT_AUTHORITY,AlarmContract.PATH_CAL_EVENTS+ "/#",CAL_ID);
         /**
          *  This URI is used to provide access to MULTIPLE rows in ringtone table
          */
@@ -115,6 +119,20 @@ public class AlarmDataProvider extends ContentProvider {
                 cursor = database.query(AlarmEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
+
+            case CAL_ID:
+                Log.e(TAG, "query: "+ "cal events type" );
+                selection = AlarmEntry._ID + "=?";
+                /**
+                 * extracting the row id from the uri
+                 */
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+
+
+                cursor = database.query(AlarmEntry.CAL_EVENTS_TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
@@ -142,6 +160,8 @@ public class AlarmDataProvider extends ContentProvider {
                 return AlarmEntry.CONTENT_LIST_TYPE;
             case ALARM_ID:
                 return AlarmEntry.CONTENT_ITEM_TYPE;
+            case CAL_EVENTS:
+                return AlarmEntry.CONTENT_ITEM_TYPE_CAL;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }

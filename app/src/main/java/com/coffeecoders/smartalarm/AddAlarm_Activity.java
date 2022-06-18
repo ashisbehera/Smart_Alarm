@@ -175,6 +175,8 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 ringtoneUri = i.getStringExtra("ringtoneUri");
                 loadData();
                 updateViews();
+            }else if(i.getAction() == "from calenderActivity"){
+                dayArrayList = new ArrayList<String>();
             }
 
             getLoaderManager().initLoader(ALARM_LOADER_E, null, this);
@@ -500,7 +502,7 @@ public class AddAlarm_Activity extends AppCompatActivity implements
                 ringtoneUri = cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING));
                 String RepeatDaysString = cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_REPEAT_DAYS));
                 Log.i("TAG", "onLoadFinished: "+RepeatDaysString);
-                if (!RepeatDaysString.isEmpty()) {
+                if (RepeatDaysString!=null && !RepeatDaysString.isEmpty()) {
                     String[] array = RepeatDaysString.split(",");
                     for (int i = 0; i < array.length; i++) {
                         dayArrayList.add(array[i]);

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
     private ContentResolver contentResolver;
     private androidx.appcompat.widget.Toolbar toolbar;
     private AlarmConstraints alarmConstraints;
+    private Alarm_Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +65,16 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 //        button2 = findViewById(R.id.set_primary_cal);
 //        button3 = findViewById(R.id.get_cal);
         cal_recycle_view = findViewById(R.id.calender_rec_view);
-
+        database = new Alarm_Database(getApplicationContext());
         Log.e(TAG, "onCreate: " + "check" );
         readCalender_accounts();
         if(accNames_id_map.containsKey(sel_cal_acc_name)){
             getEvents(accNames_id_map.get(sel_cal_acc_name));
         }
 
-        Alarm_Database database = new Alarm_Database(getApplicationContext());
-        List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
 
-        for (AlarmConstraints events_cl:events_list){
-            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
-        }
+
+
 //
 //        button2.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -303,7 +302,9 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
             }
 
 
-
+            List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
+            for (AlarmConstraints events_cl:events_list)
+            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
             calenderAdapter = new CalenderAdapter(this, events_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager
                     (this, 2, GridLayoutManager.VERTICAL, false);

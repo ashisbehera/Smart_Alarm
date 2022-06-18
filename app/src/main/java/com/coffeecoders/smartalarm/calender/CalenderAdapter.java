@@ -1,7 +1,9 @@
 package com.coffeecoders.smartalarm.calender;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.coffeecoders.smartalarm.AddAlarm_Activity;
 import com.coffeecoders.smartalarm.AlarmAdapter;
+import com.coffeecoders.smartalarm.AlarmConstraints;
 import com.coffeecoders.smartalarm.R;
+import com.coffeecoders.smartalarm.data.AlarmContract;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHolder> {
-    private ArrayList<Events> cal_data_list = new ArrayList<>();
+    private List<AlarmConstraints> cal_data_list;
     private Context context;
-    public CalenderAdapter(Context context , ArrayList<Events> data){
+    public CalenderAdapter(Context context , List<AlarmConstraints> data){
         this.context = context;
         cal_data_list = data;
     }
@@ -34,16 +40,18 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Events newEvent = cal_data_list.get(position);
-        holder.eventNameView.setText(newEvent.getEvent_name());
-        holder.eventSTimeView.setText(newEvent.getEvent_s_time());
-        holder.eventETimeView.setText(newEvent.getEvent_e_time());
+        AlarmConstraints newEvent = cal_data_list.get(position);
+        holder.eventNameView.setText(newEvent.getLabel());
+        holder.eventSTimeView.setText(newEvent.getAlarmTime());
+//        holder.eventETimeView.setText(newEvent.getEvent_e_time());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext() , AddAlarm_Activity.class);
                 intent.setAction("from calenderActivity");
+                Uri editUri = ContentUris.withAppendedId(AlarmContract.AlarmEntry.CAL_EVENTS_CONTENT_URI, newEvent.getPKeyDB());
+                intent.setData(editUri);
                 view.getContext().startActivity(intent);
             }
         });
