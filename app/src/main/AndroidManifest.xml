@@ -165,7 +165,13 @@
                 <action android:name="smart alarm refresh alarm" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".calender.CalReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote">
 
+        </receiver>
         <provider
             android:name=".data.AlarmDataProvider"
             android:authorities="com.coffeecoders.smartalarm"
