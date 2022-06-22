@@ -90,6 +90,9 @@ public class AlarmContract {
         public final static String RINGTONE_URI="ringtone_uri";
         /** check if ringtone is active or not **/
         public final static String RINGTONE_ACTIVE="ringtone_active";
+
         public static final String CAL_ACC_NAME = "cal_acc_name";
+
+        public static final String CAL_EVENT_DATE = "cal_event_date";
     }
 }

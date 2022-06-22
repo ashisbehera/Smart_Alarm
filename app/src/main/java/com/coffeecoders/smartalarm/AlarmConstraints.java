@@ -135,6 +135,8 @@ public class AlarmConstraints implements Parcelable  {
 
     public boolean isVibrated = false;
 
+    private String eventDate = null;
+
     /**
      *calender to get the time
      */
@@ -214,6 +216,14 @@ public class AlarmConstraints implements Parcelable  {
      */
     public void setAlarmTime(String alarmTime) {
         this.alarmTime=alarmTime;
+    }
+
+    public void setEventData(String date){
+        eventDate = date;
+    }
+
+    public String getEventDate(){
+        return eventDate;
     }
 
     public String getAlarmTime(){

@@ -293,6 +293,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         alarmConstraints.setLabel(title);
                         alarmConstraints.setAlarmTime(s_time);
                         alarmConstraints.setTtsString(title);
+                        alarmConstraints.setEventData(s_date);
                         saveEventsInDataB(alarmConstraints);
 
                     }
@@ -318,6 +319,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         values.put(AlarmEntry.ALARM_NAME , cal_alarm.getLabel());
         values.put(AlarmEntry.ALARM_TIME , cal_alarm.getAlarmTime());
         values.put(AlarmEntry.TTS_STRING , cal_alarm.getTtsString());
+        values.put(AlarmEntry.CAL_EVENT_DATE , cal_alarm.getEventDate());
 
         Uri newUri = getContentResolver().insert(AlarmEntry.CAL_EVENTS_CONTENT_URI, values);
 

@@ -135,6 +135,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.ALARM_RINGTONE_NAME + " TEXT, "
                 + AlarmEntry.ALARM_REPEAT_DAYS + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
+                + AlarmEntry.CAL_EVENT_DATE + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
@@ -169,7 +170,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 AlarmEntry.ALARM_TIME,AlarmEntry.RINGTONE_STRING,AlarmEntry.ALARM_VIBRATE,
                 AlarmEntry.ALARM_ACTIVE,AlarmEntry.ALARM_SNOOZE,
                 AlarmEntry.TTS_ACTIVE,AlarmEntry.RINGTONE_ACTIVE,
-                AlarmEntry.ALARM_REPEAT_DAYS,AlarmEntry.IS_REPEATING};
+                AlarmEntry.ALARM_REPEAT_DAYS,AlarmEntry.IS_REPEATING ,AlarmEntry.CAL_EVENT_DATE};
         Log.i("columns arr created" , " string arr");
         /**
          * set the cursor
@@ -194,6 +195,7 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 alarms[i].setTtsString(cursor.getString(cursor.getColumnIndex(AlarmEntry.TTS_STRING)));
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
                 alarms[i].setRingtoneUri(cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING)));
+                alarms[i].setEventData(cursor.getString(cursor.getColumnIndex(AlarmEntry.CAL_EVENT_DATE)));
                 /**
                  * TreeMap for collecting repeatDays
                  */
