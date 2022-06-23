@@ -1,6 +1,7 @@
 package com.coffeecoders.smartalarm.calender;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.format.DateUtils;
@@ -29,6 +31,8 @@ import com.coffeecoders.smartalarm.R;
 import com.coffeecoders.smartalarm.data.AlarmContract.AlarmEntry;
 import com.coffeecoders.smartalarm.data.Alarm_Database;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,6 +54,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
     private androidx.appcompat.widget.Toolbar toolbar;
     private AlarmConstraints alarmConstraints;
     private Alarm_Database database;
+    private Map<String , Integer> monthMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,14 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 
         contentResolver = getContentResolver();
         alarmConstraints = new AlarmConstraints();
+
+        monthMap = new HashMap<>();
+        monthMap.put("Jan" , 1);monthMap.put("Feb" , 2);monthMap.put("Mar" , 3);
+        monthMap.put("Apr" , 4);monthMap.put("May" , 5);monthMap.put("Jun" , 6);
+        monthMap.put("Jul" , 7);monthMap.put("Aug" , 8);monthMap.put("Sep" , 9);
+        monthMap.put("Oct" , 10);monthMap.put("Nov" , 11);monthMap.put("Dec" , 12);
+
+
 //        button2 = findViewById(R.id.set_primary_cal);
 //        button3 = findViewById(R.id.get_cal);
         cal_recycle_view = findViewById(R.id.calender_rec_view);
@@ -276,6 +289,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         String s_day = s_time_str[0];
                         String s_month = s_time_str[1];
                         String s_date = s_time_str[2];
+                        Log.e(TAG, "getEvents: " + s_date+s_month );
                         String s_time = s_time_str[3];
                         alarmConstraints.setStandardTime(s_time);
                         String s_standard_time =alarmConstraints.getStandardTime().toString();
@@ -293,7 +307,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         alarmConstraints.setLabel(title);
                         alarmConstraints.setAlarmTime(s_time);
                         alarmConstraints.setTtsString(title);
-                        alarmConstraints.setEventData(s_date);
+                        alarmConstraints.setEventData(s_date+" "+monthMap.get(s_month));
                         saveEventsInDataB(alarmConstraints);
 
                     }

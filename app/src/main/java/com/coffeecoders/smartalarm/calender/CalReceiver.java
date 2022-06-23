@@ -10,6 +10,7 @@ import com.coffeecoders.smartalarm.data.Alarm_Database;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,11 @@ public class CalReceiver extends BroadcastReceiver {
             if(calEvents.isAlarmOn()){
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 Date date = new Date();
-                if(calEvents.getEventDate().equals(formatter.format(date).toString())){
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH);
+                if(calEvents.getEventDate().equals(String.valueOf(dayOfMonth)+" "+String.valueOf(month))){
                     /**
                      * turn on the alarm now
                      */
