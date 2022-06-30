@@ -6,9 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -34,6 +37,7 @@ import com.coffeecoders.smartalarm.data.Alarm_Database;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,6 +88,11 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         if(accNames_id_map.containsKey(sel_cal_acc_name)){
             getEvents(accNames_id_map.get(sel_cal_acc_name));
         }
+
+        AlarmManager cal_alarmM = (AlarmManager) getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this , CalReceiver.class);
+        PendingIntent pendingIntent =  PendingIntent.getBroadcast(this , 109 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
+        cal_alarmM.set(AlarmManager.RTC_WAKEUP , System.currentTimeMillis()+30000 ,pendingIntent);
 
 
 
@@ -290,6 +299,13 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         String s_month = s_time_str[1];
                         String s_date = s_time_str[2];
                         Log.e(TAG, "getEvents: " + s_date+s_month );
+
+                        Date date = new Date();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(date);
+                        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                        int month = calendar.get(Calendar.MONTH)+1;
+                        Log.e(TAG, "getEvents: "+dayOfMonth+" "+month );
                         String s_time = s_time_str[3];
                         alarmConstraints.setStandardTime(s_time);
                         String s_standard_time =alarmConstraints.getStandardTime().toString();
@@ -307,7 +323,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         alarmConstraints.setLabel(title);
                         alarmConstraints.setAlarmTime(s_time);
                         alarmConstraints.setTtsString(title);
-                        alarmConstraints.setEventData(s_date+" "+monthMap.get(s_month));
+                        alarmConstraints.setEventDate(s_date+" "+monthMap.get(s_month));
                         saveEventsInDataB(alarmConstraints);
 
                     }
@@ -318,8 +334,10 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 
 
             List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
-            for (AlarmConstraints events_cl:events_list)
-            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
+            for (AlarmConstraints events_cl:events_list){
+
+            }
+//            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
             calenderAdapter = new CalenderAdapter(this, events_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager
                     (this, 2, GridLayoutManager.VERTICAL, false);

@@ -218,7 +218,7 @@ public class AlarmConstraints implements Parcelable  {
         this.alarmTime=alarmTime;
     }
 
-    public void setEventData(String date){
+    public void setEventDate(String date){
         eventDate = date;
     }
 
