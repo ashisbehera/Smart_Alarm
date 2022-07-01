@@ -21,7 +21,7 @@ import java.io.IOException;
 public class ControlAlarm extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
     /**
-     *initialing the vibrator , ringtone and uri for ringtone
+     *declare the vibrator , ringtone and uri for ringtone
      */
 
 

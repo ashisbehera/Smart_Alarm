@@ -120,6 +120,9 @@
         <service
             android:name=".ScheduleService"
             android:exported="false" />
+        <service
+            android:name=".calender.cal_rec_service.CalService"
+            android:exported="false" />
 
         <receiver
             android:name=".AlarmReceiver"
@@ -166,7 +169,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".calender.CalReceiver"
+            android:name=".calender.cal_rec_service.CalReceiver"
             android:enabled="true"
             android:exported="true"
             android:process=":remote">

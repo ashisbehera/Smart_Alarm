@@ -1,7 +1,6 @@
 package com.coffeecoders.smartalarm.calender;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.text.format.DateUtils;
@@ -22,26 +20,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.Toolbar;
 
 import com.coffeecoders.smartalarm.AlarmConstraints;
 import com.coffeecoders.smartalarm.R;
+import com.coffeecoders.smartalarm.calender.cal_rec_service.CalReceiver;
 import com.coffeecoders.smartalarm.data.AlarmContract.AlarmEntry;
 import com.coffeecoders.smartalarm.data.Alarm_Database;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,10 +81,9 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         }
 
         AlarmManager cal_alarmM = (AlarmManager) getSystemService(ALARM_SERVICE);
-        Intent intent = new Intent(this , CalReceiver.class);
-        PendingIntent pendingIntent =  PendingIntent.getBroadcast(this , 109 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
-        cal_alarmM.set(AlarmManager.RTC_WAKEUP , System.currentTimeMillis()+30000 ,pendingIntent);
-
+        Intent intent = new Intent(Calender_activity.this , CalReceiver.class);
+        PendingIntent pendingIntent =  PendingIntent.getBroadcast(Calender_activity.this , 109 , intent , PendingIntent.FLAG_UPDATE_CURRENT);
+        cal_alarmM.setInexactRepeating(AlarmManager.RTC_WAKEUP , System.currentTimeMillis()+30000 , 30000 ,pendingIntent);
 
 
 
@@ -334,9 +324,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 
 
             List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
-            for (AlarmConstraints events_cl:events_list){
 
-            }
 //            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
             calenderAdapter = new CalenderAdapter(this, events_list);
             GridLayoutManager gridLayoutManager = new GridLayoutManager

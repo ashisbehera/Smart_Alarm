@@ -166,14 +166,14 @@ public class Alarm_Database extends SQLiteOpenHelper {
          * which columns cursor will to move
          */
         String[] columns=null;
-        if(table_name == AlarmEntry.CAL_EVENTS_TABLE_NAME) {
+        if(table_name.equals( AlarmEntry.CAL_EVENTS_TABLE_NAME)) {
             columns = new String[]{AlarmEntry._ID, AlarmEntry.ALARM_NAME,
                     AlarmEntry.TTS_STRING,
                     AlarmEntry.ALARM_TIME, AlarmEntry.RINGTONE_STRING, AlarmEntry.ALARM_VIBRATE,
                     AlarmEntry.ALARM_ACTIVE, AlarmEntry.ALARM_SNOOZE,
                     AlarmEntry.TTS_ACTIVE, AlarmEntry.RINGTONE_ACTIVE,
                     AlarmEntry.ALARM_REPEAT_DAYS, AlarmEntry.IS_REPEATING, AlarmEntry.CAL_EVENT_DATE};
-        }else if(table_name == AlarmEntry.TABLE_NAME){
+        }else if(table_name.equals( AlarmEntry.TABLE_NAME)){
             columns = new String[]{AlarmEntry._ID, AlarmEntry.ALARM_NAME,
                     AlarmEntry.TTS_STRING,
                     AlarmEntry.ALARM_TIME, AlarmEntry.RINGTONE_STRING, AlarmEntry.ALARM_VIBRATE,
