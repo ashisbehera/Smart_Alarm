@@ -136,6 +136,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 + AlarmEntry.ALARM_REPEAT_DAYS + " TEXT, "
                 + AlarmEntry.ALARM_TIME + " TEXT NOT NULL, "
                 + AlarmEntry.CAL_EVENT_DATE + " TEXT NOT NULL, "
+                + AlarmEntry.CAL_S_FULL_T + " TEXT NOT NULL, "
+                + AlarmEntry.CAL_E_FULL_T + " TEXT NOT NULL, "
                 + AlarmEntry.ALARM_VIBRATE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.ALARM_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
                 + AlarmEntry.TTS_ACTIVE + " INTEGER NOT NULL DEFAULT 0, "
@@ -172,7 +174,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                     AlarmEntry.ALARM_TIME, AlarmEntry.RINGTONE_STRING, AlarmEntry.ALARM_VIBRATE,
                     AlarmEntry.ALARM_ACTIVE, AlarmEntry.ALARM_SNOOZE,
                     AlarmEntry.TTS_ACTIVE, AlarmEntry.RINGTONE_ACTIVE,
-                    AlarmEntry.ALARM_REPEAT_DAYS, AlarmEntry.IS_REPEATING, AlarmEntry.CAL_EVENT_DATE};
+                    AlarmEntry.ALARM_REPEAT_DAYS, AlarmEntry.IS_REPEATING, AlarmEntry.CAL_EVENT_DATE
+                    ,AlarmEntry.CAL_S_FULL_T , AlarmEntry.CAL_E_FULL_T};
         }else if(table_name.equals( AlarmEntry.TABLE_NAME)){
             columns = new String[]{AlarmEntry._ID, AlarmEntry.ALARM_NAME,
                     AlarmEntry.TTS_STRING,
@@ -206,6 +209,8 @@ public class Alarm_Database extends SQLiteOpenHelper {
                 alarms[i].setAlarmTime(cursor.getString(cursor.getColumnIndex(AlarmEntry.ALARM_TIME)));
                 alarms[i].setRingtoneUri(cursor.getString(cursor.getColumnIndex(AlarmEntry.RINGTONE_STRING)));
                 alarms[i].setEventDate(cursor.getString(cursor.getColumnIndex(AlarmEntry.CAL_EVENT_DATE)));
+                alarms[i].setEvent_start_full_time(cursor.getString(cursor.getColumnIndex(AlarmEntry.CAL_S_FULL_T)));
+                alarms[i].setEvent_end_full_time(cursor.getString(cursor.getColumnIndex(AlarmEntry.CAL_E_FULL_T)));
                 /**
                  * TreeMap for collecting repeatDays
                  */

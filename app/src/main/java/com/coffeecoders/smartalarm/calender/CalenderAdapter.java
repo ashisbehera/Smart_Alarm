@@ -42,8 +42,8 @@ public class CalenderAdapter extends RecyclerView.Adapter<CalenderAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AlarmConstraints newEvent = cal_data_list.get(position);
         holder.eventNameView.setText(newEvent.getLabel());
-        holder.eventSTimeView.setText(newEvent.getAlarmTime());
-//        holder.eventETimeView.setText(newEvent.getEvent_e_time());
+        holder.eventSTimeView.setText(newEvent.getEvent_start_full_time());
+        holder.eventETimeView.setText(newEvent.getEvent_end_full_time());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

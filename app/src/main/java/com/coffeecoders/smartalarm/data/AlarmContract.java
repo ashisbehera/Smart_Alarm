@@ -94,5 +94,7 @@ public class AlarmContract {
         public static final String CAL_ACC_NAME = "cal_acc_name";
 
         public static final String CAL_EVENT_DATE = "cal_event_date";
+        public static final String CAL_S_FULL_T = "cal_s_full_time";
+        public static final String CAL_E_FULL_T = "cal_e_full_time";
     }
 }

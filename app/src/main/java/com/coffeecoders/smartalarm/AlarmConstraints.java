@@ -137,6 +137,25 @@ public class AlarmConstraints implements Parcelable  {
 
     private String eventDate = null;
 
+    private String event_start_full_time = null;
+    private String event_end_full_time = null;
+
+    public String getEvent_start_full_time() {
+        return event_start_full_time;
+    }
+
+    public void setEvent_start_full_time(String event_start_full_time) {
+        this.event_start_full_time = event_start_full_time;
+    }
+
+    public String getEvent_end_full_time() {
+        return event_end_full_time;
+    }
+
+    public void setEvent_end_full_time(String event_end_full_time) {
+        this.event_end_full_time = event_end_full_time;
+    }
+
     /**
      *calender to get the time
      */

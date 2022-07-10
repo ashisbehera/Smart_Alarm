@@ -279,28 +279,24 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         final Date end = new Date(eventCursor.getLong(2));
                         final Boolean allDay = !eventCursor.getString(3).equals("0");
 
-                        Events newEvent = new Events();
-                        newEvent.setEvent_name(title);
-
 
                         String[] s_time_str = String.valueOf(begin).split("\\s+");
-                        String[] e_time_str = String.valueOf(begin).split("\\s+");
+                        String[] e_time_str = String.valueOf(end).split("\\s+");
                         String s_day = s_time_str[0];
                         String s_month = s_time_str[1];
                         String s_date = s_time_str[2];
-                        Log.e(TAG, "getEvents: " + s_date+s_month );
+//                        Log.e(TAG, "getEvents: " + s_date+s_month );
 
                         Date date = new Date();
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(date);
                         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
                         int month = calendar.get(Calendar.MONTH)+1;
-                        Log.e(TAG, "getEvents: "+dayOfMonth+" "+month );
+//                        Log.e(TAG, "getEvents: "+dayOfMonth+" "+month );
                         String s_time = s_time_str[3];
                         alarmConstraints.setStandardTime(s_time);
                         String s_standard_time =alarmConstraints.getStandardTime().toString();
                         String s_year = s_time_str[5];
-                        newEvent.setEvent_s_time(s_day+" "+s_month+" "+s_date+" , "+s_standard_time+" "+s_year);
                         String e_day = e_time_str[0];
                         String e_month = e_time_str[1];
                         String e_date = e_time_str[2];
@@ -308,12 +304,12 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         alarmConstraints.setStandardTime(e_time);
                         String e_standard_time =alarmConstraints.getStandardTime().toString();
                         String e_year = e_time_str[5];
-                        newEvent.setEvent_e_time(e_day+" "+e_month+" "+e_date+" , "+e_standard_time+" "+e_year);
-                        events_list.add(newEvent);
                         alarmConstraints.setLabel(title);
                         alarmConstraints.setAlarmTime(s_time);
                         alarmConstraints.setTtsString(title);
                         alarmConstraints.setEventDate(s_date+" "+monthMap.get(s_month));
+                        alarmConstraints.setEvent_start_full_time(s_day+" "+s_month+" "+s_date+" , "+s_standard_time+" "+s_year);
+                        alarmConstraints.setEvent_end_full_time(e_day+" "+e_month+" "+e_date+" , "+e_standard_time+" "+e_year);
                         saveEventsInDataB(alarmConstraints);
 
                     }
@@ -340,6 +336,8 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         values.put(AlarmEntry.ALARM_TIME , cal_alarm.getAlarmTime());
         values.put(AlarmEntry.TTS_STRING , cal_alarm.getTtsString());
         values.put(AlarmEntry.CAL_EVENT_DATE , cal_alarm.getEventDate());
+        values.put(AlarmEntry.CAL_S_FULL_T , cal_alarm.getEvent_start_full_time());
+        values.put(AlarmEntry.CAL_E_FULL_T , cal_alarm.getEvent_end_full_time());
 
         Uri newUri = getContentResolver().insert(AlarmEntry.CAL_EVENTS_CONTENT_URI, values);
 
