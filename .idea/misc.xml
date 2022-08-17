@@ -61,6 +61,7 @@
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/drawable/toggle_widget_background.xml" value="0.1145" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout-normal/addalarm_activity.xml" value="0.17798913043478262" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout-small/addalarm_activity.xml" value="0.6792763157894737" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/activity_about.xml" value="0.7039473684210527" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/activity_calender.xml" value="0.264" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/activity_main.xml" value="0.17798913043478262" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/activity_maps_view.xml" value="0.17798913043478262" />
@@ -68,8 +69,10 @@
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/addalarm_activity.xml" value="0.2" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/cal_acc_dialog_box.xml" value="0.18704710144927536" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/calender_card_view.xml" value="0.18704710144927536" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/cancel_alarm.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/custom_toolbar.xml" value="0.17798913043478262" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/fragment_alarm.xml" value="0.17798913043478262" />
+        <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/fragment_stop_watch.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/list_alarm.xml" value="0.18704710144927536" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/layout/list_cal_account.xml" value="0.176" />
         <entry key="..\:/Users/ashis/StudioProjects/Smart_Alarm/app/src/main/res/menu/choose_account.xml" value="0.16354166666666667" />

@@ -12,6 +12,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
     private AlarmConstraints alarmConstraints;
     private Alarm_Database database;
     private Map<String , Integer> monthMap;
+    private String cal_table_name = "local_account";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +253,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
     private void getEvents(int id){
         events_list.clear();
         // For each calendar, display all the events from the previous week to the end of next week.
-
+        List<AlarmConstraints> events_list = new LinkedList<>();
             Log.e(TAG, "readCalender_events: "+id );
             Uri.Builder builder = Uri.parse("content://com.android.calendar/instances/when").buildUpon();
             //Uri.Builder builder = Uri.parse("content://com.android.calendar/calendars").buildUpon();
@@ -310,16 +313,20 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
                         alarmConstraints.setEventDate(s_date+" "+monthMap.get(s_month));
                         alarmConstraints.setEvent_start_full_time(s_day+" "+s_month+" "+s_date+" , "+s_standard_time+" "+s_year);
                         alarmConstraints.setEvent_end_full_time(e_day+" "+e_month+" "+e_date+" , "+e_standard_time+" "+e_year);
-                        saveEventsInDataB(alarmConstraints);
+
+                        Alarm_Database db = new Alarm_Database(getApplicationContext());
+                        SQLiteDatabase sqldb = db.getWritableDatabase();
+
+                        database.create_cal_table(cal_table_name , sqldb);
+                        saveEventsInDataB(alarmConstraints , cal_table_name);
 
                     }
                     while(eventCursor.moveToNext());
 
                 }
+               events_list = database.getAlarmsFromDataBase(cal_table_name);
             }
 
-
-            List<AlarmConstraints> events_list = database.getAlarmsFromDataBase(AlarmEntry.CAL_EVENTS_TABLE_NAME);
 
 //            Log.e(TAG, "onCreate: " + events_cl.getLabel() + events_cl.getAlarmTime());
             calenderAdapter = new CalenderAdapter(this, events_list);
@@ -330,7 +337,7 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
 
     }
 
-    private void saveEventsInDataB(AlarmConstraints cal_alarm){
+    private void saveEventsInDataB(AlarmConstraints cal_alarm , String cal_table_name){
         ContentValues values = new ContentValues();
         values.put(AlarmEntry.ALARM_NAME , cal_alarm.getLabel());
         values.put(AlarmEntry.ALARM_TIME , cal_alarm.getAlarmTime());
@@ -339,14 +346,24 @@ public class Calender_activity extends AppCompatActivity implements Calender_dia
         values.put(AlarmEntry.CAL_S_FULL_T , cal_alarm.getEvent_start_full_time());
         values.put(AlarmEntry.CAL_E_FULL_T , cal_alarm.getEvent_end_full_time());
 
-        Uri newUri = getContentResolver().insert(AlarmEntry.CAL_EVENTS_CONTENT_URI, values);
+        SQLiteDatabase myDb = database.getWritableDatabase();
+        myDb.insert(cal_table_name , null , values);
+
 
     }
 
     @Override
     public void getCalAccName(String st) {
         sel_cal_acc_name = st;
+        cal_table_name = "local_account";
         Log.e(TAG, "getCalAccName: "+sel_cal_acc_name);
+        int delimiterIndex = sel_cal_acc_name.indexOf("@");
+        if (delimiterIndex != -1) {
+            cal_table_name = sel_cal_acc_name.substring(0 , delimiterIndex) ;// "name"
+            if(Character.isDigit(cal_table_name.charAt(0))){
+                cal_table_name = "a"+cal_table_name;
+            }
+        }
         getEvents(accNames_id_map.get(sel_cal_acc_name));
     }
 }
